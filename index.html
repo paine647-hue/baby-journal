@@ -78,18 +78,35 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .modal-title{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:18px}
 .modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-light);margin-top:-4px}
 
-/* ── TODAY PAGE ── */
-.hero-card{background:linear-gradient(135deg,#FDF0F3 0%,#F5EDF8 50%,#EDF5F0 100%);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:var(--shadow-soft)}
-.hero-week{font-family:'Playfair Display',serif;font-size:52px;line-height:1;color:var(--rose)}
+/* ── TODAY PAGE / HERO ── */
+.hero-card{position:relative;background:linear-gradient(135deg,#FDF0F3 0%,#F5EDF8 50%,#EDF5F0 100%);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:var(--shadow-soft);overflow:hidden}
+.hero-bg-art{position:absolute;top:0;right:0;opacity:.12;pointer-events:none}
+.hero-week{font-family:'Playfair Display',serif;font-size:56px;line-height:1;color:var(--rose)}
 .hero-week-label{font-size:12px;color:var(--ink-light);margin-bottom:2px}
 .hero-days{font-size:12px;color:var(--ink-mid);margin:4px 0 14px}
-.fruit-row{display:flex;align-items:center;gap:14px;background:var(--white);border-radius:var(--radius-sm);padding:13px}
-.fruit-emoji{font-size:48px;line-height:1}
-.fruit-name{font-family:'Playfair Display',serif;font-size:17px;color:var(--ink)}
+
+/* Fun fact ticker */
+.fun-fact-strip{background:linear-gradient(90deg,var(--plum),var(--rose));border-radius:20px;padding:8px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.fun-fact-icon{font-size:18px;flex-shrink:0}
+.fun-fact-text{font-size:12px;color:var(--white);line-height:1.4;font-weight:400}
+.fun-fact-next{font-size:10px;color:rgba(255,255,255,.7);flex-shrink:0;margin-left:auto}
+
+/* Fruit card animated */
+.fruit-row{display:flex;align-items:center;gap:14px;background:var(--white);border-radius:var(--radius-sm);padding:14px;position:relative;overflow:hidden}
+.fruit-row::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(232,116,138,.06),rgba(123,175,142,.06));pointer-events:none}
+.fruit-emoji{font-size:52px;line-height:1;animation:fruitBob 3s ease-in-out infinite}
+.fruit-name{font-family:'Playfair Display',serif;font-size:18px;color:var(--ink)}
 .fruit-size-label{font-size:11px;color:var(--ink-light)}
-.fruit-stats{display:flex;gap:10px;margin-top:6px}
+.fruit-stats{display:flex;gap:10px;margin-top:8px}
 .fruit-stat{font-size:10px;color:var(--ink-mid)}
-.fruit-stat strong{display:block;font-size:12px;color:var(--ink);font-weight:600}
+.fruit-stat strong{display:block;font-size:13px;color:var(--ink);font-weight:600}
+
+/* Sparkle dots */
+.sparkle{position:absolute;border-radius:50%;animation:sparkleAnim 2.5s ease-in-out infinite}
+
+@keyframes fruitBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+@keyframes sparkleAnim{0%,100%{transform:scale(0);opacity:0}50%{transform:scale(1);opacity:1}}
+@keyframes factFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .progress-row{display:flex;gap:10px;margin-bottom:14px}
 .prog-card{flex:1;background:var(--white);border-radius:var(--radius-sm);padding:13px;box-shadow:var(--shadow-card);display:flex;align-items:center;gap:10px}
 .ring-wrap{position:relative;width:42px;height:42px;flex-shrink:0}
@@ -106,19 +123,19 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .dos-card,.donts-card{flex:1;border-radius:var(--radius-sm);padding:13px}
 .dos-card{background:var(--sage-pale);border:1px solid var(--sage-light)}
 .donts-card{background:var(--rose-pale);border:1px solid var(--rose-mid)}
-.dos-donts-title{font-size:11px;font-weight:600;margin-bottom:8px}
+.dos-donts-title{font-size:13px;font-weight:600;margin-bottom:10px}
 .dos-donts-title.do{color:var(--sage)}
 .dos-donts-title.dont{color:var(--rose)}
-.dos-donts-item{font-size:11px;color:var(--ink-mid);line-height:1.5;margin-bottom:4px;display:flex;gap:5px}
+.dos-donts-item{font-size:13px;color:var(--ink-mid);line-height:1.6;margin-bottom:6px;display:flex;gap:5px}
 
 /* GARBH SANSKAR */
 .gs-card{background:linear-gradient(135deg,#FDF6EC,#F5EDF8);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;border:1px solid #F0DEFF}
-.gs-label{font-size:10px;font-weight:600;color:var(--plum);letter-spacing:.05em;margin-bottom:8px}
-.gs-shloka{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);line-height:1.7;margin-bottom:8px;font-style:italic}
-.gs-transliteration{font-size:11px;color:var(--plum);margin-bottom:8px;line-height:1.5}
-.gs-meaning{font-size:12px;color:var(--ink-mid);line-height:1.6;margin-bottom:8px}
-.gs-practice{font-size:11px;color:var(--sage);background:var(--sage-pale);border-radius:8px;padding:8px 10px;line-height:1.5}
-.gs-music{font-size:11px;color:var(--plum);margin-top:8px}
+.gs-label{font-size:12px;font-weight:600;color:var(--plum);letter-spacing:.05em;margin-bottom:10px}
+.gs-shloka{font-family:'Playfair Display',serif;font-size:16px;color:var(--ink);line-height:1.8;margin-bottom:10px;font-style:italic}
+.gs-transliteration{font-size:13px;color:var(--plum);margin-bottom:10px;line-height:1.6}
+.gs-meaning{font-size:14px;color:var(--ink-mid);line-height:1.7;margin-bottom:10px}
+.gs-practice{font-size:13px;color:var(--sage);background:var(--sage-pale);border-radius:8px;padding:10px 12px;line-height:1.6}
+.gs-music{font-size:13px;color:var(--plum);margin-top:10px}
 
 /* SCAN UPCOMING */
 .scan-card{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;box-shadow:var(--shadow-card);display:flex;align-items:center;gap:10px;margin-bottom:8px}
@@ -179,7 +196,8 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .wtab-btn.active{background:var(--rose);border-color:var(--rose);color:var(--white)}
 .yoga-pose-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow-card);margin-bottom:10px}
 .yoga-pose-header{display:flex;align-items:center;gap:12px;margin-bottom:0}
-.yoga-anim{width:80px;height:80px;flex-shrink:0}
+.yoga-anim{width:80px;height:80px;flex-shrink:0;display:block}
+.yoga-anim svg{width:80px;height:80px;display:block}
 .yt-btn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 14px;background:#FF0000;border:none;border-radius:20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;text-decoration:none}
 .yt-btn:hover{opacity:.88}
 .yoga-pose-name{font-size:14px;font-weight:600;color:var(--ink)}
@@ -232,8 +250,8 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .week-guide-card{background:var(--white);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow-card);margin-bottom:12px}
 .week-guide-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--ink);margin-bottom:10px}
 .week-guide-section{margin-bottom:12px}
-.week-guide-section-title{font-size:11px;font-weight:600;color:var(--rose);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
-.week-guide-text{font-size:12px;color:var(--ink-mid);line-height:1.7}
+.week-guide-section-title{font-size:13px;font-weight:600;color:var(--rose);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.week-guide-text{font-size:14px;color:var(--ink-mid);line-height:1.75}
 .food-section{margin-bottom:16px}
 .food-section-head{display:flex;align-items:center;gap:7px;margin-bottom:8px}
 .food-section-head .label{font-size:12px;font-weight:600}
@@ -438,13 +456,36 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
       <div class="page-eyebrow" id="todayGreeting">Good morning 🌸</div>
       <div class="page-title" id="todayTitle">Week --</div>
     </div>
-    <div class="hero-card">
+    <div class="hero-card" id="heroCard">
+      <!-- Background art -->
+      <svg class="hero-bg-art" width="140" height="140" viewBox="0 0 140 140">
+        <circle cx="100" cy="30" r="50" fill="#E8748A"/>
+        <circle cx="30" cy="110" r="35" fill="#7BAF8E"/>
+        <circle cx="120" cy="110" r="25" fill="#9B6B8A"/>
+      </svg>
+      <!-- Sparkles -->
+      <div class="sparkle" style="width:6px;height:6px;background:#E8748A;top:18px;right:50px;animation-delay:0s"></div>
+      <div class="sparkle" style="width:4px;height:4px;background:#7BAF8E;top:40px;right:30px;animation-delay:.8s"></div>
+      <div class="sparkle" style="width:5px;height:5px;background:#9B6B8A;top:60px;right:60px;animation-delay:1.4s"></div>
+
       <div class="hero-week-label">You are in</div>
-      <div><span class="hero-week" id="heroWeek">--</span><span style="font-size:16px;color:var(--ink-mid);margin-left:4px">weeks</span></div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:2px">
+        <span class="hero-week" id="heroWeek">--</span>
+        <span style="font-size:18px;color:var(--ink-mid);font-family:'Playfair Display',serif">weeks</span>
+      </div>
       <div class="hero-days" id="heroDays"></div>
+
+      <!-- Fun fact strip -->
+      <div class="fun-fact-strip" onclick="nextFunFact()" id="funFactStrip">
+        <span class="fun-fact-icon">🐘</span>
+        <span class="fun-fact-text" id="funFactText">Elephants are pregnant for 22 months — the longest of any land animal!</span>
+        <span class="fun-fact-next">tap for more ›</span>
+      </div>
+
+      <!-- Fruit card -->
       <div class="fruit-row">
         <div class="fruit-emoji" id="fruitEmoji">🫐</div>
-        <div>
+        <div style="flex:1">
           <div class="fruit-size-label">Baby is the size of</div>
           <div class="fruit-name" id="fruitName">a blueberry</div>
           <div class="fruit-stats">
@@ -453,6 +494,14 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
             <div class="fruit-stat"><strong id="babyHR">--</strong>Heart</div>
           </div>
         </div>
+        <!-- Mini SVG week arc -->
+        <svg width="52" height="52" viewBox="0 0 52 52" style="flex-shrink:0">
+          <circle cx="26" cy="26" r="22" fill="none" stroke="#FBDDE4" stroke-width="4"/>
+          <circle cx="26" cy="26" r="22" fill="none" stroke="#E8748A" stroke-width="4"
+            stroke-dasharray="138" id="heroArc" stroke-dashoffset="138"
+            stroke-linecap="round" transform="rotate(-90 26 26)"/>
+          <text x="26" y="30" text-anchor="middle" font-size="10" font-weight="600" fill="#E8748A" font-family="DM Sans,sans-serif" id="heroArcPct">0%</text>
+        </svg>
       </div>
     </div>
     <div class="progress-row">
@@ -855,6 +904,37 @@ async function initApp(){
   checkNotifPrompt();
 }
 
+// ── FUN FACTS ──
+const funFacts=[
+  {icon:'🐘',text:"Elephants are pregnant for 22 months — the longest of any land animal!"},
+  {icon:'🦋',text:"A baby can taste what the mother eats — strong flavours like garlic pass through amniotic fluid."},
+  {icon:'🎵',text:"Babies can hear and recognise their mother's voice from inside the womb from week 18."},
+  {icon:'👣',text:"A baby's fingerprints form by week 10 — they are already uniquely theirs."},
+  {icon:'💤',text:"Babies dream in the womb — REM sleep patterns appear as early as week 23."},
+  {icon:'🦁',text:"A lion's pregnancy lasts 110 days. A blue whale's lasts nearly 12 months!"},
+  {icon:'🤸',text:"Your baby can do somersaults — and you'll start feeling them from around week 16–20."},
+  {icon:'🌱',text:"Your body produces 50% more blood during pregnancy to nourish your baby."},
+  {icon:'🌙',text:"Babies are more active at night when the mother is resting — the rocking motion of walking soothes them during the day."},
+  {icon:'💪',text:"The uterus grows 500 times its original size during pregnancy. It returns to normal within 6 weeks after birth."},
+  {icon:'🌊',text:"A newborn baby has 300 bones. Adults have 206 — many fuse together as we grow."},
+  {icon:'⭐',text:"Opossum pregnancies last just 12 days. A human pregnancy, at 40 weeks, is one of the longest relative to body size."},
+];
+let funFactIdx=0;
+function nextFunFact(){
+  funFactIdx=(funFactIdx+1)%funFacts.length;
+  const f=funFacts[funFactIdx];
+  const strip=document.getElementById('funFactStrip');
+  const icon=strip.querySelector('.fun-fact-icon');
+  const text=document.getElementById('funFactText');
+  strip.style.animation='none';
+  setTimeout(()=>{
+    icon.textContent=f.icon;
+    text.textContent=f.text;
+    text.style.animation='factFade .4s ease forwards';
+    setTimeout(()=>text.style.animation='',500);
+  },50);
+}
+
 // ── TODAY ──
 function renderToday(){
   const week=calcWeek(START_DATE);
@@ -880,6 +960,12 @@ function renderToday(){
 
   const circ=2*Math.PI*17;
   document.getElementById('progressRing').style.strokeDashoffset=circ-(pct/100)*circ;
+  // Mini arc inside fruit card
+  const arcCirc=2*Math.PI*22;
+  const arcEl=document.getElementById('heroArc');
+  const arcPct=document.getElementById('heroArcPct');
+  if(arcEl){arcEl.style.strokeDashoffset=arcCirc-(pct/100)*arcCirc}
+  if(arcPct){arcPct.textContent=pct+'%'}
 
   const t=week<=12?1:week<=27?2:3;
   const tLabels=['','First Trimester','Second Trimester','Third Trimester'];
@@ -1064,7 +1150,7 @@ function makeYogaSVG(anim){
   const skin='#F4C5A0',hair='#5C3317',rose='#E8748A',belly='#F8D5B8',sage='#7BAF8E';
   const svgs={
     // Mountain Pose — standing upright, arms at sides, breathing animation
-    standing:`<svg viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg">
+    standing:`<svg width="80" height="80" viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-breathe" style="transform-origin:40px 55px">
         <ellipse cx="40" cy="105" rx="18" ry="5" fill="${rose}" opacity=".15"/>
         <!-- hair -->
@@ -1091,7 +1177,7 @@ function makeYogaSVG(anim){
       </g>
     </svg>`,
     // Butterfly pose — seated, soles together, knees out
-    butterfly:`<svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+    butterfly:`<svg width="80" height="80" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-sway" style="transform-origin:45px 45px">
         <ellipse cx="45" cy="85" rx="30" ry="6" fill="${rose}" opacity=".15"/>
         <!-- hair -->
@@ -1116,7 +1202,7 @@ function makeYogaSVG(anim){
       </g>
     </svg>`,
     // Cat-Cow — on all fours, back arching
-    catcow:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+    catcow:`<svg width="80" height="80" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-tilt" style="transform-origin:50px 40px">
         <ellipse cx="50" cy="75" rx="35" ry="5" fill="${rose}" opacity=".15"/>
         <!-- head (looking forward/down) -->
@@ -1145,7 +1231,7 @@ function makeYogaSVG(anim){
       </g>
     </svg>`,
     // Warrior I — lunge with arms up
-    warrior:`<svg viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+    warrior:`<svg width="80" height="80" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-stretch" style="transform-origin:50px 55px">
         <ellipse cx="50" cy="106" rx="28" ry="4" fill="${rose}" opacity=".15"/>
         <!-- hair -->
@@ -1172,7 +1258,7 @@ function makeYogaSVG(anim){
       </g>
     </svg>`,
     // Chair pose — sitting back, arms forward
-    chair:`<svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
+    chair:`<svg width="80" height="80" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-squat" style="transform-origin:40px 60px">
         <ellipse cx="40" cy="97" rx="22" ry="4" fill="${rose}" opacity=".15"/>
         <!-- hair -->
@@ -1198,7 +1284,7 @@ function makeYogaSVG(anim){
       </g>
     </svg>`,
     // Deep squat / Malasana
-    squat:`<svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+    squat:`<svg width="80" height="80" viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-squat" style="transform-origin:50px 55px">
         <ellipse cx="50" cy="87" rx="30" ry="4" fill="${rose}" opacity=".15"/>
         <!-- hair -->
@@ -1227,7 +1313,7 @@ function makeYogaSVG(anim){
       </g>
     </svg>`,
     // Legs up the wall
-    legswall:`<svg viewBox="0 0 110 80" xmlns="http://www.w3.org/2000/svg">
+    legswall:`<svg width="80" height="80" viewBox="0 0 110 80" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-float" style="transform-origin:55px 40px">
         <!-- wall -->
         <rect x="88" y="0" width="6" height="80" fill="${rose}" opacity=".2" rx="2"/>
@@ -1254,7 +1340,7 @@ function makeYogaSVG(anim){
       </g>
     </svg>`,
     // Seated — for kegel
-    seated:`<svg viewBox="0 0 80 95" xmlns="http://www.w3.org/2000/svg">
+    seated:`<svg width="80" height="80" viewBox="0 0 80 95" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-kegel" style="transform-origin:40px 55px">
         <ellipse cx="40" cy="90" rx="25" ry="5" fill="${rose}" opacity=".15"/>
         <!-- hair -->
@@ -1279,7 +1365,7 @@ function makeYogaSVG(anim){
       </g>
     </svg>`,
     // Wide-leg forward fold
-    fold:`<svg viewBox="0 0 110 90" xmlns="http://www.w3.org/2000/svg">
+    fold:`<svg width="80" height="80" viewBox="0 0 110 90" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-stretch" style="transform-origin:55px 50px">
         <ellipse cx="55" cy="86" rx="40" ry="4" fill="${rose}" opacity=".15"/>
         <!-- head hanging down -->
@@ -1307,7 +1393,7 @@ function makeYogaSVG(anim){
       </g>
     </svg>`,
     // Side angle pose
-    sideangle:`<svg viewBox="0 0 110 100" xmlns="http://www.w3.org/2000/svg">
+    sideangle:`<svg width="80" height="80" viewBox="0 0 110 100" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-sway" style="transform-origin:55px 55px">
         <ellipse cx="55" cy="97" rx="38" ry="4" fill="${rose}" opacity=".15"/>
         <!-- hair -->
@@ -1336,7 +1422,7 @@ function makeYogaSVG(anim){
       </g>
     </svg>`,
     // Side-lying shavasana
-    sidelying:`<svg viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg">
+    sidelying:`<svg width="80" height="80" viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-float" style="transform-origin:60px 40px">
         <!-- floor -->
         <line x1="5" y1="60" x2="115" y2="60" stroke="${rose}" stroke-width="1.5" opacity=".3"/>
