@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baby Journal 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --rose:#E8748A;--rose-light:#F5A8B8;--rose-pale:#FDF0F3;--rose-mid:#FBDDE4;
+  --sage:#7BAF8E;--sage-light:#C4DFD0;--sage-pale:#F0F8F3;
+  --plum:#9B6B8A;--amber:#E8A44A;--amber-pale:#FDF6EC;
+  --cream:#FFF8F5;--ink:#2C1A24;--ink-mid:#6B4C5E;--ink-light:#A8889A;
+  --white:#FFFFFF;
+  --shadow-soft:0 4px 24px rgba(44,26,36,0.08);
+  --shadow-card:0 2px 12px rgba(44,26,36,0.06);
+  --radius:20px;--radius-sm:12px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0;padding:0;background:var(--cream)}
+body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 auto;overflow-x:hidden}
+
+/* LOCK */
+#lockScreen{position:fixed;inset:0;z-index:1000;background:linear-gradient(160deg,#FDF0F3 0%,#F0F8F3 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;text-align:center}
+.lock-emoji{font-size:64px;margin-bottom:16px;animation:float 3s ease-in-out infinite}
+.lock-title{font-family:'Playfair Display',serif;font-size:28px;color:var(--ink);margin-bottom:8px}
+.lock-sub{font-size:14px;color:var(--ink-light);margin-bottom:40px}
+.pin-dots{display:flex;gap:16px;margin-bottom:32px;justify-content:center}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--rose-light);background:transparent;transition:background .2s,transform .15s}
+.pin-dot.filled{background:var(--rose);border-color:var(--rose);transform:scale(1.1)}
+.pin-grid{display:grid;grid-template-columns:repeat(3,72px);gap:12px;justify-content:center}
+.pin-btn{width:72px;height:72px;border-radius:50%;border:none;background:var(--white);font-family:'DM Sans',sans-serif;font-size:22px;font-weight:500;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-card);transition:background .15s,transform .1s;display:flex;align-items:center;justify-content:center}
+.pin-btn:active{background:var(--rose-pale);transform:scale(0.95)}
+.pin-error{color:var(--rose);font-size:13px;margin-top:16px;min-height:20px}
+
+/* APP */
+#app{display:none;min-height:100vh;padding-bottom:80px}
+#app.visible{display:block}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--white);border-top:1px solid var(--rose-mid);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav-btn{flex:1;padding:8px 2px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;border:none;background:transparent;cursor:pointer;color:var(--ink-light);font-family:'DM Sans',sans-serif;font-size:9px;transition:color .2s}
+.nav-btn.active{color:var(--rose)}
+.nav-btn span:first-child{font-size:20px}
+
+/* PAGES */
+.page{display:none;padding:20px 20px 0}
+.page.active{display:block;animation:fadeIn .25s ease}
+
+/* COMMON COMPONENTS */
+.page-header{margin-bottom:20px}
+.page-eyebrow{font-size:12px;color:var(--ink-light);margin-bottom:2px}
+.page-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:600}
+.section-title{font-size:12px;font-weight:600;color:var(--ink-mid);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
+.card{background:var(--white);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow-card);margin-bottom:12px}
+.save-btn{width:100%;padding:15px;border:none;border-radius:var(--radius-sm);background:var(--rose);color:var(--white);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .1s;margin-bottom:12px}
+.save-btn:active{opacity:.85;transform:scale(.98)}
+.save-btn.secondary{background:var(--white);color:var(--rose);border:2px solid var(--rose)}
+.save-btn.sage{background:var(--sage);border:none;color:var(--white)}
+.add-btn{width:100%;padding:13px;border:2px dashed var(--rose-light);border-radius:var(--radius-sm);background:var(--rose-pale);color:var(--rose);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:12px}
+.input-field{width:100%;background:var(--white);border:1.5px solid var(--rose-mid);border-radius:var(--radius-sm);padding:11px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color .2s;resize:none}
+.input-field:focus{border-color:var(--rose)}
+.input-label{font-size:12px;color:var(--ink-light);margin-bottom:5px;display:block}
+.input-group{margin-bottom:13px}
+.no-data{text-align:center;padding:30px 20px;color:var(--ink-light);font-size:13px}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--white);padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(44,26,36,.5);z-index:300;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:var(--white);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:430px;max-height:88vh;overflow-y:auto}
+.modal-title{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:18px}
+.modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-light);margin-top:-4px}
+
+/* ── TODAY PAGE ── */
+.hero-card{background:linear-gradient(135deg,#FDF0F3 0%,#F5EDF8 50%,#EDF5F0 100%);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:var(--shadow-soft)}
+.hero-week{font-family:'Playfair Display',serif;font-size:52px;line-height:1;color:var(--rose)}
+.hero-week-label{font-size:12px;color:var(--ink-light);margin-bottom:2px}
+.hero-days{font-size:12px;color:var(--ink-mid);margin:4px 0 14px}
+.fruit-row{display:flex;align-items:center;gap:14px;background:var(--white);border-radius:var(--radius-sm);padding:13px}
+.fruit-emoji{font-size:48px;line-height:1}
+.fruit-name{font-family:'Playfair Display',serif;font-size:17px;color:var(--ink)}
+.fruit-size-label{font-size:11px;color:var(--ink-light)}
+.fruit-stats{display:flex;gap:10px;margin-top:6px}
+.fruit-stat{font-size:10px;color:var(--ink-mid)}
+.fruit-stat strong{display:block;font-size:12px;color:var(--ink);font-weight:600}
+.progress-row{display:flex;gap:10px;margin-bottom:14px}
+.prog-card{flex:1;background:var(--white);border-radius:var(--radius-sm);padding:13px;box-shadow:var(--shadow-card);display:flex;align-items:center;gap:10px}
+.ring-wrap{position:relative;width:42px;height:42px;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--rose)}
+.prog-label{font-size:10px;color:var(--ink-light)}
+.prog-val{font-size:14px;font-weight:600;color:var(--ink);margin-top:1px}
+.trimester-band{background:var(--sage-pale);border:1px solid var(--sage-light);border-radius:var(--radius-sm);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.trimester-label{font-size:12px;color:var(--sage);font-weight:600}
+.trimester-tip{font-size:11px;color:var(--ink-mid);max-width:180px;text-align:right;line-height:1.4}
+
+/* DO's DON'Ts */
+.dos-donts-row{display:flex;gap:10px;margin-bottom:14px}
+.dos-card,.donts-card{flex:1;border-radius:var(--radius-sm);padding:13px}
+.dos-card{background:var(--sage-pale);border:1px solid var(--sage-light)}
+.donts-card{background:var(--rose-pale);border:1px solid var(--rose-mid)}
+.dos-donts-title{font-size:11px;font-weight:600;margin-bottom:8px}
+.dos-donts-title.do{color:var(--sage)}
+.dos-donts-title.dont{color:var(--rose)}
+.dos-donts-item{font-size:11px;color:var(--ink-mid);line-height:1.5;margin-bottom:4px;display:flex;gap:5px}
+
+/* GARBH SANSKAR */
+.gs-card{background:linear-gradient(135deg,#FDF6EC,#F5EDF8);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;border:1px solid #F0DEFF}
+.gs-label{font-size:10px;font-weight:600;color:var(--plum);letter-spacing:.05em;margin-bottom:8px}
+.gs-shloka{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink);line-height:1.7;margin-bottom:8px;font-style:italic}
+.gs-transliteration{font-size:11px;color:var(--plum);margin-bottom:8px;line-height:1.5}
+.gs-meaning{font-size:12px;color:var(--ink-mid);line-height:1.6;margin-bottom:8px}
+.gs-practice{font-size:11px;color:var(--sage);background:var(--sage-pale);border-radius:8px;padding:8px 10px;line-height:1.5}
+.gs-music{font-size:11px;color:var(--plum);margin-top:8px}
+
+/* SCAN UPCOMING */
+.scan-card{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;box-shadow:var(--shadow-card);display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.scan-icon{font-size:22px}
+.scan-info{flex:1}
+.scan-name{font-size:13px;font-weight:500}
+.scan-date{font-size:11px;color:var(--ink-light);margin-top:1px}
+.scan-badge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500}
+.scan-badge.soon{background:var(--rose-pale);color:var(--rose)}
+.scan-badge.upcoming{background:var(--sage-pale);color:var(--sage)}
+
+/* NOTIFICATION PROMPT */
+.notif-card{background:var(--amber-pale);border:1px solid #F5D8A0;border-radius:var(--radius-sm);padding:13px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.notif-text{font-size:12px;color:var(--ink-mid);flex:1;line-height:1.5}
+.notif-btn{padding:7px 14px;background:var(--amber);border:none;border-radius:20px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+
+/* ── LOG PAGE ── */
+.log-date-header{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;margin-bottom:14px;box-shadow:var(--shadow-card);display:flex;align-items:center;justify-content:space-between}
+.log-date-nav{border:none;background:var(--rose-pale);color:var(--rose);width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer}
+.log-date-display{text-align:center}
+.log-date-day{font-family:'Playfair Display',serif;font-size:20px}
+.log-date-full{font-size:11px;color:var(--ink-light)}
+.mood-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.mood-btn{flex:1;min-width:56px;background:var(--white);border:2px solid transparent;border-radius:var(--radius-sm);padding:9px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow-card)}
+.mood-btn span:first-child{font-size:20px}
+.mood-btn span:last-child{font-size:8px;color:var(--ink-light)}
+.mood-btn.selected{border-color:var(--rose);background:var(--rose-pale)}
+.mood-btn.selected span:last-child{color:var(--rose)}
+.counter-row{display:flex;gap:10px;margin-bottom:13px}
+.counter-card{flex:1;background:var(--white);border-radius:var(--radius-sm);padding:13px;box-shadow:var(--shadow-card);text-align:center}
+.counter-label{font-size:10px;color:var(--ink-light);margin-bottom:7px}
+.counter-controls{display:flex;align-items:center;justify-content:center;gap:10px}
+.counter-btn{width:28px;height:28px;border-radius:50%;border:none;background:var(--rose-pale);color:var(--rose);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.counter-num{font-size:20px;font-weight:600;color:var(--ink);min-width:26px}
+.kicks-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow-card);margin-bottom:13px;text-align:center}
+.kicks-circle{width:72px;height:72px;border-radius:50%;background:var(--rose-pale);border:3px solid var(--rose-light);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .1s,background .15s}
+.kicks-circle:active{transform:scale(.93);background:var(--rose-mid)}
+.kicks-circle span{font-size:28px}
+.kicks-count{font-size:20px;font-weight:600;color:var(--rose)}
+.kicks-sub{font-size:10px;color:var(--ink-light)}
+.kicks-reset{margin-top:6px;font-size:11px;color:var(--ink-light);background:none;border:none;cursor:pointer;text-decoration:underline}
+.photo-upload-area{border:2px dashed var(--rose-light);border-radius:var(--radius-sm);padding:18px;text-align:center;cursor:pointer;background:var(--rose-pale);margin-bottom:12px}
+.photo-preview-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.photo-thumb-wrap{position:relative;display:inline-block}
+.photo-thumb{width:68px;height:68px;border-radius:10px;object-fit:cover;border:2px solid var(--white);box-shadow:var(--shadow-card)}
+.photo-del{position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--rose);color:var(--white);border:none;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--rose-pale)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-label-text{font-size:13px;color:var(--ink-mid)}
+.toggle-switch{width:40px;height:22px;background:var(--rose-mid);border-radius:11px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle-switch.on{background:var(--rose)}
+.toggle-knob{width:18px;height:18px;border-radius:50%;background:var(--white);position:absolute;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.toggle-switch.on .toggle-knob{transform:translateX(18px)}
+
+/* ── WELLNESS PAGE ── */
+.wellness-tabs{display:flex;gap:8px;margin-bottom:16px}
+.wtab-btn{flex:1;padding:8px 4px;border-radius:20px;border:1.5px solid var(--rose-mid);background:var(--white);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+.wtab-btn.active{background:var(--rose);border-color:var(--rose);color:var(--white)}
+.yoga-pose-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow-card);margin-bottom:10px}
+.yoga-pose-header{display:flex;align-items:center;gap:12px;margin-bottom:0}
+.yoga-anim{width:56px;height:56px;flex-shrink:0}
+.yoga-pose-name{font-size:14px;font-weight:600;color:var(--ink)}
+.yoga-pose-benefit{font-size:11px;color:var(--ink-light);margin-top:2px}
+.yoga-trimester-pills{display:flex;gap:5px;margin-top:5px}
+.yoga-tri-pill{font-size:9px;padding:2px 7px;border-radius:20px;background:var(--sage-pale);color:var(--sage);border:1px solid var(--sage-light)}
+.yoga-recommended{background:var(--rose-pale);border:1px solid var(--rose-light);font-size:9px;padding:2px 8px;border-radius:20px;color:var(--rose);margin-left:auto}
+.yoga-expand-btn{width:100%;border:none;background:var(--rose-pale);color:var(--rose);font-family:'DM Sans',sans-serif;font-size:12px;padding:8px;border-radius:8px;cursor:pointer;margin-top:10px}
+.yoga-details{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--rose-pale)}
+.yoga-details.open{display:block}
+.yoga-how-title{font-size:11px;font-weight:600;color:var(--ink-mid);margin-bottom:6px}
+.yoga-step{font-size:11px;color:var(--ink-mid);line-height:1.6;margin-bottom:3px;display:flex;gap:6px}
+.yoga-step-num{color:var(--rose);font-weight:600;flex-shrink:0}
+.yoga-tracker-bar{display:flex;align-items:center;justify-content:space-between;background:var(--rose-pale);border-radius:var(--radius-sm);padding:10px 13px;margin-bottom:10px}
+.yoga-tracker-q{font-size:13px;color:var(--ink-mid)}
+.yn-btns{display:flex;gap:6px}
+.yn-btn{padding:5px 14px;border-radius:20px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.yn-btn.yes{background:var(--sage-pale);color:var(--sage);border:1px solid var(--sage-light)}
+.yn-btn.no{background:var(--rose-pale);color:var(--rose);border:1px solid var(--rose-light)}
+.yn-btn.active-yes{background:var(--sage);color:var(--white)}
+.yn-btn.active-no{background:var(--rose);color:var(--white)}
+.exercise-block{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow-card);margin-bottom:10px}
+.exercise-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.exercise-desc{font-size:12px;color:var(--ink-mid);line-height:1.6;margin-bottom:6px}
+.exercise-tags{display:flex;flex-wrap:wrap;gap:5px}
+.exercise-tag{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--sage-pale);color:var(--sage)}
+.exercise-tag.avoid{background:var(--rose-pale);color:var(--rose)}
+
+/* YOGA SVG ANIMATIONS */
+@keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes squat{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@keyframes stretch{0%,100%{transform:scaleX(1)}50%{transform:scaleX(1.06)}}
+@keyframes kegel{0%,100%{transform:translateY(0) scaleX(1)}50%{transform:translateY(-2px) scaleX(.97)}}
+@keyframes tilt{0%,100%{transform:rotate(0)}50%{transform:rotate(6deg)}}
+@keyframes float2{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.anim-breathe{animation:breathe 4s ease-in-out infinite;transform-origin:center bottom}
+.anim-sway{animation:sway 3s ease-in-out infinite;transform-origin:center bottom}
+.anim-squat{animation:squat 2.5s ease-in-out infinite}
+.anim-stretch{animation:stretch 3s ease-in-out infinite;transform-origin:center}
+.anim-kegel{animation:kegel 3s ease-in-out infinite}
+.anim-tilt{animation:tilt 3s ease-in-out infinite;transform-origin:center bottom}
+.anim-float{animation:float2 3s ease-in-out infinite}
+
+/* ── GUIDE PAGE ── */
+.guide-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.guide-tabs::-webkit-scrollbar{display:none}
+.gtab-btn{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid var(--rose-mid);background:var(--white);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+.gtab-btn.active{background:var(--rose);border-color:var(--rose);color:var(--white)}
+.week-guide-card{background:var(--white);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow-card);margin-bottom:12px}
+.week-guide-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--ink);margin-bottom:10px}
+.week-guide-section{margin-bottom:12px}
+.week-guide-section-title{font-size:11px;font-weight:600;color:var(--rose);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.week-guide-text{font-size:12px;color:var(--ink-mid);line-height:1.7}
+.food-section{margin-bottom:16px}
+.food-section-head{display:flex;align-items:center;gap:7px;margin-bottom:8px}
+.food-section-head .label{font-size:12px;font-weight:600}
+.food-section-head .label.eat{color:var(--sage)}
+.food-section-head .label.avoid{color:var(--rose)}
+.food-pills{display:flex;flex-wrap:wrap;gap:7px}
+.food-pill{padding:5px 11px;border-radius:20px;font-size:11px;display:flex;align-items:center;gap:4px}
+.food-pill.eat{background:var(--sage-pale);color:var(--sage);border:1px solid var(--sage-light)}
+.food-pill.avoid{background:var(--rose-pale);color:var(--rose);border:1px solid var(--rose-light)}
+.nutrient-card{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;box-shadow:var(--shadow-card);margin-bottom:9px;display:flex;gap:11px;align-items:flex-start}
+.nutrient-icon{font-size:22px;flex-shrink:0}
+.nutrient-name{font-size:13px;font-weight:500;margin-bottom:2px}
+.nutrient-why{font-size:11px;color:var(--ink-mid);line-height:1.5}
+.book-card{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;box-shadow:var(--shadow-card);margin-bottom:9px;display:flex;align-items:center;gap:12px}
+.book-cover{font-size:28px;flex-shrink:0}
+.book-info{flex:1}
+.book-title{font-size:13px;font-weight:500;margin-bottom:2px}
+.book-author{font-size:11px;color:var(--ink-light);margin-bottom:4px}
+.book-lang{font-size:9px;padding:2px 7px;border-radius:20px;background:var(--amber-pale);color:var(--amber);display:inline-block}
+.book-status-btns{display:flex;gap:5px;margin-top:6px}
+.book-status-btn{font-size:10px;padding:3px 9px;border-radius:20px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;background:var(--rose-pale);color:var(--rose);transition:all .15s}
+.book-status-btn.active{background:var(--sage);color:var(--white)}
+.watch-card{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;box-shadow:var(--shadow-card);margin-bottom:9px}
+.watch-title{font-size:13px;font-weight:500}
+.watch-type{font-size:10px;color:var(--ink-light);margin-bottom:3px}
+.watch-why{font-size:11px;color:var(--ink-mid);line-height:1.5;margin-top:3px}
+.watch-avoid-card{background:var(--rose-pale);border:1px solid var(--rose-light);border-radius:var(--radius-sm);padding:13px 14px;margin-bottom:9px}
+.watch-avoid-title{font-size:12px;font-weight:600;color:var(--rose);margin-bottom:5px}
+.watch-avoid-item{font-size:11px;color:var(--ink-mid);line-height:1.6;margin-bottom:3px;display:flex;gap:5px}
+
+/* ── MEDICAL PAGE ── */
+.med-tabs{display:flex;gap:8px;margin-bottom:14px}
+.med-tab-btn{flex:1;padding:8px 4px;border-radius:20px;border:1.5px solid var(--rose-mid);background:var(--white);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+.med-tab-btn.active{background:var(--rose);border-color:var(--rose);color:var(--white)}
+.visit-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow-card);margin-bottom:9px}
+.visit-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.visit-name{font-size:14px;font-weight:600}
+.visit-date{font-size:11px;color:var(--ink-light);margin-top:1px}
+.visit-week-badge{font-size:10px;padding:2px 9px;border-radius:20px;background:var(--rose-pale);color:var(--rose)}
+.visit-notes{font-size:12px;color:var(--ink-mid);line-height:1.5;margin-top:6px}
+.visit-attachment{margin-top:8px;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--plum);font-weight:500}
+.reminder-toggle{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.reminder-toggle .toggle-label-text{font-size:12px}
+
+/* ── JOURNEY PAGE ── */
+.journey-summary{display:flex;gap:10px;margin-bottom:16px}
+.journey-stat-card{flex:1;background:var(--white);border-radius:var(--radius-sm);padding:12px;box-shadow:var(--shadow-card);text-align:center}
+.journey-stat-val{font-family:'Playfair Display',serif;font-size:22px;color:var(--rose)}
+.journey-stat-label{font-size:10px;color:var(--ink-light);margin-top:1px}
+.chart-wrap{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow-card);margin-bottom:12px}
+.chart-title{font-size:12px;font-weight:600;color:var(--ink-mid);margin-bottom:10px}
+.mini-chart{height:110px}
+.mini-chart canvas{width:100%;height:100%}
+.weight-log-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--rose-pale)}
+.weight-log-item:last-child{border-bottom:none}
+.weight-log-date{font-size:12px;color:var(--ink-mid)}
+.weight-log-val{font-size:14px;font-weight:600;color:var(--ink)}
+.weight-log-diff{font-size:10px;padding:2px 7px;border-radius:20px}
+.weight-log-diff.up{background:var(--rose-pale);color:var(--rose)}
+.weight-log-diff.down{background:var(--sage-pale);color:var(--sage)}
+
+/* GALLERY */
+.gallery-month{margin-bottom:18px}
+.gallery-month-label{font-size:11px;font-weight:600;color:var(--ink-mid);margin-bottom:8px}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.gallery-item{aspect-ratio:1;border-radius:7px;overflow:hidden;background:var(--rose-pale);cursor:pointer;position:relative}
+.gallery-item img{width:100%;height:100%;object-fit:cover}
+.gallery-item .gallery-date{position:absolute;bottom:3px;left:3px;background:rgba(44,26,36,.5);color:var(--white);font-size:8px;padding:2px 5px;border-radius:4px}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column}
+.lightbox.open{display:flex}
+.lightbox-img{max-width:95vw;max-height:80vh;border-radius:12px;object-fit:contain}
+.lightbox-close{position:absolute;top:20px;right:20px;background:none;border:none;color:var(--white);font-size:28px;cursor:pointer}
+.lightbox-date{color:rgba(255,255,255,.7);font-size:13px;margin-top:10px}
+
+/* WEEKLY SUMMARY */
+.summary-week-selector{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:14px}
+.summary-week-selector::-webkit-scrollbar{display:none}
+.swk-pill{flex-shrink:0;padding:6px 13px;border-radius:20px;border:1.5px solid var(--rose-mid);background:var(--white);font-size:11px;font-weight:500;color:var(--ink-mid);cursor:pointer;transition:all .2s}
+.swk-pill.active{background:var(--rose);border-color:var(--rose);color:var(--white)}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.summary-metric{background:var(--white);border-radius:var(--radius-sm);padding:13px;box-shadow:var(--shadow-card);text-align:center}
+.summary-metric-val{font-family:'Playfair Display',serif;font-size:22px;color:var(--rose)}
+.summary-metric-label{font-size:10px;color:var(--ink-light);margin-top:2px}
+.export-btn{width:100%;padding:14px;border:none;border-radius:var(--radius-sm);background:var(--sage);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}
+
+/* ANIMATIONS */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.lock-emoji,.anim-breathe,.anim-sway,.anim-squat,.anim-stretch,.anim-kegel,.anim-tilt,.anim-float{animation:none}.page.active{animation:none}}
+</style>
+</head>
+<body>
+
+<!-- LOCK -->
+<div id="lockScreen">
+  <div class="lock-emoji">🌸</div>
+  <h1 class="lock-title">Baby Journal</h1>
+  <p class="lock-sub">Our little secret — enter PIN</p>
+  <div class="pin-dots" id="pinDots">
+    <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-btn" onclick="pinInput('1')">1</button>
+    <button class="pin-btn" onclick="pinInput('2')">2</button>
+    <button class="pin-btn" onclick="pinInput('3')">3</button>
+    <button class="pin-btn" onclick="pinInput('4')">4</button>
+    <button class="pin-btn" onclick="pinInput('5')">5</button>
+    <button class="pin-btn" onclick="pinInput('6')">6</button>
+    <button class="pin-btn" onclick="pinInput('7')">7</button>
+    <button class="pin-btn" onclick="pinInput('8')">8</button>
+    <button class="pin-btn" onclick="pinInput('9')">9</button>
+    <button class="pin-btn" onclick="pinInput('')"></button>
+    <button class="pin-btn" onclick="pinInput('0')">0</button>
+    <button class="pin-btn" style="font-size:18px;color:var(--ink-light)" onclick="pinDelete()">⌫</button>
+  </div>
+  <p class="pin-error" id="pinError"></p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <div class="lightbox-date" id="lightboxDate"></div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="visitModal">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('visitModal')">✕</button>
+    <h2 class="modal-title">Add Doctor Visit</h2>
+    <div class="input-group"><label class="input-label">Type of visit / scan</label><input class="input-field" id="vType" placeholder="e.g. Anomaly Scan"></div>
+    <div class="input-group"><label class="input-label">Doctor name</label><input class="input-field" id="vDoctor" placeholder="Dr. Name"></div>
+    <div class="input-group"><label class="input-label">Date</label><input class="input-field" type="date" id="vDate"></div>
+    <div class="input-group"><label class="input-label">Notes</label><textarea class="input-field" id="vNotes" rows="3" placeholder="What was discussed..."></textarea></div>
+    <div class="input-group">
+      <label class="input-label">Attach report (optional)</label>
+      <input type="file" id="vFile" accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'visit')">
+      <button class="save-btn secondary" onclick="document.getElementById('vFile').click()">📎 Attach Report</button>
+      <span id="vFileName" style="font-size:11px;color:var(--ink-light)"></span>
+    </div>
+    <div class="reminder-toggle">
+      <div class="toggle-switch" id="visitReminderToggle" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+      <span class="toggle-label-text">Remind me a day before</span>
+    </div>
+    <button class="save-btn" onclick="saveVisit()">Save Visit</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="prescModal">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('prescModal')">✕</button>
+    <h2 class="modal-title">Add Prescription</h2>
+    <div class="input-group"><label class="input-label">Date</label><input class="input-field" type="date" id="pDate"></div>
+    <div class="input-group"><label class="input-label">Doctor</label><input class="input-field" id="pDoctor" placeholder="Dr. Name"></div>
+    <div class="input-group"><label class="input-label">Notes</label><textarea class="input-field" id="pNotes" rows="2" placeholder="Medications prescribed..."></textarea></div>
+    <div class="input-group">
+      <input type="file" id="pFile" accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'presc')">
+      <button class="save-btn secondary" onclick="document.getElementById('pFile').click()">📎 Upload Prescription</button>
+      <span id="pFileName" style="font-size:11px;color:var(--ink-light)"></span>
+    </div>
+    <button class="save-btn" onclick="savePresc()">Save</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="reportModal">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('reportModal')">✕</button>
+    <h2 class="modal-title">Add Report / Scan</h2>
+    <div class="input-group"><label class="input-label">Scan / report name</label><input class="input-field" id="rName" placeholder="e.g. NT Scan, Blood Report"></div>
+    <div class="input-group"><label class="input-label">Date</label><input class="input-field" type="date" id="rDate"></div>
+    <div class="input-group"><label class="input-label">Notes</label><textarea class="input-field" id="rNotes" rows="2"></textarea></div>
+    <div class="input-group">
+      <input type="file" id="rFile" accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'report')">
+      <button class="save-btn secondary" onclick="document.getElementById('rFile').click()">📎 Upload Report</button>
+      <span id="rFileName" style="font-size:11px;color:var(--ink-light)"></span>
+    </div>
+    <button class="save-btn" onclick="saveReport()">Save</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="weightModal">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('weightModal')">✕</button>
+    <h2 class="modal-title">Log Weight</h2>
+    <div class="input-group"><label class="input-label">Date</label><input class="input-field" type="date" id="wDate"></div>
+    <div class="input-group"><label class="input-label">Weight (kg)</label><input class="input-field" type="number" id="wVal" step="0.1" placeholder="e.g. 62.5"></div>
+    <button class="save-btn" onclick="saveWeight()">Save</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- TODAY -->
+  <div class="page active" id="pageToday">
+    <div class="page-header">
+      <div class="page-eyebrow" id="todayGreeting">Good morning 🌸</div>
+      <div class="page-title" id="todayTitle">Week --</div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-week-label">You are in</div>
+      <div><span class="hero-week" id="heroWeek">--</span><span style="font-size:16px;color:var(--ink-mid);margin-left:4px">weeks</span></div>
+      <div class="hero-days" id="heroDays"></div>
+      <div class="fruit-row">
+        <div class="fruit-emoji" id="fruitEmoji">🫐</div>
+        <div>
+          <div class="fruit-size-label">Baby is the size of</div>
+          <div class="fruit-name" id="fruitName">a blueberry</div>
+          <div class="fruit-stats">
+            <div class="fruit-stat"><strong id="babyH">--</strong>Height</div>
+            <div class="fruit-stat"><strong id="babyW">--</strong>Weight</div>
+            <div class="fruit-stat"><strong id="babyHR">--</strong>Heart</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="progress-row">
+      <div class="prog-card">
+        <div class="ring-wrap">
+          <svg width="42" height="42" viewBox="0 0 42 42">
+            <circle cx="21" cy="21" r="17" fill="none" stroke="var(--rose-mid)" stroke-width="4"/>
+            <circle cx="21" cy="21" r="17" fill="none" stroke="var(--rose)" stroke-width="4" stroke-dasharray="107" id="progressRing" stroke-dashoffset="107" stroke-linecap="round"/>
+          </svg>
+          <div class="ring-center" id="progressPct">0%</div>
+        </div>
+        <div><div class="prog-label">Journey</div><div class="prog-val" id="progressLabel">-- done</div></div>
+      </div>
+      <div class="prog-card">
+        <div style="font-size:26px">📅</div>
+        <div><div class="prog-label">Due date</div><div class="prog-val" id="dueDate">--</div></div>
+      </div>
+    </div>
+    <div class="trimester-band">
+      <div class="trimester-label" id="trimLabel">Trimester</div>
+      <div class="trimester-tip" id="trimTip">--</div>
+    </div>
+    <div id="notifCard" class="notif-card" style="display:none">
+      <div style="font-size:24px">🔔</div>
+      <div class="notif-text">Get daily Do's & Don'ts at 10am and a log reminder at 11pm</div>
+      <button class="notif-btn" onclick="requestNotifPermission()">Enable</button>
+    </div>
+    <div class="section-title">Today's Do's & Don'ts</div>
+    <div class="dos-donts-row" id="dosDontsRow"></div>
+    <div class="section-title" style="margin-top:4px">Garbh Sanskar 🕉️</div>
+    <div class="gs-card" id="gsCard"></div>
+    <div class="section-title" style="margin-top:4px">Upcoming visits</div>
+    <div id="upcomingVisits"></div>
+  </div>
+
+  <!-- LOG -->
+  <div class="page" id="pageLog">
+    <div class="page-header"><div class="page-eyebrow">Daily entry</div><div class="page-title">Today's Log</div></div>
+    <div class="log-date-header">
+      <button class="log-date-nav" onclick="changeLogDate(-1)">‹</button>
+      <div class="log-date-display"><div class="log-date-day" id="logDateDay">Today</div><div class="log-date-full" id="logDateFull">--</div></div>
+      <button class="log-date-nav" onclick="changeLogDate(1)">›</button>
+    </div>
+    <div class="section-title">How are you feeling? <span style="font-size:10px;font-weight:400;color:var(--ink-light)">(pick up to 2)</span></div>
+    <div class="mood-row">
+      <button class="mood-btn" onclick="selectMood('amazing')" id="mood-amazing"><span>🤩</span><span>Amazing</span></button>
+      <button class="mood-btn" onclick="selectMood('happy')" id="mood-happy"><span>😊</span><span>Happy</span></button>
+      <button class="mood-btn" onclick="selectMood('tired')" id="mood-tired"><span>😴</span><span>Tired</span></button>
+      <button class="mood-btn" onclick="selectMood('rough')" id="mood-rough"><span>🤢</span><span>Rough</span></button>
+      <button class="mood-btn" onclick="selectMood('sad')" id="mood-sad"><span>😢</span><span>Sad</span></button>
+      <button class="mood-btn" onclick="selectMood('anxious')" id="mood-anxious"><span>😰</span><span>Anxious</span></button>
+    </div>
+    <div class="counter-row">
+      <div class="counter-card">
+        <div class="counter-label">🤢 Vomits</div>
+        <div class="counter-controls">
+          <button class="counter-btn" onclick="changeCounter('vomit',-1)">−</button>
+          <div class="counter-num" id="vomitCount">0</div>
+          <button class="counter-btn" onclick="changeCounter('vomit',1)">+</button>
+        </div>
+      </div>
+      <div class="counter-card">
+        <div class="counter-label">😴 Sleep hrs</div>
+        <div class="counter-controls">
+          <button class="counter-btn" onclick="changeCounter('sleep',-1)">−</button>
+          <div class="counter-num" id="sleepCount">7</div>
+          <button class="counter-btn" onclick="changeCounter('sleep',1)">+</button>
+        </div>
+      </div>
+    </div>
+    <div id="kicksSection">
+      <div class="kicks-card">
+        <div style="font-size:12px;font-weight:600;color:var(--ink-mid);margin-bottom:10px">👟 Baby kicks today</div>
+        <div class="kicks-circle" onclick="addKick()"><span>👣</span></div>
+        <div class="kicks-count" id="kicksCount">0 kicks</div>
+        <div class="kicks-sub">Tap each time you feel a kick</div>
+        <button class="kicks-reset" onclick="resetKicks()">Reset</button>
+      </div>
+    </div>
+    <div class="input-group"><label class="input-label">🍫 Cravings today</label><input class="input-field" id="cravingsInput" placeholder="What are you craving?"></div>
+    <div class="input-group"><label class="input-label">📝 Journal</label><textarea class="input-field" id="journalInput" rows="4" placeholder="How was your day?"></textarea></div>
+    <div class="input-group">
+      <label class="input-label">📸 Bump photos (up to 2)</label>
+      <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
+        <div style="font-size:26px">📷</div>
+        <div style="font-size:12px;color:var(--ink-light);margin-top:5px">Tap to add photo</div>
+        <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this)">
+      </div>
+      <div class="photo-preview-row" id="photoPreviewRow"></div>
+    </div>
+    <div class="input-group"><label class="input-label">⚖️ Weight today (kg)</label><input class="input-field" type="number" id="logWeight" step="0.1" placeholder="e.g. 62.5"></div>
+    <div class="card">
+      <div class="section-title" style="margin-bottom:10px">Lifestyle Trackers</div>
+      <div class="toggle-row">
+        <span class="toggle-label-text">🍕 Outside food today?</span>
+        <div class="toggle-switch" id="outsideFoodToggle" onclick="toggleOutsideFood()"><div class="toggle-knob"></div></div>
+      </div>
+      <div id="outsideFoodDetail" style="display:none;margin-top:8px">
+        <input class="input-field" id="outsideFoodText" placeholder="What did you eat outside?">
+      </div>
+      <div class="input-group" style="margin-top:12px;margin-bottom:6px"><label class="input-label">📱 Screen time today (mins)</label><input class="input-field" type="number" id="screentimeInput" placeholder="Total mins including Instagram"></div>
+      <div style="display:flex;gap:10px">
+        <div class="input-group" style="flex:1;margin-bottom:0"><label class="input-label">🌅 Wake time</label><input class="input-field" type="time" id="wakeTime"></div>
+        <div class="input-group" style="flex:1;margin-bottom:0"><label class="input-label">🌙 Sleep time</label><input class="input-field" type="time" id="sleepTime"></div>
+      </div>
+    </div>
+    <button class="save-btn" onclick="saveLog()">Save log</button>
+  </div>
+
+  <!-- WELLNESS -->
+  <div class="page" id="pageWellness">
+    <div class="page-header"><div class="page-eyebrow">Body & mind</div><div class="page-title">Wellness</div></div>
+    <div class="wellness-tabs">
+      <button class="wtab-btn active" onclick="setWellnessTab('yoga',this)">🧘 Yoga</button>
+      <button class="wtab-btn" onclick="setWellnessTab('exercise',this)">🏃 Exercise</button>
+    </div>
+    <div id="wellnessYoga"></div>
+    <div id="wellnessExercise" style="display:none"></div>
+  </div>
+
+  <!-- GUIDE -->
+  <div class="page" id="pageGuide">
+    <div class="page-header"><div class="page-eyebrow">Knowledge</div><div class="page-title">Guide</div></div>
+    <div class="guide-tabs">
+      <button class="gtab-btn active" onclick="setGuideTab('weekly',this)">📅 This Week</button>
+      <button class="gtab-btn" onclick="setGuideTab('food',this)">🥗 Food</button>
+      <button class="gtab-btn" onclick="setGuideTab('books',this)">📚 Books</button>
+      <button class="gtab-btn" onclick="setGuideTab('watch',this)">🎬 Watch</button>
+    </div>
+    <div id="guideWeekly"></div>
+    <div id="guideFood" style="display:none"></div>
+    <div id="guideBooks" style="display:none"></div>
+    <div id="guideWatch" style="display:none"></div>
+  </div>
+
+  <!-- MEDICAL -->
+  <div class="page" id="pageMedical">
+    <div class="page-header"><div class="page-eyebrow">Health records</div><div class="page-title">Medical</div></div>
+    <div class="med-tabs">
+      <button class="med-tab-btn active" onclick="setMedTab('visits',this)">🩺 Visits</button>
+      <button class="med-tab-btn" onclick="setMedTab('prescriptions',this)">💊 Prescriptions</button>
+      <button class="med-tab-btn" onclick="setMedTab('reports',this)">🗂 Reports</button>
+    </div>
+    <div id="medVisits"></div>
+    <div id="medPrescriptions" style="display:none"></div>
+    <div id="medReports" style="display:none"></div>
+  </div>
+
+  <!-- JOURNEY -->
+  <div class="page" id="pageJourney">
+    <div class="page-header"><div class="page-eyebrow">Your story</div><div class="page-title">Journey</div></div>
+    <div class="guide-tabs" style="margin-bottom:14px">
+      <button class="gtab-btn active" onclick="setJourneyTab('weight',this)">⚖️ Weight</button>
+      <button class="gtab-btn" onclick="setJourneyTab('gallery',this)">📸 Gallery</button>
+      <button class="gtab-btn" onclick="setJourneyTab('summary',this)">📊 Summary</button>
+    </div>
+    <div id="journeyWeight"></div>
+    <div id="journeyGallery" style="display:none"></div>
+    <div id="journeySummary" style="display:none"></div>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showPage('Today')"><span>🌅</span><span>Today</span></button>
+    <button class="nav-btn" onclick="showPage('Log')"><span>📝</span><span>Log</span></button>
+    <button class="nav-btn" onclick="showPage('Wellness')"><span>🧘</span><span>Wellness</span></button>
+    <button class="nav-btn" onclick="showPage('Guide')"><span>📖</span><span>Guide</span></button>
+    <button class="nav-btn" onclick="showPage('Medical')"><span>🩺</span><span>Medical</span></button>
+    <button class="nav-btn" onclick="showPage('Journey')"><span>📊</span><span>Journey</span></button>
+  </nav>
+</div>
+
+<script>
+// ── CONFIG ──
+const PIN='2707';
+const START_DATE=new Date('2026-07-27');
+const TOTAL_WEEKS=40;
+const SUPABASE_URL='https://dwvtyctgawlshbjqyeqq.supabase.co';
+const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR3dnR5Y3RnYXdsc2hianF5ZXFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyNjYzOTgsImV4cCI6MjEwNjg0MjM5OH0.AguAs9-2Ftj3iFJa67T01QBreJBllazCvbkUi9lP8rc';
+
+// ── SUPABASE ──
+const supa={
+  async get(t){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=*&order=created_at.asc`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)throw new Error(await r.text());return r.json()},
+  async upsert(t,row){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{method:'POST',headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return r.json()}
+};
+
+// ── DB ──
+let db={logs:{},visits:[],prescriptions:[],reports:[],weights:[],gallery:{},wellness:{}};
+function cacheDB(){try{localStorage.setItem('bj2',JSON.stringify(db))}catch(e){}}
+function loadCached(){try{const s=localStorage.getItem('bj2');if(s)db=JSON.parse(s)}catch(e){}}
+async function loadDB(){
+  loadCached();
+  try{
+    const[logs,visits,weights]=await Promise.all([supa.get('bj_logs'),supa.get('bj_visits'),supa.get('bj_weights')]);
+    db.logs={};
+    logs.forEach(r=>{
+      db.logs[r.date_key]={mood:r.mood,vomit:r.vomit,sleep:r.sleep,kicks:r.kicks,cravings:r.cravings,journal:r.journal,weight:r.weight,photos:r.photos||[],date:r.date_key,id:r.id,outside_food:r.outside_food,outside_food_text:r.outside_food_text,screentime:r.screentime,wake_time:r.wake_time,sleep_time:r.sleep_time,yoga_done:r.yoga_done,exercise_done:r.exercise_done,exercise_type:r.exercise_type,exercise_mins:r.exercise_mins,yoga_mins:r.yoga_mins};
+      if(r.photos&&r.photos.length)db.gallery[r.date_key]=r.photos;
+    });
+    db.visits=visits.filter(v=>v.record_type==='visit'||!v.record_type).map(v=>({id:v.id,type:v.type,doctor:v.doctor,date:v.date,notes:v.notes,reminder:v.reminder,file:v.file,fileName:v.file_name}));
+    db.prescriptions=visits.filter(v=>v.record_type==='presc').map(v=>({id:v.id,date:v.date,doctor:v.doctor,notes:v.notes,file:v.file,fileName:v.file_name}));
+    db.reports=visits.filter(v=>v.record_type==='report').map(v=>({id:v.id,name:v.type,date:v.date,notes:v.notes,file:v.file,fileName:v.file_name}));
+    db.weights=weights.map(r=>({id:r.id,date:r.date,val:r.val}));
+    cacheDB();
+    if(document.getElementById('app').classList.contains('visible')){renderToday();renderMedical();renderWeight();}
+  }catch(e){console.warn('Supabase load failed:',e)}
+}
+
+// ── WEEK DATA ──
+const weekData=[
+  {w:1,fruit:'🤍',name:'poppy seed',h:'0.1 cm',wt:'<1g',hr:'--'},{w:2,fruit:'🤍',name:'sesame seed',h:'0.2 cm',wt:'<1g',hr:'--'},{w:3,fruit:'🤍',name:'poppy seed',h:'0.2 cm',wt:'<1g',hr:'--'},
+  {w:4,fruit:'🫐',name:'blueberry',h:'0.4 cm',wt:'<1g',hr:'90-110'},{w:5,fruit:'🫘',name:'apple seed',h:'0.5 cm',wt:'<1g',hr:'100-140'},{w:6,fruit:'🟤',name:'sweet pea',h:'0.6 cm',wt:'<1g',hr:'100-160'},
+  {w:7,fruit:'🍇',name:'grape',h:'1.0 cm',wt:'<1g',hr:'90-160'},{w:8,fruit:'🫑',name:'raspberry',h:'1.6 cm',wt:'1g',hr:'150-170'},{w:9,fruit:'🍒',name:'cherry',h:'2.3 cm',wt:'2g',hr:'170-200'},
+  {w:10,fruit:'🍓',name:'strawberry',h:'3.1 cm',wt:'4g',hr:'160-180'},{w:11,fruit:'🍋',name:'lime',h:'4.1 cm',wt:'7g',hr:'150-170'},{w:12,fruit:'🥝',name:'kiwi',h:'5.4 cm',wt:'14g',hr:'150-180'},
+  {w:13,fruit:'🫛',name:'lemon',h:'7.4 cm',wt:'23g',hr:'145-165'},{w:14,fruit:'🍑',name:'peach',h:'8.7 cm',wt:'43g',hr:'145-165'},{w:15,fruit:'🍊',name:'orange',h:'10.1 cm',wt:'70g',hr:'140-160'},
+  {w:16,fruit:'🥑',name:'avocado',h:'11.6 cm',wt:'100g',hr:'140-160'},{w:17,fruit:'🍐',name:'pear',h:'13.0 cm',wt:'140g',hr:'140-160'},{w:18,fruit:'🥭',name:'mango',h:'14.2 cm',wt:'190g',hr:'140-160'},
+  {w:19,fruit:'🌽',name:'corn cob',h:'15.3 cm',wt:'240g',hr:'140-160'},{w:20,fruit:'🍌',name:'banana',h:'25.6 cm',wt:'300g',hr:'140-160'},{w:21,fruit:'🥕',name:'carrot',h:'26.7 cm',wt:'360g',hr:'140-160'},
+  {w:22,fruit:'🍆',name:'eggplant',h:'27.8 cm',wt:'430g',hr:'140-160'},{w:23,fruit:'🌽',name:'large corn',h:'28.9 cm',wt:'500g',hr:'140-160'},{w:24,fruit:'🌿',name:'corn ear',h:'30.0 cm',wt:'600g',hr:'140-160'},
+  {w:25,fruit:'🥦',name:'cauliflower',h:'34.6 cm',wt:'660g',hr:'140-160'},{w:26,fruit:'🥬',name:'cabbage',h:'35.6 cm',wt:'760g',hr:'140-160'},{w:27,fruit:'🥦',name:'broccoli',h:'36.6 cm',wt:'875g',hr:'140-160'},
+  {w:28,fruit:'🍈',name:'pomelo',h:'38.6 cm',wt:'1.4 kg',hr:'145-165'},{w:29,fruit:'🎃',name:'butternut squash',h:'38.6 cm',wt:'1.5 kg',hr:'145-165'},{w:30,fruit:'🥥',name:'coconut',h:'39.9 cm',wt:'1.7 kg',hr:'145-165'},
+  {w:31,fruit:'🍍',name:'pineapple',h:'41.1 cm',wt:'1.9 kg',hr:'145-165'},{w:32,fruit:'🎃',name:'large squash',h:'42.4 cm',wt:'2.1 kg',hr:'145-165'},{w:33,fruit:'🍍',name:'large pineapple',h:'43.7 cm',wt:'2.4 kg',hr:'145-165'},
+  {w:34,fruit:'🍈',name:'cantaloupe',h:'45.0 cm',wt:'2.6 kg',hr:'145-165'},{w:35,fruit:'🍑',name:'honeydew melon',h:'46.2 cm',wt:'2.9 kg',hr:'145-165'},{w:36,fruit:'🥬',name:'romaine head',h:'47.4 cm',wt:'3.0 kg',hr:'145-165'},
+  {w:37,fruit:'🌿',name:'winter melon',h:'48.6 cm',wt:'3.2 kg',hr:'145-165'},{w:38,fruit:'🎃',name:'pumpkin',h:'49.8 cm',wt:'3.4 kg',hr:'145-165'},{w:39,fruit:'🍉',name:'small watermelon',h:'50.7 cm',wt:'3.5 kg',hr:'145-165'},
+  {w:40,fruit:'🍉',name:'watermelon',h:'51.2 cm',wt:'3.6 kg',hr:'145-165'}
+];
+function getWeekInfo(w){return weekData.find(d=>d.w===w)||weekData[weekData.length-1]}
+
+// ── GARBH SANSKAR ──
+const garbhSanskar=[
+  {shloka:'गर्भस्थ शिशु सुखी भव।\nसर्वेऽत्र सुखिनः सन्तु।',trans:'Garbhastha Shishu Sukhi Bhava.\nSarve atra sukhinaḥ santu.',meaning:'गर्भ में पल रहे शिशु सुखी हो। यहाँ सभी सुखी हों। यह श्लोक माँ और शिशु के बीच प्रेम और शांति की भावना को जागृत करता है।',practice:'प्रतिदिन सुबह दीपक जलाकर इस मंत्र को तीन बार पढ़ें। शिशु को मन में विचार करते हुए प्रेम भेजें।',music:'प्रातः: भैरवी राग सुनें (शांति और करुणा के लिए)'},
+  {shloka:'सुप्रजाः सुखसम्पन्नाः\nदीर्घायुष्माश्च सन्तु ते।',trans:'Suprajāḥ sukhasampannāḥ\ndīrghāyuṣmāśca santu te.',meaning:'तुम्हारी संतान सुंदर, सुखी और दीर्घायु हो। यह वेदिक आशीर्वाद माँ के गर्भस्थ शिशु के स्वस्थ जीवन की कामना करता है।',practice:'सोने से पहले इस श्लोक को पढ़ें और शिशु के स्वस्थ, दीर्घायु जीवन की कल्पना करें।',music:'सायं: यमन राग सुनें (हृदय को खोलने के लिए)'},
+  {shloka:'ॐ नमो भगवते वासुदेवाय।\nशिशोः रक्षां कुरु कुरु स्वाहा।',trans:'Om Namo Bhagavate Vāsudevāya.\nShishoḥ rakṣāṃ kuru kuru svāhā.',meaning:'हे भगवान वासुदेव, इस शिशु की रक्षा करो। भगवान विष्णु को समर्पित यह मंत्र शिशु के लिए दैवीय सुरक्षा का आह्वान करता है।',practice:'श्रीमद् भगवद्गीता का एक अध्याय ऊँचे स्वर में पढ़ें — शिशु की सुनने की क्षमता विकसित हो रही है।',music:'बाँसुरी की शास्त्रीय धुन सुनें — विशेषतः श्याम कल्याण राग'},
+  {shloka:'सर्वे भवन्तु सुखिनः।\nसर्वे सन्तु निरामयाः।\nसर्वे भद्राणि पश्यन्तु।',trans:'Sarve bhavantu sukhinaḥ.\nSarve santu nirāmayāḥ.\nSarve bhadrāṇi paśyantu.',meaning:'सभी सुखी हों, सभी निरोगी हों, सभी का कल्याण हो। यह शांति पाठ माँ के मन में सकारात्मकता और करुणा भरता है, जो शिशु तक पहुँचती है।',practice:'दिन में एक बार 5 मिनट ध्यान करें। साँस के साथ "सुख" और "शांति" शब्द मन में दोहराएँ।',music:'हनुमान चालीसा या किसी मंदिर का स्तोत्र शांत स्वर में सुनें'},
+  {shloka:'त्वमेव माता च पिता त्वमेव।\nत्वमेव बन्धुश्च सखा त्वमेव।',trans:'Tvameva mātā ca pitā tvameva.\nTvameva bandhuśca sakhā tvameva.',meaning:'तू ही माँ है, तू ही पिता है, तू ही बंधु है, तू ही मित्र है — ईश्वर को समर्पित यह भाव माँ के हृदय को प्रेम और कृतज्ञता से भरता है।',practice:'पति के साथ मिलकर शाम को दीपक जलाएँ और इस श्लोक को साथ पढ़ें।',music:'शाम को भीमपलासी राग सुनें — भावनाओं को शांत करता है'},
+  {shloka:'ॐ शान्तिः शान्तिः शान्तिः।\nगर्भे शिशोः सुखं भव।',trans:'Om Śāntiḥ Śāntiḥ Śāntiḥ.\nGarbhe śishoḥ sukhaṃ bhava.',meaning:'तीन बार शांति का उच्चारण — शरीर, मन और आत्मा की शांति के लिए। गर्भस्थ शिशु सुखी हो। यह मंत्र विशेष रूप से गर्भावस्था के मध्य काल के लिए है।',practice:'स्नान के बाद गर्भ पर हाथ रखकर यह मंत्र तीन बार बोलें। शिशु को शांति और सुरक्षा का अनुभव कराएँ।',music:'ध्रुपद शैली में ॐ का उच्चारण या किसी नदी का प्रवाह ध्वनि सुनें'},
+  {shloka:'यत्र नार्यस्तु पूज्यन्ते\nरमन्ते तत्र देवताः।',trans:'Yatra nāryastu pūjyante\nramante tatra devatāḥ.',meaning:'जहाँ नारी की पूजा होती है, वहाँ देवता निवास करते हैं। मनुस्मृति का यह श्लोक माँ को स्वयं के सम्मान और दिव्यता का स्मरण कराता है।',practice:'आज अपने लिए कुछ सुंदर करें — फूल लाएँ, अपना पसंदीदा भोजन बनाएँ, या बस आराम करें।',music:'सरस्वती वंदना सुनें या माँ दुर्गा के भजन — तीसरी तिमाही की शक्ति के लिए'},
+  {shloka:'आयुर्बलं यशो वर्चः\nप्रजाः पशुवसूनि च।\nब्रह्मप्रज्ञां च मेधां च\nत्वं नो देहि वनस्पते।',trans:'Āyur balaṃ yaśo varcaḥ\nprajāḥ paśuvasūni ca.\nBrahmaprjñāṃ ca medhāṃ ca\ntvaṃ no dehi vanaspate.',meaning:'हे वनस्पति देव, हमें आयु, बल, यश, तेज, संतान, बुद्धि और ज्ञान दो। अथर्ववेद का यह मंत्र शिशु की समग्र समृद्धि के लिए है।',practice:'किसी पौधे को पानी दें और उसके पास यह मंत्र पढ़ें। प्रकृति से जुड़ाव शिशु को शांति देता है।',music:'प्रकृति की आवाजें सुनें — पक्षियों का गाना, जलधारा — विशेष रूप से सुबह'},
+  {shloka:'ॐ पूर्णमदः पूर्णमिदम्\nपूर्णात् पूर्णमुदच्यते।\nपूर्णस्य पूर्णमादाय\nपूर्णमेवावशिष्यते।',trans:'Om pūrṇamadaḥ pūrṇamidam\npūrṇāt pūrṇamudacyate.\npūrṇasya pūrṇamādāya\npūrṇamevāvaśiṣyate.',meaning:'वह पूर्ण है, यह भी पूर्ण है। पूर्ण से पूर्ण निकालने पर भी पूर्ण ही शेष रहता है। ईशोपनिषद का यह श्लोक माँ को याद दिलाता है — तुम और तुम्हारा शिशु दोनों पूर्ण हैं।',practice:'प्रसव की तैयारी में यह मंत्र हर रात सोने से पहले पढ़ें। स्वयं को और शिशु को पूर्णता का अनुभव कराएँ।',music:'शाम को भैरवी राग — जन्म की तैयारी और समर्पण के लिए'},
+];
+function getGSForWeek(w){const idx=Math.floor(((w-1)/40)*garbhSanskar.length);return garbhSanskar[Math.min(idx,garbhSanskar.length-1)]}
+
+// ── DOS DONTS ──
+const dosDonts={
+  t1:{dos:['ताज़ा घर का खाना खाएँ, छोटे-छोटे बार-बार खाएँ','खूब पानी पिएँ — दिन में 2.5-3 लीटर','फोलिक एसिड और प्रीनेटल विटामिन रोज़ लें','हल्की सैर करें — दिन में 20-30 मिनट','अच्छी नींद लें, जल्दी सोएँ'],donts:['कच्चा पपीता और अनानास बिल्कुल न खाएँ','जंक फूड और बाहर का तला हुआ खाना न खाएँ','खुद से कोई दवा न लें — डॉक्टर से पूछें','तनाव और भारी काम से बचें','सौना और बहुत गर्म पानी से स्नान न करें']},
+  t2:{dos:['हर भोजन में प्रोटीन लें — दाल, पनीर, अंडा','कैल्शियम के लिए रागी, दही, तिल का सेवन करें','योगा और हल्का व्यायाम जारी रखें','शिशु की हलचल नोट करना शुरू करें (16 हफ्ते के बाद)','एनोमली स्कैन समय पर कराएँ (18-20 हफ्ते)'],donts:['पारे वाली मछली न खाएँ (king mackerel, swordfish)','अनपाश्चराइज़्ड दूध और सॉफ्ट चीज़ से बचें','कैफीन सीमित रखें — दिन में एक कप से ज़्यादा नहीं','भारी सामान न उठाएँ, ज़्यादा देर खड़े न रहें','देर रात तक जागना और स्क्रीन टाइम कम करें']},
+  t3:{dos:['आयरन युक्त भोजन लें — मुनगे की पत्तियाँ, राजमा, रागी','हर घंटे थोड़ी देर चलें — पैर की सूजन कम होगी','केगल व्यायाम रोज़ करें — प्रसव में मदद मिलेगी','बर्थ प्लान तैयार करें, अस्पताल का बैग पैक करें','दाईं करवट सोएँ — शिशु को रक्त प्रवाह बेहतर होता है'],donts:['नमक और मसालेदार खाना कम करें — सूजन बढ़ती है','कच्ची सब्जियाँ कम खाएँ — गैस हो सकती है','लंबी यात्रा और हवाई जहाज़ से बचें (34 हफ्ते के बाद)','पीठ के बल न सोएँ — नसों पर दबाव पड़ता है','शिशु की हलचल कम लगे तो तुरंत डॉक्टर को बुलाएँ']},
+};
+function getDosForWeek(w){return w<=12?dosDonts.t1:w<=27?dosDonts.t2:dosDonts.t3}
+
+// ── WEEK GUIDE ──
+const weekGuide={
+  4:{baby:'हृदय की धड़कन शुरू हो रही है। भ्रूण एक लहसुन की कली जितना छोटा है।',mum:'थकान और मिचली शुरू हो सकती है। हार्मोन तेजी से बढ़ रहे हैं।',test:'पहली डॉक्टर विज़िट — ब्लड ग्रुप, थायरॉयड, CBC करवाएँ।',food:'मेथी के पत्ते, मसूर दाल, संतरा — फोलेट के लिए।',warning:'भारी रक्तस्राव या तेज़ ऐंठन हो तो तुरंत डॉक्टर को दिखाएँ।'},
+  8:{baby:'सभी मुख्य अंग बनना शुरू हो गए हैं। उँगलियाँ अलग हो रही हैं। दिल की धड़कन अल्ट्रासाउंड में सुनाई देती है।',mum:'मिचली सबसे ज़्यादा इस समय होती है। थकान और सीने में जलन सामान्य है।',test:'पहला अल्ट्रासाउंड — दिल की धड़कन की पुष्टि।',food:'अदरक की चाय मिचली में राहत देती है। नींबू सूंघने से भी मदद मिलती है।',warning:'मिचली इतनी ज़्यादा कि कुछ भी नहीं खा पा रही हैं? डॉक्टर से बात करें।'},
+  12:{baby:'सभी अंग जगह पर हैं। अब शिशु का विकास मुख्य रूप से आकार में होगा।',mum:'पहली तिमाही खत्म होने वाली है। मिचली धीरे-धीरे कम होगी।',test:'NT Scan — 11-13 हफ्ते के बीच। डबल मार्कर टेस्ट।',food:'रागी, तिल, पनीर — कैल्शियम के लिए अब ज़रूरी है।',warning:'यदि पहले अल्ट्रासाउंड नहीं हुआ तो इस सप्ताह करवाएँ।'},
+  16:{baby:'शिशु अब हाथ-पैर हिला सकता है। चेहरे के भाव बना सकता है।',mum:'पेट दिखने लगा होगा। ऊर्जा वापस आ रही है — गोल्डन पीरियड शुरू।',test:'यदि NT Scan नहीं हुआ तो अब Triple Marker Test करवाएँ।',food:'आयरन के लिए: राजमा, चना, पालक। साथ में नींबू निचोड़ें।',warning:'16वें हफ्ते के बाद शिशु की हलचल नोट करना शुरू करें।'},
+  20:{baby:'शिशु अब आपकी आवाज़ सुन सकता है। बाल और भौंहें बन रही हैं।',mum:'पेट पूरी तरह दिखने लगा है। पीठ दर्द शुरू हो सकता है।',test:'Anomaly Scan — सबसे महत्वपूर्ण अल्ट्रासाउंड। 18-20 हफ्ते में।',food:'ओमेगा-3 के लिए: अखरोट, अलसी। दिमाग का विकास तेज़ है।',warning:'Anomaly Scan में यदि कोई भी असामान्यता दिखे तो फीटल मेडिसिन विशेषज्ञ से मिलें।'},
+  24:{baby:'फेफड़े surfactant बनाना शुरू कर रहे हैं। शिशु प्रकाश महसूस कर सकता है।',mum:'पैरों में सूजन और हार्टबर्न सामान्य है। नींद में परेशानी हो सकती है।',test:'Glucose Tolerance Test (GTT) — 24-28 हफ्ते में। Gestational Diabetes जाँचना ज़रूरी।',food:'चीनी और मीठे पेय कम करें। Gestational Diabetes का खतरा इस समय ज़्यादा।',warning:'बहुत तेज़ सिरदर्द, आँखों में धुंधलापन, पेट में दर्द — Pre-eclampsia के लक्षण हो सकते हैं।'},
+  28:{baby:'आँखें खुल-बंद कर सकता है। वजन तेज़ी से बढ़ रहा है।',mum:'तीसरी तिमाही शुरू। साँस फूलना और पीठ दर्द बढ़ेगा।',test:'Growth Scan। CBC फिर से — एनीमिया जाँचें।',food:'मुनगे की पत्तियाँ, रागी, जामुन — आयरन और कैल्शियम दोनों।',warning:'28 हफ्ते के बाद रोज़ शाम को शिशु की हलचल गिनें — 2 घंटे में 10 बार होनी चाहिए।'},
+  32:{baby:'वज़न लगभग 1.7 किलो। हड्डियाँ मज़बूत हो रही हैं।',mum:'ब्रेक्सटन हिक्स (झूठे दर्द) शुरू हो सकते हैं। नींद मुश्किल हो रही है।',test:'Growth Scan — शिशु की स्थिति देखें।',food:'प्रोटीन हर भोजन में। हल्दी का दूध रात को — anti-inflammatory।',warning:'यदि शिशु अभी भी breech position में है तो चिंता न करें — 36 हफ्ते तक मुड़ सकता है।'},
+  36:{baby:'फेफड़े लगभग परिपक्व। शिशु का वज़न 3 किलो के करीब।',mum:'Lightening शुरू हो सकता है — शिशु नीचे उतर रहा है। साँस आसान हो सकती है।',test:'Growth Scan — Position और Fluid Level। GBS Screen।',food:'हल्का, बार-बार खाएँ। पेट के लिए जगह कम है।',warning:'37 हफ्ते के बाद कभी भी प्रसव शुरू हो सकता है — अस्पताल का बैग तैयार रखें।'},
+  40:{baby:'पूर्ण रूप से विकसित। आने के लिए तैयार!',mum:'डिलीवरी कभी भी हो सकती है। Braxton Hicks बढ़ रहे हैं।',test:'डॉक्टर हर हफ्ते देखेंगे।',food:'खजूर खाएँ — शोध में पाया गया है कि यह cervix को तैयार करने में मदद करता है।',warning:'पानी टूट जाए, नियमित दर्द आए, या हलचल कम हो — तुरंत अस्पताल जाएँ।'},
+};
+function getWeekGuide(w){
+  const keys=Object.keys(weekGuide).map(Number).sort((a,b)=>a-b);
+  let best=keys[0];
+  keys.forEach(k=>{if(k<=w)best=k});
+  return weekGuide[best];
+}
+
+// ── FOOD DATA ──
+const foodData={
+  1:{eat:['🥦 मेथी / पालक','🍊 संतरा / आँवला','🥚 अंडा (उबला)','🫘 मसूर दाल / राजमा','🥛 दूध / दही','🥜 मूँगफली / बादाम','🫐 बेरीज़','🌾 साबुत अनाज','🧄 लहसुन, अदरक','🍋 नींबू'],avoid:['🍈 कच्चा पपीता बिल्कुल नहीं','🍍 कच्चा अनानास नहीं','🧀 बिना पाश्चुरीकृत पनीर','🍷 शराब — पूरी तरह','☕ कैफीन सीमित','🌶️ बहुत मसालेदार खाना','🍟 बाहर का तला हुआ','🥩 कच्चा / कम पका माँस'],nutrients:[{icon:'🌿',name:'फोलिक एसिड',why:'तंत्रिका तंत्र के विकास के लिए। मेथी, राजमा, और फोर्टिफाइड अनाज से 400-800 mcg रोज़ लें।'},{icon:'🩸',name:'आयरन',why:'रक्त की मात्रा बढ़ रही है। पालक, रागी, राजमा खाएँ — साथ में नींबू निचोड़ें।'},{icon:'🥛',name:'कैल्शियम',why:'हड्डियों के शुरुआती निर्माण के लिए। दूध, दही, तिल और रागी उत्तम हैं।'}]},
+  2:{eat:['🐟 अलसी / अखरोट (ओमेगा-3)','🥦 हरी पत्तेदार सब्ज़ियाँ','🍠 शकरकंद','🥑 एवोकाडो','🫘 सभी दालें','🌾 ओट्स / रागी','🧄 अदरक (मिचली के लिए)','🍓 विटामिन-C फल','🥕 गाजर','🧈 घी (सीमित मात्रा में)'],avoid:['🐟 पारे वाली मछली','🥩 कम पका माँस','🧀 सॉफ्ट चीज़','☕ कैफीन सीमित','🫙 पैकेज्ड / प्रिज़र्वेटिव युक्त खाना','🧂 ज़्यादा नमक','🍭 ज़्यादा मीठा'],nutrients:[{icon:'🦴',name:'कैल्शियम + विटामिन D',why:'शिशु की हड्डियाँ और दाँत तेज़ी से बन रहे हैं। रागी 100g में 364mg कैल्शियम।'},{icon:'🧠',name:'DHA (ओमेगा-3)',why:'मस्तिष्क और आँखों का विकास। अखरोट, अलसी, मछली।'},{icon:'🩸',name:'आयरन',why:'खून दोगुना हो रहा है। नींबू के साथ आयरन का अवशोषण बढ़ता है।'}]},
+  3:{eat:['🥛 उच्च कैल्शियम खाद्य','🫘 हर भोजन में प्रोटीन','🌾 जटिल कार्बोहाइड्रेट','🥦 मैग्नीशियम युक्त सब्ज़ियाँ','🍌 केला (पोटेशियम)','🐟 अखरोट / अलसी','💧 पानी युक्त फल','🍠 फाइबर युक्त सब्जियाँ','🌰 मेवे और बीज','🌿 हल्दी का दूध'],avoid:['🧂 ज़्यादा नमक (सूजन बढ़ती है)','☕ कैफीन न्यूनतम','🌶️ बहुत मसालेदार (हार्टबर्न)','🍕 बड़े भोजन — छोटे-छोटे खाएँ','🥩 कच्चा खाना','🍟 तला-भुना खाना'],nutrients:[{icon:'🦴',name:'कैल्शियम',why:'अंतिम हफ्तों में हड्डियाँ बन रही हैं। बादाम, तिल, दूध।'},{icon:'💪',name:'प्रोटीन',why:'शिशु की मांसपेशियाँ और प्रसव की तैयारी। अंडा, दाल, पनीर।'},{icon:'⚡',name:'मैग्नीशियम',why:'पैर की ऐंठन कम करता है। कद्दू के बीज, बादाम, काली चॉकलेट।'}]}
+};
+
+// ── YOGA DATA ──
+const yogaPoses=[
+  {id:'tadasana',name:'Tadasana (Mountain Pose)',benefit:'मुद्रा सुधारता है, पीठ दर्द कम करता है',tri:[1,2,3],steps:['सीधे खड़ी हों, पैर कूल्हे की चौड़ाई पर','भुजाएँ बगल में, साँस लें और रीढ़ लंबी करें','कंधे पीछे और नीचे करें','30 सेकंड रुकें, सामान्य साँस लें'],anim:'breathe'},
+  {id:'baddha',name:'Baddha Konasana (Butterfly)',benefit:'कूल्हे खुलते हैं, श्रोणि लचीली होती है',tri:[1,2,3],steps:['बैठें, पैरों के तलवे आपस में मिलाएँ','घुटनों को धीरे-धीरे नीचे की ओर दबाएँ','रीढ़ सीधी रखें','1-2 मिनट रुकें'],anim:'sway'},
+  {id:'cat_cow',name:'Marjaryasana (Cat-Cow)',benefit:'पीठ दर्द कम करता है, शिशु की position सुधारता है',tri:[1,2,3],steps:['चारों हाथ-घुटनों पर आएँ','साँस लेते हुए — पेट नीचे, सिर ऊपर (Cow)','साँस छोड़ते हुए — पीठ ऊपर, ठुड्डी छाती में (Cat)','10 बार दोहराएँ'],anim:'tilt'},
+  {id:'virabhadra',name:'Virabhadrasana (Warrior I)',benefit:'पैर मज़बूत होते हैं, स्थिरता बढ़ती है',tri:[1,2],steps:['एक पैर आगे, दूसरा पीछे करें','आगे के घुटने को 90° मोड़ें','भुजाएँ ऊपर उठाएँ','30 सेकंड रुकें, दूसरी तरफ दोहराएँ'],anim:'stretch'},
+  {id:'utkatasana',name:'Utkatasana (Chair Pose)',benefit:'जाँघें और श्रोणि मज़बूत होती है',tri:[1,2],steps:['पैर कूल्हे की चौड़ाई पर खड़ी हों','धीरे-धीरे बैठने की स्थिति में आएँ (कुर्सी जैसी)','भुजाएँ आगे या ऊपर करें','20-30 सेकंड रुकें'],anim:'squat'},
+  {id:'malasana',name:'Malasana (Squat)',benefit:'श्रोणि खुलती है, प्रसव में मदद करती है',tri:[2,3],steps:['पैर कंधे की चौड़ाई से थोड़ा बाहर करें','धीरे-धीरे स्क्वाट में बैठें','हाथ नमस्कार की मुद्रा में','1-2 मिनट रुकें — सहारा ले सकती हैं'],anim:'squat'},
+  {id:'viparita',name:'Viparita Karani (Legs up wall)',benefit:'सूजन कम करता है, थकान दूर करता है',tri:[2,3],steps:['दीवार के पास लेट जाएँ','पैरों को दीवार पर ऊपर करें','बाईं करवट पर सो जाएँ बाद में','5-10 मिनट आराम करें'],anim:'float'},
+  {id:'kegel',name:'Kegel Exercise',benefit:'श्रोणि तल मज़बूत होता है, प्रसव आसान होता है',tri:[1,2,3],steps:['बैठें या लेट जाएँ','पेशाब रोकने वाली मांसपेशियाँ कसें','5-10 सेकंड रोकें','10 बार दोहराएँ — दिन में 3 बार'],anim:'kegel'},
+  {id:'pelvic_tilt',name:'Pelvic Tilt',benefit:'पीठ दर्द कम करता है, प्रसव में मदद',tri:[1,2,3],steps:['चारों हाथ-घुटनों पर आएँ','साँस छोड़ते हुए पेट अंदर खींचें','5 सेकंड रोकें','10 बार दोहराएँ'],anim:'tilt'},
+  {id:'prasarita',name:'Prasarita Padottanasana',benefit:'हैमस्ट्रिंग और कूल्हे खिंचते हैं',tri:[1,2],steps:['पैर चौड़े करके खड़ी हों','धीरे-धीरे आगे झुकें','हाथों को ज़मीन या पिंडलियों पर रखें','30 सेकंड रुकें'],anim:'stretch'},
+  {id:'parsvakonasana',name:'Parsvakonasana (Side Angle)',benefit:'कमर और पसलियाँ खुलती हैं',tri:[1,2],steps:['पैर चौड़े, एक घुटना मोड़ें','उसी तरफ झुकें, हाथ घुटने पर','दूसरा हाथ कान के पास ऊपर करें','30 सेकंड, दोनों तरफ'],anim:'sway'},
+  {id:'shavasana',name:'Shavasana (Left Side)',benefit:'गहरी विश्राम, रक्त प्रवाह बेहतर होता है',tri:[2,3],steps:['बाईं करवट लेट जाएँ','घुटनों के बीच तकिया रखें','आँखें बंद करें, साँस सामान्य करें','10-15 मिनट आराम करें'],anim:'float'},
+];
+
+function getYogaForTrimester(w){
+  const t=w<=12?1:w<=27?2:3;
+  return yogaPoses.filter(p=>p.tri.includes(t));
+}
+function getRecommendedYoga(w){
+  const all=getYogaForTrimester(w);
+  if(w<=12)return['tadasana','baddha','kegel'];
+  if(w<=27)return['malasana','cat_cow','virabhadra'];
+  return['kegel','viparita','shavasana'];
+}
+
+// ── EXERCISE DATA ──
+const exerciseData={
+  t1:[{name:'Morning Walk',desc:'प्रतिदिन 20-30 मिनट हल्की सैर। रक्त शर्करा नियंत्रित रहती है और ऊर्जा बनी रहती है। सुबह खाली पेट न जाएँ।',tags:['T1','T2','T3','20-30 मिनट']},{name:'Breathing Exercises',desc:'4 की गिनती पर साँस लें, 4 पर रोकें, 4 पर छोड़ें। दिन में 5-10 मिनट। मिचली और चिंता कम होती है।',tags:['T1','T2','T3','5-10 मिनट']},{name:'Light Stretching',desc:'गर्दन, कंधे और कमर की हल्की stretching। सुबह उठते ही 10 मिनट। मांसपेशियाँ लचीली रहती हैं।',tags:['T1','T2','T3','10 मिनट']}],
+  t2:[{name:'Supported Squats',desc:'दीवार या कुर्सी का सहारा लेकर 10-15 स्क्वाट। श्रोणि मज़बूत होती है, प्रसव आसान होता है। धीरे-धीरे करें।',tags:['T2','T3','10-15 मिनट']},{name:'Swimming / Water Aerobics',desc:'सप्ताह में 2-3 बार 30 मिनट। जोड़ों पर दबाव नहीं, पूरे शरीर का व्यायाम। सूजन कम होती है।',tags:['T2','T3','30 मिनट']},{name:'Birthing Ball Exercises',desc:'बर्थिंग बॉल पर बैठकर धीरे-धीरे गोल घुमाएँ। शिशु की सही position में मदद करता है। पीठ दर्द कम होता है।',tags:['T2','T3','15-20 मिनट']},{name:'Pelvic Tilts',desc:'चारों हाथ-घुटनों पर या खड़े होकर। पीठ को आगे-पीछे घुमाएँ। पीठ दर्द में राहत मिलती है।',tags:['T1','T2','T3','10 मिनट']}],
+  t3:[{name:'Kegel Exercises',desc:'1 सेकंड कसें, 1 सेकंड छोड़ें — 10 बार। फिर 10 सेकंड कसें, 10 छोड़ें — 5 बार। दिन में 3 बार। प्रसव में बहुत मदद।',tags:['T3','दिन में 3 बार']},{name:'Ankle Circles',desc:'कुर्सी पर बैठकर पैरों की एड़ियाँ घुमाएँ। पैरों की सूजन कम होती है। दिन में 5-6 बार।',tags:['T2','T3','5 मिनट']},{name:'Cat-Cow Stretches',desc:'चारों हाथ-घुटनों पर। साँस के साथ पीठ ऊपर-नीचे। शिशु की position सुधरती है। पीठ दर्द कम होता है।',tags:['T1','T2','T3','10 मिनट']},{name:'Deep Breathing for Labor',desc:'4-7-8 विधि: 4 पर लें, 7 पर रोकें, 8 पर छोड़ें। प्रसव की तैयारी के लिए रोज़ 10 मिनट।',tags:['T3','10 मिनट']}],
+  avoid:['Contact sports (football, basketball)','High-impact jumping or bouncing','Back-lying exercises after T1','Hot yoga or Bikram yoga','Horse riding, skiing, scuba diving','Heavy weight lifting','Exercises with fall risk']
+};
+
+// ── BOOKS ──
+const books=[
+  {emoji:'📖',title:'What to Expect When You\'re Expecting',author:'Heidi Murkoff',lang:'English',why:'The most comprehensive pregnancy reference. Week-by-week breakdown.',id:'b1'},
+  {emoji:'📗',title:'Ina May\'s Guide to Childbirth',author:'Ina May Gaskin',lang:'English',why:'Empowering birth stories and natural childbirth guidance.',id:'b2'},
+  {emoji:'📙',title:'The Mindful Mom-to-Be',author:'Lori Bregman',lang:'English',why:'Holistic mind-body approach. Meditation and journaling prompts.',id:'b3'},
+  {emoji:'📘',title:'Gentle Birth, Gentle Mothering',author:'Sarah J. Buckley',lang:'English',why:'Evidence-based natural pregnancy and birth options.',id:'b4'},
+  {emoji:'📕',title:'Garbh Sanskar',author:'Dr. Balaji Tambe',lang:'Hindi',why:'गर्भ संस्कार की परंपरागत और वैज्ञानिक विधियाँ। माँ और शिशु के लिए।',id:'b5'},
+  {emoji:'📓',title:'Maa Banne Ki Taiyari',author:'Dr. Sharda Jain',lang:'Hindi',why:'भारतीय महिलाओं के लिए सरल हिंदी में गर्भावस्था मार्गदर्शिका।',id:'b6'},
+  {emoji:'📔',title:'Shishu ka Shreshtha Vikas',author:'Dr. Sanjay Gupta',lang:'Hindi',why:'शिशु के मानसिक और शारीरिक विकास के लिए गर्भावस्था में क्या करें।',id:'b7'},
+];
+
+// ── WATCH ──
+const watchList=[
+  {emoji:'🎬',title:'Call the Midwife',type:'TV Series — English',why:'A warm, heartfelt British series about midwives. Uplifting and informative.',lang:'English'},
+  {emoji:'🎥',title:'The Business of Being Born',type:'Documentary — English',why:'Eye-opening documentary about birth choices. Informed decision-making.',lang:'English'},
+  {emoji:'🧘',title:'Yoga with Adriene — Prenatal',type:'YouTube — English',why:'Free, gentle prenatal yoga. Highly recommended for all trimesters.',lang:'English'},
+  {emoji:'🎭',title:'Mimi (2021)',type:'Film — Hindi',why:'एक प्रेरक कहानी। हल्की, भावनात्मक, और सकारात्मक।',lang:'Hindi'},
+  {emoji:'🎞️',title:'Nil Battey Sannata',type:'Film — Hindi',why:'एक माँ की दृढ़ता की कहानी। बहुत प्रेरणादायक।',lang:'Hindi'},
+  {emoji:'😂',title:'Good Newwz',type:'Film — Hindi',why:'हल्की-फुल्की कॉमेडी। गर्भावस्था पर। तनाव कम करने के लिए।',lang:'Hindi'},
+  {emoji:'🌿',title:'Satvic Movement',type:'YouTube — Hindi/English',why:'Natural pregnancy, food and lifestyle guidance in Hindi and English.',lang:'Both'},
+];
+const watchAvoid=[
+  {what:'Horror films & psychological thrillers',why:'Cortisol (stress hormone) बढ़ता है जो शिशु तक पहुँचता है'},
+  {what:'True crime content (shows/podcasts)',why:'लगातार नकारात्मक विचार माँ के मन पर असर डालते हैं'},
+  {what:'Graphic violence or war movies',why:'Emotional stress शिशु के तंत्रिका तंत्र को प्रभावित कर सकता है'},
+  {what:'High-stress reality TV',why:'Anxiety और negative emotions बढ़ाता है'},
+  {what:'Heavy news (crime, disaster)',why:'रात को देखने से नींद खराब होती है। सुबह भी नहीं'},
+  {what:'Instagram Reels late at night',why:'Blue light नींद बिगाड़ती है, comparison anxiety बढ़ाती है'},
+];
+
+// ── UTILITIES ──
+function calcWeek(d){const days=Math.floor((new Date()-d)/(1000*60*60*24));return Math.max(1,Math.min(Math.floor(days/7)+1,40))}
+function calcDays(d){return Math.floor((new Date()-d)/(1000*60*60*24))}
+function formatDate(d){return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}
+function dateKey(d){const dt=d||new Date();return dt.toISOString().split('T')[0]}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')}));
+
+// ── PIN ──
+let pinEntry='';
+function pinInput(d){
+  if(pinEntry.length>=4)return;
+  pinEntry+=d;
+  document.getElementById('d'+(pinEntry.length-1)).classList.add('filled');
+  if(pinEntry.length===4){
+    setTimeout(()=>{
+      if(pinEntry===PIN){document.getElementById('lockScreen').style.display='none';document.getElementById('app').classList.add('visible');initApp();}
+      else{document.getElementById('pinError').textContent='Incorrect PIN';pinEntry='';for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('filled')}
+    },200);
+  }
+}
+function pinDelete(){if(!pinEntry.length)return;document.getElementById('d'+(pinEntry.length-1)).classList.remove('filled');pinEntry=pinEntry.slice(0,-1);document.getElementById('pinError').textContent=''}
+
+// ── NAVIGATION ──
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page'+name).classList.add('active');
+  const names=['Today','Log','Wellness','Guide','Medical','Journey'];
+  document.querySelectorAll('.nav-btn')[names.indexOf(name)].classList.add('active');
+  if(name==='Today')renderToday();
+  if(name==='Log')initLog();
+  if(name==='Wellness'){setWellnessTab('yoga',document.querySelector('.wtab-btn'))}
+  if(name==='Guide'){setGuideTab('weekly',document.querySelector('.gtab-btn'))}
+  if(name==='Medical'){setMedTab('visits',document.querySelector('.med-tab-btn'))}
+  if(name==='Journey'){setJourneyTab('weight',document.querySelector('.gtab-btn'))}
+}
+
+// ── INIT ──
+async function initApp(){
+  await loadDB();
+  renderToday();
+  initLog();
+  checkNotifPrompt();
+}
+
+// ── TODAY ──
+function renderToday(){
+  const week=calcWeek(START_DATE);
+  const days=calcDays(START_DATE);
+  const info=getWeekInfo(week);
+  const pct=Math.round((week/TOTAL_WEEKS)*100);
+  const due=new Date(START_DATE);due.setDate(due.getDate()+TOTAL_WEEKS*7);
+  const hr=new Date().getHours();
+  const greet=hr<12?'Good morning 🌸':hr<17?'Good afternoon ☀️':'Good evening 🌙';
+
+  document.getElementById('todayGreeting').textContent=greet;
+  document.getElementById('todayTitle').textContent='Week '+week;
+  document.getElementById('heroWeek').textContent=week;
+  document.getElementById('heroDays').textContent=days+' days since confirmation';
+  document.getElementById('fruitEmoji').textContent=info.fruit;
+  document.getElementById('fruitName').textContent=info.name;
+  document.getElementById('babyH').textContent=info.h;
+  document.getElementById('babyW').textContent=info.wt;
+  document.getElementById('babyHR').textContent=info.hr==='--'?'--':info.hr+' bpm';
+  document.getElementById('progressPct').textContent=pct+'%';
+  document.getElementById('progressLabel').textContent=week+' done';
+  document.getElementById('dueDate').textContent=formatDate(due);
+
+  const circ=2*Math.PI*17;
+  document.getElementById('progressRing').style.strokeDashoffset=circ-(pct/100)*circ;
+
+  const t=week<=12?1:week<=27?2:3;
+  const tLabels=['','First Trimester','Second Trimester','Third Trimester'];
+  const tTips=['','Rest, hydrate, take folic acid','The golden weeks — energy returning','Baby is almost here!'];
+  document.getElementById('trimLabel').textContent=tLabels[t];
+  document.getElementById('trimTip').textContent=tTips[t];
+
+  // Dos Donts
+  const dd=getDosForWeek(week);
+  document.getElementById('dosDontsRow').innerHTML=`
+    <div class="dos-card">
+      <div class="dos-donts-title do">✅ करें</div>
+      ${dd.dos.slice(0,4).map(d=>`<div class="dos-donts-item"><span>•</span><span>${d}</span></div>`).join('')}
+    </div>
+    <div class="donts-card">
+      <div class="dos-donts-title dont">❌ न करें</div>
+      ${dd.donts.slice(0,4).map(d=>`<div class="dos-donts-item"><span>•</span><span>${d}</span></div>`).join('')}
+    </div>`;
+
+  // Garbh Sanskar
+  const gs=getGSForWeek(week);
+  document.getElementById('gsCard').innerHTML=`
+    <div class="gs-label">🕉️ GARBH SANSKAR — सप्ताह ${week}</div>
+    <div class="gs-shloka">${gs.shloka}</div>
+    <div class="gs-transliteration">${gs.trans}</div>
+    <div class="gs-meaning">${gs.meaning}</div>
+    <div class="gs-practice">🙏 आज का अभ्यास: ${gs.practice}</div>
+    <div class="gs-music">🎵 ${gs.music}</div>`;
+
+  // Upcoming
+  const up=(db.visits||[]).filter(v=>new Date(v.date)>=new Date()).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,2);
+  document.getElementById('upcomingVisits').innerHTML=up.length?up.map(v=>{
+    const du=Math.ceil((new Date(v.date)-new Date())/(1000*60*60*24));
+    return`<div class="scan-card"><span class="scan-icon">🩺</span><div class="scan-info"><div class="scan-name">${v.type}</div><div class="scan-date">Dr. ${v.doctor||'--'}</div></div><span class="scan-badge ${du<=7?'soon':'upcoming'}">${du<=7?'In '+du+' days':formatDate(v.date)}</span></div>`;
+  }).join(''):'<p class="no-data">No upcoming visits</p>';
+}
+
+// ── NOTIFICATIONS ──
+function checkNotifPrompt(){
+  if('Notification' in window&&Notification.permission==='default')
+    document.getElementById('notifCard').style.display='flex';
+}
+async function requestNotifPermission(){
+  const p=await Notification.requestPermission();
+  document.getElementById('notifCard').style.display='none';
+  if(p==='granted'){scheduleNotifications();showToast('Notifications enabled ✓')}
+  else showToast('Permission denied');
+}
+function scheduleNotifications(){
+  if(!('serviceWorker' in navigator))return;
+  showToast('Reminders set for 10am & 11pm');
+}
+
+// ── LOG ──
+let logDate=new Date();
+let currentPhotos=[];
+let currentKicks=0;
+let selectedMoods=[];
+
+function initLog(){
+  updateLogDateDisplay();
+  loadLogForDate();
+  const week=calcWeek(START_DATE);
+  document.getElementById('kicksSection').style.display=week>=16?'block':'none';
+}
+function updateLogDateDisplay(){
+  const isToday=dateKey(logDate)===dateKey(new Date());
+  document.getElementById('logDateDay').textContent=isToday?'Today':logDate.toLocaleDateString('en-IN',{weekday:'long'});
+  document.getElementById('logDateFull').textContent=formatDate(logDate);
+}
+function changeLogDate(d){logDate.setDate(logDate.getDate()+d);updateLogDateDisplay();loadLogForDate()}
+function loadLogForDate(){
+  const key=dateKey(logDate);
+  const log=(db.logs||{})[key]||{};
+  selectedMoods=log.mood?log.mood.split(','):[]; 
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  selectedMoods.forEach(m=>{const el=document.getElementById('mood-'+m);if(el)el.classList.add('selected')});
+  document.getElementById('vomitCount').textContent=log.vomit||0;
+  document.getElementById('sleepCount').textContent=log.sleep!==undefined?log.sleep:7;
+  currentKicks=log.kicks||0;
+  document.getElementById('kicksCount').textContent=currentKicks+' kicks';
+  document.getElementById('cravingsInput').value=log.cravings||'';
+  document.getElementById('journalInput').value=log.journal||'';
+  document.getElementById('logWeight').value=log.weight||'';
+  document.getElementById('screentimeInput').value=log.screentime||'';
+  document.getElementById('wakeTime').value=log.wake_time||'';
+  document.getElementById('sleepTime').value=log.sleep_time||'';
+  const ot=document.getElementById('outsideFoodToggle');
+  if(log.outside_food){ot.classList.add('on');document.getElementById('outsideFoodDetail').style.display='block';document.getElementById('outsideFoodText').value=log.outside_food_text||''}
+  else{ot.classList.remove('on');document.getElementById('outsideFoodDetail').style.display='none';document.getElementById('outsideFoodText').value=''}
+  const row=document.getElementById('photoPreviewRow');
+  row.innerHTML='';
+  currentPhotos=log.photos?[...log.photos]:[];
+  currentPhotos.forEach((src,i)=>row.appendChild(makeThumb(src,i)));
+}
+function makeThumb(src,i){
+  const wrap=document.createElement('div');wrap.className='photo-thumb-wrap';
+  const img=document.createElement('img');img.className='photo-thumb';img.src=src;
+  const del=document.createElement('button');del.className='photo-del';del.textContent='✕';
+  del.onclick=()=>{currentPhotos.splice(i,1);document.getElementById('photoPreviewRow').innerHTML='';currentPhotos.forEach((s,j)=>document.getElementById('photoPreviewRow').appendChild(makeThumb(s,j)))};
+  wrap.appendChild(img);wrap.appendChild(del);
+  return wrap;
+}
+function selectMood(m){
+  const idx=selectedMoods.indexOf(m);
+  if(idx>=0){selectedMoods.splice(idx,1);document.getElementById('mood-'+m).classList.remove('selected')}
+  else if(selectedMoods.length<2){selectedMoods.push(m);document.getElementById('mood-'+m).classList.add('selected')}
+  else showToast('Pick up to 2 moods');
+}
+function changeCounter(type,delta){
+  const el=document.getElementById(type+'Count');
+  let v=parseInt(el.textContent)+delta;v=Math.max(0,v);el.textContent=v;
+}
+function addKick(){currentKicks++;document.getElementById('kicksCount').textContent=currentKicks+' kicks'}
+function resetKicks(){currentKicks=0;document.getElementById('kicksCount').textContent='0 kicks'}
+function toggleOutsideFood(){
+  const t=document.getElementById('outsideFoodToggle');t.classList.toggle('on');
+  document.getElementById('outsideFoodDetail').style.display=t.classList.contains('on')?'block':'none';
+}
+function handlePhotoUpload(input){
+  if(currentPhotos.length>=2){showToast('Max 2 photos per day');return}
+  const files=Array.from(input.files).slice(0,2-currentPhotos.length);
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      currentPhotos.push(e.target.result);
+      const row=document.getElementById('photoPreviewRow');
+      row.innerHTML='';
+      currentPhotos.forEach((s,i)=>row.appendChild(makeThumb(s,i)));
+    };
+    reader.readAsDataURL(file);
+  });
+}
+async function saveLog(){
+  const key=dateKey(logDate);
+  if(!db.logs)db.logs={};
+  const existingId=db.logs[key]?.id;
+  const row={
+    date_key:key,mood:selectedMoods.join(','),
+    vomit:parseInt(document.getElementById('vomitCount').textContent)||0,
+    sleep:parseInt(document.getElementById('sleepCount').textContent)||7,
+    kicks:currentKicks,
+    cravings:document.getElementById('cravingsInput').value,
+    journal:document.getElementById('journalInput').value,
+    weight:parseFloat(document.getElementById('logWeight').value)||null,
+    photos:currentPhotos,
+    outside_food:document.getElementById('outsideFoodToggle').classList.contains('on'),
+    outside_food_text:document.getElementById('outsideFoodText').value,
+    screentime:parseInt(document.getElementById('screentimeInput').value)||null,
+    wake_time:document.getElementById('wakeTime').value,
+    sleep_time:document.getElementById('sleepTime').value,
+  };
+  if(existingId)row.id=existingId;
+  db.logs[key]={...row,date:key,id:existingId};
+  if(currentPhotos.length)db.gallery[key]=currentPhotos;
+  if(row.weight){
+    if(!db.weights)db.weights=[];
+    const ei=db.weights.findIndex(w=>w.date===key);
+    if(ei>=0)db.weights[ei].val=row.weight;else db.weights.push({date:key,val:row.weight});
+    db.weights.sort((a,b)=>a.date.localeCompare(b.date));
+  }
+  cacheDB();showToast('Saving...');
+  try{
+    const saved=await supa.upsert('bj_logs',row);
+    if(saved&&saved[0])db.logs[key].id=saved[0].id;
+    if(row.weight)await supa.upsert('bj_weights',{date:key,val:row.weight});
+    cacheDB();showToast('Log saved ✓');
+  }catch(e){showToast('Saved locally');console.warn(e)}
+}
+
+// ── WELLNESS ──
+function setWellnessTab(tab,btn){
+  document.querySelectorAll('.wtab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('wellnessYoga').style.display=tab==='yoga'?'block':'none';
+  document.getElementById('wellnessExercise').style.display=tab==='exercise'?'block':'none';
+  if(tab==='yoga')renderYoga();
+  if(tab==='exercise')renderExercise();
+}
+
+function makeYogaSVG(anim){
+  const col='#E8748A';
+  const svgs={
+    breathe:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-breathe"><ellipse cx="28" cy="42" rx="12" ry="6" fill="${col}" opacity=".3"/><circle cx="28" cy="18" r="8" fill="${col}" opacity=".8"/><rect x="23" y="26" width="10" height="16" rx="5" fill="${col}" opacity=".7"/><rect x="14" y="30" width="12" height="4" rx="2" fill="${col}" opacity=".6"/><rect x="30" y="30" width="12" height="4" rx="2" fill="${col}" opacity=".6"/><rect x="22" y="42" width="5" height="10" rx="2" fill="${col}" opacity=".6"/><rect x="29" y="42" width="5" height="10" rx="2" fill="${col}" opacity=".6"/></g></svg>`,
+    sway:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-sway"><circle cx="28" cy="10" r="7" fill="${col}" opacity=".8"/><rect x="23" y="17" width="10" height="14" rx="5" fill="${col}" opacity=".7"/><rect x="12" y="20" width="13" height="3.5" rx="2" fill="${col}" opacity=".6"/><rect x="31" y="20" width="13" height="3.5" rx="2" fill="${col}" opacity=".6"/><rect x="21" y="31" width="6" height="12" rx="3" fill="${col}" opacity=".6"/><rect x="29" y="31" width="6" height="12" rx="3" fill="${col}" opacity=".6"/></g></svg>`,
+    squat:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-squat"><circle cx="28" cy="8" r="7" fill="${col}" opacity=".8"/><rect x="23" y="15" width="10" height="12" rx="5" fill="${col}" opacity=".7"/><line x1="18" y1="18" x2="10" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="38" y1="18" x2="46" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="22" y1="27" x2="14" y2="44" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/><line x1="34" y1="27" x2="42" y2="44" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/></g></svg>`,
+    stretch:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-stretch"><circle cx="28" cy="10" r="7" fill="${col}" opacity=".8"/><rect x="23" y="17" width="10" height="12" rx="5" fill="${col}" opacity=".7"/><line x1="28" y1="18" x2="6" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="28" y1="18" x2="50" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="24" y1="29" x2="20" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/><line x1="32" y1="29" x2="36" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/></g></svg>`,
+    kegel:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-kegel"><circle cx="28" cy="10" r="7" fill="${col}" opacity=".8"/><rect x="23" y="17" width="10" height="12" rx="5" fill="${col}" opacity=".7"/><line x1="23" y1="20" x2="14" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="33" y1="20" x2="42" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><ellipse cx="28" cy="31" rx="8" ry="5" fill="${col}" opacity=".4"/><line x1="24" y1="29" x2="22" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/><line x1="32" y1="29" x2="34" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/></g></svg>`,
+    tilt:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-tilt"><circle cx="28" cy="9" r="6" fill="${col}" opacity=".8"/><line x1="28" y1="15" x2="28" y2="30" stroke="${col}" stroke-width="8" stroke-linecap="round" opacity=".7"/><line x1="16" y1="22" x2="40" y2="22" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="16" y1="30" x2="8" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/><line x1="40" y1="30" x2="48" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/></g></svg>`,
+    float:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-float"><circle cx="28" cy="14" r="7" fill="${col}" opacity=".8"/><rect x="12" y="22" width="32" height="14" rx="7" fill="${col}" opacity=".6"/><line x1="12" y1="29" x2="4" y2="38" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".5"/><line x1="44" y1="29" x2="52" y2="38" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".5"/><line x1="22" y1="36" x2="18" y2="52" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".5"/><line x1="34" y1="36" x2="38" y2="52" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".5"/></g></svg>`
+  };
+  return svgs[anim]||svgs.breathe;
+}
+
+function renderYoga(){
+  const week=calcWeek(START_DATE);
+  const recommended=getRecommendedYoga(week);
+  const today=dateKey(new Date());
+  const log=db.logs[today]||{};
+  const el=document.getElementById('wellnessYoga');
+  let html=`<div class="yoga-tracker-bar">
+    <span class="yoga-tracker-q">🧘 Did yoga today?</span>
+    <div class="yn-btns">
+      <button class="yn-btn yes ${log.yoga_done===true?'active-yes':''}" onclick="logYesNo('yoga',true,this)">Yes</button>
+      <button class="yn-btn no ${log.yoga_done===false?'active-no':''}" onclick="logYesNo('yoga',false,this)">No</button>
+    </div>
+  </div>
+  <div class="section-title">This week's top 3</div>`;
+  const allPoses=getYogaForTrimester(week);
+  const topPoses=allPoses.filter(p=>recommended.includes(p.id));
+  const otherPoses=allPoses.filter(p=>!recommended.includes(p.id));
+  topPoses.forEach(p=>{html+=renderPoseCard(p,true)});
+  if(otherPoses.length){
+    html+=`<div class="section-title" style="margin-top:10px">Full library</div>`;
+    otherPoses.forEach(p=>{html+=renderPoseCard(p,false)});
+  }
+  el.innerHTML=html;
+}
+
+function renderPoseCard(p,isRec){
+  return`<div class="yoga-pose-card">
+    <div class="yoga-pose-header">
+      <div class="yoga-anim">${makeYogaSVG(p.anim)}</div>
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="yoga-pose-name">${p.name}</div>
+          ${isRec?'<span class="yoga-recommended">⭐ Recommended</span>':''}
+        </div>
+        <div class="yoga-pose-benefit">${p.benefit}</div>
+        <div class="yoga-trimester-pills">${p.tri.map(t=>`<span class="yoga-tri-pill">T${t}</span>`).join('')}</div>
+      </div>
+    </div>
+    <button class="yoga-expand-btn" onclick="toggleYogaDetails(this)">How to do it ▾</button>
+    <div class="yoga-details">
+      ${p.steps.map((s,i)=>`<div class="yoga-step"><span class="yoga-step-num">${i+1}.</span><span>${s}</span></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function toggleYogaDetails(btn){
+  const d=btn.nextElementSibling;
+  d.classList.toggle('open');
+  btn.textContent=d.classList.contains('open')?'Close ▴':'How to do it ▾';
+}
+
+function renderExercise(){
+  const week=calcWeek(START_DATE);
+  const t=week<=12?'t1':week<=27?'t2':'t3';
+  const today=dateKey(new Date());
+  const log=db.logs[today]||{};
+  let html=`<div class="yoga-tracker-bar">
+    <span class="yoga-tracker-q">🏃 Did exercise today?</span>
+    <div class="yn-btns">
+      <button class="yn-btn yes ${log.exercise_done===true?'active-yes':''}" onclick="logYesNo('exercise',true,this)">Yes</button>
+      <button class="yn-btn no ${log.exercise_done===false?'active-no':''}" onclick="logYesNo('exercise',false,this)">No</button>
+    </div>
+  </div>
+  <div class="input-group"><label class="input-label">Type & duration (e.g. Walking 30 mins)</label><input class="input-field" id="exerciseLog" value="${log.exercise_type||''}" placeholder="What did you do?"><input class="input-field" type="number" id="exerciseMins" value="${log.exercise_mins||''}" placeholder="Minutes" style="margin-top:6px"></div>
+  <button class="save-btn sage" onclick="saveExerciseLog()">Save exercise log</button>
+  <div class="section-title">Recommended this trimester</div>`;
+  exerciseData[t].forEach(e=>{
+    html+=`<div class="exercise-block">
+      <div class="exercise-name">${e.name}</div>
+      <div class="exercise-desc">${e.desc}</div>
+      <div class="exercise-tags">${e.tags.map(tag=>`<span class="exercise-tag">${tag}</span>`).join('')}</div>
+    </div>`;
+  });
+  html+=`<div class="section-title" style="margin-top:10px;color:var(--rose)">❌ Avoid during pregnancy</div>`;
+  exerciseData.avoid.forEach(a=>{html+=`<div class="dos-donts-item" style="font-size:12px;color:var(--ink-mid);margin-bottom:5px"><span>•</span><span>${a}</span></div>`});
+  document.getElementById('wellnessExercise').innerHTML=html;
+}
+
+async function logYesNo(type,val,btn){
+  const today=dateKey(new Date());
+  if(!db.logs[today])db.logs[today]={date_key:today};
+  db.logs[today][type+'_done']=val;
+  cacheDB();
+  btn.parentElement.querySelectorAll('.yn-btn').forEach(b=>{b.classList.remove('active-yes','active-no')});
+  btn.classList.add(val?'active-yes':'active-no');
+  try{await supa.upsert('bj_logs',{date_key:today,[type+'_done']:val})}catch(e){}
+}
+
+async function saveExerciseLog(){
+  const today=dateKey(new Date());
+  const type=document.getElementById('exerciseLog').value;
+  const mins=parseInt(document.getElementById('exerciseMins').value)||null;
+  if(!db.logs[today])db.logs[today]={date_key:today};
+  db.logs[today].exercise_type=type;db.logs[today].exercise_mins=mins;
+  cacheDB();showToast('Exercise logged ✓');
+  try{await supa.upsert('bj_logs',{date_key:today,exercise_type:type,exercise_mins:mins})}catch(e){}
+}
+
+// ── GUIDE ──
+function setGuideTab(tab,btn){
+  ['weekly','food','books','watch'].forEach(t=>{document.getElementById('guide'+t.charAt(0).toUpperCase()+t.slice(1)).style.display=t===tab?'block':'none'});
+  document.querySelectorAll('.gtab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(tab==='weekly')renderWeeklyGuide();
+  if(tab==='food')renderFood();
+  if(tab==='books')renderBooks();
+  if(tab==='watch')renderWatch();
+}
+
+function renderWeeklyGuide(){
+  const week=calcWeek(START_DATE);
+  const g=getWeekGuide(week);
+  document.getElementById('guideWeekly').innerHTML=`
+    <div class="week-guide-card">
+      <div class="week-guide-title">Week ${week} — What's happening</div>
+      <div class="week-guide-section"><div class="week-guide-section-title">👶 Baby</div><div class="week-guide-text">${g.baby}</div></div>
+      <div class="week-guide-section"><div class="week-guide-section-title">🌸 Mum's body</div><div class="week-guide-text">${g.mum}</div></div>
+      <div class="week-guide-section"><div class="week-guide-section-title">🩺 Tests this stage</div><div class="week-guide-text">${g.test}</div></div>
+      <div class="week-guide-section"><div class="week-guide-section-title">🥗 Food focus</div><div class="week-guide-text">${g.food}</div></div>
+      <div class="week-guide-section" style="background:var(--rose-pale);border-radius:8px;padding:10px"><div class="week-guide-section-title">⚠️ When to call doctor</div><div class="week-guide-text">${g.warning}</div></div>
+    </div>`;
+}
+
+function renderFood(){
+  const week=calcWeek(START_DATE);
+  const t=week<=12?1:week<=27?2:3;
+  const el=document.getElementById('guideFood');
+  const f=foodData[t];
+  const tabs=['First Trimester','Second Trimester','Third Trimester'];
+  el.innerHTML=`<div class="wellness-tabs" style="margin-bottom:14px">
+    ${[1,2,3].map(i=>`<button class="wtab-btn ${t===i?'active':''}" onclick="renderFoodTab(${i},this)">${tabs[i-1]}</button>`).join('')}
+  </div><div id="foodTabContent"></div>`;
+  renderFoodContent(f);
+}
+function renderFoodTab(t,btn){
+  document.querySelectorAll('#guideFood .wtab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  renderFoodContent(foodData[t]);
+}
+function renderFoodContent(f){
+  document.getElementById('foodTabContent').innerHTML=`
+    <div class="food-section"><div class="food-section-head"><span>✅</span><span class="label eat">खाएँ — Eat</span></div><div class="food-pills">${f.eat.map(i=>`<span class="food-pill eat">${i}</span>`).join('')}</div></div>
+    <div class="food-section"><div class="food-section-head"><span>⛔</span><span class="label avoid">परहेज़ करें — Avoid</span></div><div class="food-pills">${f.avoid.map(i=>`<span class="food-pill avoid">${i}</span>`).join('')}</div></div>
+    <div class="section-title">Key nutrients</div>
+    ${f.nutrients.map(n=>`<div class="nutrient-card"><span class="nutrient-icon">${n.icon}</span><div><div class="nutrient-name">${n.name}</div><div class="nutrient-why">${n.why}</div></div></div>`).join('')}`;
+}
+
+function renderBooks(){
+  const el=document.getElementById('guideBooks');
+  const statuses=JSON.parse(localStorage.getItem('bookStatus')||'{}');
+  const statusLabels=['📖 Reading','✅ Done','📚 To read'];
+  el.innerHTML=`<div class="section-title">Recommended reads</div>`+
+  books.map(b=>{
+    const s=statuses[b.id]||'';
+    return`<div class="book-card">
+      <span class="book-cover">${b.emoji}</span>
+      <div class="book-info">
+        <div class="book-title">${b.title}</div>
+        <div class="book-author">${b.author}</div>
+        <span class="book-lang">${b.lang}</span>
+        <div class="book-status-btns">
+          ${statusLabels.map(sl=>`<button class="book-status-btn ${s===sl?'active':''}" onclick="setBookStatus('${b.id}','${sl}',this)">${sl}</button>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function setBookStatus(id,status,btn){
+  const statuses=JSON.parse(localStorage.getItem('bookStatus')||'{}');
+  statuses[id]=status;
+  localStorage.setItem('bookStatus',JSON.stringify(statuses));
+  btn.closest('.book-status-btns').querySelectorAll('.book-status-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function renderWatch(){
+  const el=document.getElementById('guideWatch');
+  el.innerHTML=`<div class="section-title">What to watch 🎬</div>`+
+  watchList.map(w=>`<div class="watch-card">
+    <div style="display:flex;gap:10px;align-items:flex-start">
+      <span style="font-size:26px">${w.emoji}</span>
+      <div>
+        <div class="watch-title">${w.title}</div>
+        <div class="watch-type">${w.type}</div>
+        <div class="watch-why">${w.why}</div>
+        <span class="book-lang" style="margin-top:5px;display:inline-block">${w.lang}</span>
+      </div>
+    </div>
+  </div>`).join('')+
+  `<div class="section-title" style="margin-top:16px;color:var(--rose)">⛔ What NOT to watch</div>`+
+  watchAvoid.map(w=>`<div class="watch-avoid-card">
+    <div class="watch-avoid-title">❌ ${w.what}</div>
+    <div style="font-size:11px;color:var(--ink-mid)">${w.why}</div>
+  </div>`).join('');
+}
+
+// ── MEDICAL ──
+let medFileData={visit:null,presc:null,report:null};
+function handleFile(input,type){
+  const file=input.files[0];if(!file)return;
+  const idMap={visit:'vFileName',presc:'pFileName',report:'rFileName'};
+  document.getElementById(idMap[type]).textContent=file.name;
+  const reader=new FileReader();
+  reader.onload=e=>{medFileData[type]={data:e.target.result,name:file.name}};
+  reader.readAsDataURL(file);
+}
+function setMedTab(tab,btn){
+  ['medVisits','medPrescriptions','medReports'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('med'+tab.charAt(0).toUpperCase()+tab.slice(1)).style.display='block';
+  document.querySelectorAll('.med-tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMedical();
+}
+function renderMedical(){
+  renderVisits();renderPrescriptions();renderReports();
+}
+function renderVisits(){
+  const el=document.getElementById('medVisits');
+  if(!el)return;
+  el.innerHTML=`<button class="add-btn" onclick="openVisitModal()">+ Add Visit or Scan</button>`+
+  ((db.visits||[]).length?db.visits.sort((a,b)=>b.date.localeCompare(a.date)).map(v=>{
+    const wk=Math.floor((new Date(v.date)-START_DATE)/(1000*60*60*24*7))+1;
+    const wkL=wk>=1&&wk<=40?'Week '+wk:'';
+    return`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">${v.type}</div><div class="visit-date">${formatDate(v.date)}${v.doctor?' · Dr. '+v.doctor:''}</div></div>${wkL?`<span class="visit-week-badge">${wkL}</span>`:''}</div>${v.notes?`<div class="visit-notes">${v.notes}</div>`:''}</div>`;
+  }).join(''):'<p class="no-data">No visits logged yet</p>');
+}
+function renderPrescriptions(){
+  const el=document.getElementById('medPrescriptions');if(!el)return;
+  el.innerHTML=`<button class="add-btn" onclick="openModal('prescModal')">+ Add Prescription</button>`+
+  ((db.prescriptions||[]).length?db.prescriptions.sort((a,b)=>b.date.localeCompare(a.date)).map(p=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">💊 Prescription</div><div class="visit-date">${formatDate(p.date)}${p.doctor?' · Dr. '+p.doctor:''}</div></div></div>${p.notes?`<div class="visit-notes">${p.notes}</div>`:''}${p.file?`<div class="visit-attachment">📎 ${p.fileName||'Attached'}</div>`:''}</div>`).join(''):'<p class="no-data">No prescriptions yet</p>');
+}
+function renderReports(){
+  const el=document.getElementById('medReports');if(!el)return;
+  el.innerHTML=`<button class="add-btn" onclick="openModal('reportModal')">+ Add Report / Scan</button>`+
+  ((db.reports||[]).length?db.reports.sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">🗂 ${r.name||'Report'}</div><div class="visit-date">${formatDate(r.date)}</div></div></div>${r.notes?`<div class="visit-notes">${r.notes}</div>`:''}${r.file?`<div class="visit-attachment">📎 ${r.fileName||'Attached'}</div>`:''}</div>`).join(''):'<p class="no-data">No reports yet</p>');
+}
+function openVisitModal(){document.getElementById('vDate').value=dateKey(new Date());openModal('visitModal')}
+async function saveVisit(){
+  const type=document.getElementById('vType').value.trim();
+  const date=document.getElementById('vDate').value;
+  if(!type||!date){showToast('Fill type and date');return}
+  const row={type,doctor:document.getElementById('vDoctor').value,date,notes:document.getElementById('vNotes').value,reminder:document.getElementById('visitReminderToggle').classList.contains('on'),file:medFileData.visit?.data||null,file_name:medFileData.visit?.name||null,record_type:'visit'};
+  if(!db.visits)db.visits=[];
+  db.visits.push({...row,fileName:row.file_name});
+  cacheDB();closeModal('visitModal');renderVisits();renderToday();showToast('Saving...');
+  ['vType','vDoctor','vDate','vNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('vFileName').textContent='';medFileData.visit=null;
+  try{await supa.upsert('bj_visits',row);showToast('Visit saved ✓')}catch(e){showToast('Saved locally')}
+}
+async function savePresc(){
+  const date=document.getElementById('pDate').value;if(!date){showToast('Add date');return}
+  const row={type:'Prescription',doctor:document.getElementById('pDoctor').value,date,notes:document.getElementById('pNotes').value,file:medFileData.presc?.data||null,file_name:medFileData.presc?.name||null,record_type:'presc'};
+  if(!db.prescriptions)db.prescriptions=[];
+  db.prescriptions.push({...row,fileName:row.file_name});
+  cacheDB();closeModal('prescModal');renderPrescriptions();showToast('Saving...');
+  ['pDate','pDoctor','pNotes'].forEach(id=>document.getElementById(id).value='');medFileData.presc=null;
+  try{await supa.upsert('bj_visits',row);showToast('Prescription saved ✓')}catch(e){showToast('Saved locally')}
+}
+async function saveReport(){
+  const date=document.getElementById('rDate').value;if(!date){showToast('Add date');return}
+  const row={type:document.getElementById('rName').value||'Report',doctor:'',date,notes:document.getElementById('rNotes').value,file:medFileData.report?.data||null,file_name:medFileData.report?.name||null,record_type:'report'};
+  if(!db.reports)db.reports=[];
+  db.reports.push({...row,name:row.type,fileName:row.file_name});
+  cacheDB();closeModal('reportModal');renderReports();showToast('Saving...');
+  ['rName','rDate','rNotes'].forEach(id=>document.getElementById(id).value='');medFileData.report=null;
+  try{await supa.upsert('bj_visits',row);showToast('Report saved ✓')}catch(e){showToast('Saved locally')}
+}
+
+// ── JOURNEY ──
+function setJourneyTab(tab,btn){
+  ['journeyWeight','journeyGallery','journeySummary'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('journey'+tab.charAt(0).toUpperCase()+tab.slice(1)).style.display='block';
+  document.querySelectorAll('#pageJourney .gtab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(tab==='weight')renderWeight();
+  if(tab==='gallery')renderGallery();
+  if(tab==='summary')renderSummary();
+}
+
+async function saveWeight(){
+  const date=document.getElementById('wDate').value;
+  const val=parseFloat(document.getElementById('wVal').value);
+  if(!date||!val){showToast('Fill date and weight');return}
+  if(!db.weights)db.weights=[];
+  const ei=db.weights.findIndex(w=>w.date===date);
+  const existingId=ei>=0?db.weights[ei].id:null;
+  if(ei>=0)db.weights[ei].val=val;else db.weights.push({date,val});
+  db.weights.sort((a,b)=>a.date.localeCompare(b.date));
+  cacheDB();closeModal('weightModal');renderWeight();showToast('Saving...');
+  try{await supa.upsert('bj_weights',{date,val,...(existingId?{id:existingId}:{})});showToast('Weight logged ✓')}catch(e){showToast('Saved locally')}
+}
+
+function renderWeight(){
+  const el=document.getElementById('journeyWeight');if(!el)return;
+  const weights=db.weights||[];
+  const first=weights[0]?.val||null,last=weights[weights.length-1]?.val||null;
+  const gain=first&&last?(last-first).toFixed(1):null;
+  el.innerHTML=`
+    <div class="journey-summary">
+      <div class="journey-stat-card"><div class="journey-stat-val">${first||'--'}</div><div class="journey-stat-label">Starting (kg)</div></div>
+      <div class="journey-stat-card"><div class="journey-stat-val">${last||'--'}</div><div class="journey-stat-label">Current (kg)</div></div>
+      <div class="journey-stat-card"><div class="journey-stat-val">${gain!==null?(gain>0?'+':'')+gain:'--'}</div><div class="journey-stat-label">Gained (kg)</div></div>
+    </div>
+    <div class="chart-wrap"><div class="chart-title">Weight trend</div><div class="mini-chart"><canvas id="weightCanvas"></canvas></div></div>
+    <button class="add-btn" onclick="openModal('weightModal');document.getElementById('wDate').value='${dateKey(new Date())}'">+ Log weight</button>
+    <div class="section-title">History</div>
+    <div>${weights.length?[...weights].reverse().map((w,i,arr)=>{const prev=arr[i+1];const diff=prev?(w.val-prev.val).toFixed(1):null;return`<div class="weight-log-item"><span class="weight-log-date">${formatDate(w.date)}</span><div style="display:flex;align-items:center;gap:7px">${diff?`<span class="weight-log-diff ${diff>0?'up':'down'}">${diff>0?'+':''}${diff} kg</span>`:''}<span class="weight-log-val">${w.val} kg</span></div></div>`}).join(''):'<p class="no-data">No weight logged yet</p>'}</div>`;
+  setTimeout(()=>drawChart(weights),50);
+}
+
+function drawChart(weights){
+  const canvas=document.getElementById('weightCanvas');if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth||320,H=110;
+  canvas.width=W*2;canvas.height=H*2;canvas.style.width=W+'px';canvas.style.height=H+'px';
+  ctx.scale(2,2);ctx.clearRect(0,0,W,H);
+  if(weights.length<2){ctx.fillStyle='#A8889A';ctx.font='11px sans-serif';ctx.textAlign='center';ctx.fillText('Log more entries to see chart',W/2,H/2);return}
+  const pad={t:8,b:18,l:28,r:8},cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const vals=weights.map(w=>w.val);
+  const minV=Math.min(...vals)-.5,maxV=Math.max(...vals)+.5;
+  const xS=cW/(weights.length-1),yS=cH/(maxV-minV);
+  const px=i=>pad.l+i*xS,py=v=>pad.t+cH-(v-minV)*yS;
+  ctx.strokeStyle='#FBDDE4';ctx.lineWidth=1;
+  for(let i=0;i<=3;i++){const y=pad.t+(cH/3)*i;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke()}
+  ctx.fillStyle='#A8889A';ctx.font='8px sans-serif';ctx.textAlign='right';
+  for(let i=0;i<=2;i++){const v=minV+(maxV-minV)*(1-i/2);ctx.fillText(v.toFixed(1),pad.l-3,pad.t+(cH/2)*i+3)}
+  const g=ctx.createLinearGradient(0,pad.t,0,pad.t+cH);
+  g.addColorStop(0,'rgba(232,116,138,.25)');g.addColorStop(1,'rgba(232,116,138,.02)');
+  ctx.beginPath();ctx.moveTo(px(0),py(weights[0].val));
+  weights.forEach((w,i)=>{if(i>0)ctx.lineTo(px(i),py(w.val))});
+  ctx.lineTo(px(weights.length-1),pad.t+cH);ctx.lineTo(px(0),pad.t+cH);
+  ctx.closePath();ctx.fillStyle=g;ctx.fill();
+  ctx.beginPath();ctx.strokeStyle='#E8748A';ctx.lineWidth=2;ctx.lineJoin='round';
+  weights.forEach((w,i)=>{i===0?ctx.moveTo(px(i),py(w.val)):ctx.lineTo(px(i),py(w.val))});
+  ctx.stroke();
+  weights.forEach((w,i)=>{ctx.beginPath();ctx.arc(px(i),py(w.val),3,0,Math.PI*2);ctx.fillStyle='#E8748A';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke()});
+}
+
+function renderGallery(){
+  const el=document.getElementById('journeyGallery');if(!el)return;
+  const gallery=db.gallery||{};
+  const keys=Object.keys(gallery).sort().reverse();
+  if(!keys.length){el.innerHTML='<div class="no-data" style="padding:40px 20px"><div style="font-size:48px">📷</div><div>No photos yet</div><div style="font-size:12px;margin-top:6px">Add photos in daily log</div></div>';return}
+  const byMonth={};
+  keys.forEach(k=>{const m=k.substring(0,7);if(!byMonth[m])byMonth[m]=[];byMonth[m].push(k)});
+  el.innerHTML=Object.entries(byMonth).map(([month,dates])=>{
+    const label=new Date(month+'-01').toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+    const items=dates.flatMap(date=>(gallery[date]||[]).map(src=>({src,date})));
+    return`<div class="gallery-month"><div class="gallery-month-label">${label}</div><div class="gallery-grid">${items.map(item=>`<div class="gallery-item" onclick="openLightbox('${item.src}','${item.date}')"><img src="${item.src}" loading="lazy"><span class="gallery-date">${item.date.slice(5)}</span></div>`).join('')}</div></div>`;
+  }).join('');
+}
+function openLightbox(src,date){
+  document.getElementById('lightboxImg').src=src;
+  document.getElementById('lightboxDate').textContent=formatDate(date);
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open')}
+document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)closeLightbox()});
+
+function renderSummary(){
+  const el=document.getElementById('journeySummary');if(!el)return;
+  const week=calcWeek(START_DATE);
+  const weekNums=[];for(let i=Math.max(1,week-3);i<=week;i++)weekNums.push(i);
+  el.innerHTML=`<div class="section-title">Weekly analysis</div>
+  <div class="summary-week-selector">${weekNums.map(w=>`<button class="swk-pill ${w===week?'active':''}" onclick="renderSummaryWeek(${w},this)">Wk ${w}</button>`).join('')}</div>
+  <div id="summaryContent"></div>
+  <button class="export-btn" onclick="exportCSV()">📥 Export all data (CSV)</button>`;
+  renderSummaryWeek(week,null);
+}
+
+function renderSummaryWeek(w,btn){
+  if(btn){document.querySelectorAll('.swk-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+  const weekStart=new Date(START_DATE);weekStart.setDate(weekStart.getDate()+(w-1)*7);
+  const days=[];for(let i=0;i<7;i++){const d=new Date(weekStart);d.setDate(d.getDate()+i);days.push(dateKey(d))}
+  const logs=days.map(d=>db.logs[d]).filter(Boolean);
+  const yogaDays=logs.filter(l=>l.yoga_done===true).length;
+  const exDays=logs.filter(l=>l.exercise_done===true).length;
+  const logDays=logs.length;
+  const avgSleep=logs.length?Math.round(logs.reduce((s,l)=>s+(l.sleep||0),0)/logs.length):0;
+  const avgScreen=logs.filter(l=>l.screentime).length?Math.round(logs.filter(l=>l.screentime).reduce((s,l)=>s+(l.screentime||0),0)/logs.filter(l=>l.screentime).length):0;
+  const moods=logs.flatMap(l=>l.mood?l.mood.split(','):[]).filter(Boolean);
+  const moodCount={};moods.forEach(m=>{moodCount[m]=(moodCount[m]||0)+1});
+  const topMood=Object.entries(moodCount).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('summaryContent').innerHTML=`
+    <div class="summary-grid">
+      <div class="summary-metric"><div class="summary-metric-val">${logDays}/7</div><div class="summary-metric-label">Days logged</div></div>
+      <div class="summary-metric"><div class="summary-metric-val">${yogaDays}/7</div><div class="summary-metric-label">Yoga days</div></div>
+      <div class="summary-metric"><div class="summary-metric-val">${exDays}/7</div><div class="summary-metric-label">Exercise days</div></div>
+      <div class="summary-metric"><div class="summary-metric-val">${avgSleep||'--'}</div><div class="summary-metric-label">Avg sleep (hrs)</div></div>
+      <div class="summary-metric"><div class="summary-metric-val">${avgScreen||'--'}</div><div class="summary-metric-label">Avg screen (mins)</div></div>
+      <div class="summary-metric"><div class="summary-metric-val">${topMood?topMood[0]:'--'}</div><div class="summary-metric-label">Top mood</div></div>
+    </div>`;
+}
+
+function exportCSV(){
+  const logs=Object.values(db.logs||{});
+  if(!logs.length){showToast('No data to export');return}
+  const headers=['Date','Mood','Vomits','Sleep hrs','Kicks','Cravings','Journal','Weight','Outside food','Outside food text','Screen time','Wake time','Sleep time','Yoga done','Exercise done','Exercise type','Exercise mins'];
+  const rows=logs.sort((a,b)=>a.date_key?.localeCompare(b.date_key||'')||0).map(l=>[
+    l.date_key||l.date||'',l.mood||'',l.vomit||0,l.sleep||'',l.kicks||0,
+    (l.cravings||'').replace(/,/g,';'),(l.journal||'').replace(/,/g,';').replace(/\n/g,' '),
+    l.weight||'',l.outside_food?'Yes':'No',(l.outside_food_text||'').replace(/,/g,';'),
+    l.screentime||'',l.wake_time||'',l.sleep_time||'',
+    l.yoga_done===true?'Yes':l.yoga_done===false?'No':'',
+    l.exercise_done===true?'Yes':l.exercise_done===false?'No':'',
+    (l.exercise_type||'').replace(/,/g,';'),l.exercise_mins||''
+  ]);
+  const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='baby_journal_export.csv';a.click();
+  URL.revokeObjectURL(url);showToast('Export downloaded ✓');
+}
+
+// ── SQL for new columns (run in Supabase SQL Editor):
+/*
+ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS outside_food boolean;
+ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS outside_food_text text;
+ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS screentime int;
+ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS wake_time text;
+ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS sleep_time text;
+ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS yoga_done boolean;
+ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS exercise_done boolean;
+ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS exercise_type text;
+ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS exercise_mins int;
+ALTER TABLE bj_visits ADD COLUMN IF NOT EXISTS record_type text DEFAULT 'visit';
+*/
+</script>
+</body>
+</html>
