@@ -179,7 +179,9 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .wtab-btn.active{background:var(--rose);border-color:var(--rose);color:var(--white)}
 .yoga-pose-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow-card);margin-bottom:10px}
 .yoga-pose-header{display:flex;align-items:center;gap:12px;margin-bottom:0}
-.yoga-anim{width:56px;height:56px;flex-shrink:0}
+.yoga-anim{width:80px;height:80px;flex-shrink:0}
+.yt-btn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 14px;background:#FF0000;border:none;border-radius:20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;text-decoration:none}
+.yt-btn:hover{opacity:.88}
 .yoga-pose-name{font-size:14px;font-weight:600;color:var(--ink)}
 .yoga-pose-benefit{font-size:11px;color:var(--ink-light);margin-top:2px}
 .yoga-trimester-pills{display:flex;gap:5px;margin-top:5px}
@@ -693,24 +695,24 @@ function getGSForWeek(w){const idx=Math.floor(((w-1)/40)*garbhSanskar.length);re
 
 // ── DOS DONTS ──
 const dosDonts={
-  t1:{dos:['ताज़ा घर का खाना खाएँ, छोटे-छोटे बार-बार खाएँ','खूब पानी पिएँ — दिन में 2.5-3 लीटर','फोलिक एसिड और प्रीनेटल विटामिन रोज़ लें','हल्की सैर करें — दिन में 20-30 मिनट','अच्छी नींद लें, जल्दी सोएँ'],donts:['कच्चा पपीता और अनानास बिल्कुल न खाएँ','जंक फूड और बाहर का तला हुआ खाना न खाएँ','खुद से कोई दवा न लें — डॉक्टर से पूछें','तनाव और भारी काम से बचें','सौना और बहुत गर्म पानी से स्नान न करें']},
-  t2:{dos:['हर भोजन में प्रोटीन लें — दाल, पनीर, अंडा','कैल्शियम के लिए रागी, दही, तिल का सेवन करें','योगा और हल्का व्यायाम जारी रखें','शिशु की हलचल नोट करना शुरू करें (16 हफ्ते के बाद)','एनोमली स्कैन समय पर कराएँ (18-20 हफ्ते)'],donts:['पारे वाली मछली न खाएँ (king mackerel, swordfish)','अनपाश्चराइज़्ड दूध और सॉफ्ट चीज़ से बचें','कैफीन सीमित रखें — दिन में एक कप से ज़्यादा नहीं','भारी सामान न उठाएँ, ज़्यादा देर खड़े न रहें','देर रात तक जागना और स्क्रीन टाइम कम करें']},
-  t3:{dos:['आयरन युक्त भोजन लें — मुनगे की पत्तियाँ, राजमा, रागी','हर घंटे थोड़ी देर चलें — पैर की सूजन कम होगी','केगल व्यायाम रोज़ करें — प्रसव में मदद मिलेगी','बर्थ प्लान तैयार करें, अस्पताल का बैग पैक करें','दाईं करवट सोएँ — शिशु को रक्त प्रवाह बेहतर होता है'],donts:['नमक और मसालेदार खाना कम करें — सूजन बढ़ती है','कच्ची सब्जियाँ कम खाएँ — गैस हो सकती है','लंबी यात्रा और हवाई जहाज़ से बचें (34 हफ्ते के बाद)','पीठ के बल न सोएँ — नसों पर दबाव पड़ता है','शिशु की हलचल कम लगे तो तुरंत डॉक्टर को बुलाएँ']},
+  t1:{dos:['Eat fresh home-cooked meals in small, frequent portions','Drink 2.5–3 litres of water daily — stay well hydrated','Take folic acid and prenatal vitamins every single day','Go for a gentle 20–30 minute walk daily','Sleep early and get 8+ hours of rest'],donts:['No raw papaya or raw pineapple — avoid completely','Avoid junk food and deep-fried outside food','Never self-medicate — always check with your doctor first','Avoid stress and heavy lifting or strenuous work','No saunas or very hot baths — can raise body temperature']},
+  t2:{dos:['Include protein in every meal — dal, paneer, eggs','Eat calcium-rich foods: ragi, curd, sesame seeds daily','Continue prenatal yoga and light exercise','Start tracking baby movements from week 16 onward','Schedule your anomaly scan at 18–20 weeks'],donts:['Avoid high-mercury fish (king mackerel, swordfish, tuna)','Avoid unpasteurised milk and soft cheeses','Limit caffeine to no more than one cup per day','Avoid heavy lifting and prolonged standing','Reduce late-night screen time and avoid staying up past 11pm']},
+  t3:{dos:['Eat iron-rich foods: drumstick leaves, rajma, ragi, spinach','Walk a little every hour — helps reduce leg swelling','Do Kegel exercises daily — builds strength for labour','Prepare your birth plan and pack your hospital bag','Sleep on your left side — improves blood flow to baby'],donts:['Cut back on salt and spicy food — worsens swelling','Avoid long travel or flying after 34 weeks','Do not sleep flat on your back — puts pressure on blood vessels','Limit raw vegetables — can cause gas and bloating','If baby movements reduce noticeably, call your doctor immediately']},
 };
 function getDosForWeek(w){return w<=12?dosDonts.t1:w<=27?dosDonts.t2:dosDonts.t3}
 
 // ── WEEK GUIDE ──
 const weekGuide={
-  4:{baby:'हृदय की धड़कन शुरू हो रही है। भ्रूण एक लहसुन की कली जितना छोटा है।',mum:'थकान और मिचली शुरू हो सकती है। हार्मोन तेजी से बढ़ रहे हैं।',test:'पहली डॉक्टर विज़िट — ब्लड ग्रुप, थायरॉयड, CBC करवाएँ।',food:'मेथी के पत्ते, मसूर दाल, संतरा — फोलेट के लिए।',warning:'भारी रक्तस्राव या तेज़ ऐंठन हो तो तुरंत डॉक्टर को दिखाएँ।'},
-  8:{baby:'सभी मुख्य अंग बनना शुरू हो गए हैं। उँगलियाँ अलग हो रही हैं। दिल की धड़कन अल्ट्रासाउंड में सुनाई देती है।',mum:'मिचली सबसे ज़्यादा इस समय होती है। थकान और सीने में जलन सामान्य है।',test:'पहला अल्ट्रासाउंड — दिल की धड़कन की पुष्टि।',food:'अदरक की चाय मिचली में राहत देती है। नींबू सूंघने से भी मदद मिलती है।',warning:'मिचली इतनी ज़्यादा कि कुछ भी नहीं खा पा रही हैं? डॉक्टर से बात करें।'},
-  12:{baby:'सभी अंग जगह पर हैं। अब शिशु का विकास मुख्य रूप से आकार में होगा।',mum:'पहली तिमाही खत्म होने वाली है। मिचली धीरे-धीरे कम होगी।',test:'NT Scan — 11-13 हफ्ते के बीच। डबल मार्कर टेस्ट।',food:'रागी, तिल, पनीर — कैल्शियम के लिए अब ज़रूरी है।',warning:'यदि पहले अल्ट्रासाउंड नहीं हुआ तो इस सप्ताह करवाएँ।'},
-  16:{baby:'शिशु अब हाथ-पैर हिला सकता है। चेहरे के भाव बना सकता है।',mum:'पेट दिखने लगा होगा। ऊर्जा वापस आ रही है — गोल्डन पीरियड शुरू।',test:'यदि NT Scan नहीं हुआ तो अब Triple Marker Test करवाएँ।',food:'आयरन के लिए: राजमा, चना, पालक। साथ में नींबू निचोड़ें।',warning:'16वें हफ्ते के बाद शिशु की हलचल नोट करना शुरू करें।'},
-  20:{baby:'शिशु अब आपकी आवाज़ सुन सकता है। बाल और भौंहें बन रही हैं।',mum:'पेट पूरी तरह दिखने लगा है। पीठ दर्द शुरू हो सकता है।',test:'Anomaly Scan — सबसे महत्वपूर्ण अल्ट्रासाउंड। 18-20 हफ्ते में।',food:'ओमेगा-3 के लिए: अखरोट, अलसी। दिमाग का विकास तेज़ है।',warning:'Anomaly Scan में यदि कोई भी असामान्यता दिखे तो फीटल मेडिसिन विशेषज्ञ से मिलें।'},
-  24:{baby:'फेफड़े surfactant बनाना शुरू कर रहे हैं। शिशु प्रकाश महसूस कर सकता है।',mum:'पैरों में सूजन और हार्टबर्न सामान्य है। नींद में परेशानी हो सकती है।',test:'Glucose Tolerance Test (GTT) — 24-28 हफ्ते में। Gestational Diabetes जाँचना ज़रूरी।',food:'चीनी और मीठे पेय कम करें। Gestational Diabetes का खतरा इस समय ज़्यादा।',warning:'बहुत तेज़ सिरदर्द, आँखों में धुंधलापन, पेट में दर्द — Pre-eclampsia के लक्षण हो सकते हैं।'},
-  28:{baby:'आँखें खुल-बंद कर सकता है। वजन तेज़ी से बढ़ रहा है।',mum:'तीसरी तिमाही शुरू। साँस फूलना और पीठ दर्द बढ़ेगा।',test:'Growth Scan। CBC फिर से — एनीमिया जाँचें।',food:'मुनगे की पत्तियाँ, रागी, जामुन — आयरन और कैल्शियम दोनों।',warning:'28 हफ्ते के बाद रोज़ शाम को शिशु की हलचल गिनें — 2 घंटे में 10 बार होनी चाहिए।'},
-  32:{baby:'वज़न लगभग 1.7 किलो। हड्डियाँ मज़बूत हो रही हैं।',mum:'ब्रेक्सटन हिक्स (झूठे दर्द) शुरू हो सकते हैं। नींद मुश्किल हो रही है।',test:'Growth Scan — शिशु की स्थिति देखें।',food:'प्रोटीन हर भोजन में। हल्दी का दूध रात को — anti-inflammatory।',warning:'यदि शिशु अभी भी breech position में है तो चिंता न करें — 36 हफ्ते तक मुड़ सकता है।'},
-  36:{baby:'फेफड़े लगभग परिपक्व। शिशु का वज़न 3 किलो के करीब।',mum:'Lightening शुरू हो सकता है — शिशु नीचे उतर रहा है। साँस आसान हो सकती है।',test:'Growth Scan — Position और Fluid Level। GBS Screen।',food:'हल्का, बार-बार खाएँ। पेट के लिए जगह कम है।',warning:'37 हफ्ते के बाद कभी भी प्रसव शुरू हो सकता है — अस्पताल का बैग तैयार रखें।'},
-  40:{baby:'पूर्ण रूप से विकसित। आने के लिए तैयार!',mum:'डिलीवरी कभी भी हो सकती है। Braxton Hicks बढ़ रहे हैं।',test:'डॉक्टर हर हफ्ते देखेंगे।',food:'खजूर खाएँ — शोध में पाया गया है कि यह cervix को तैयार करने में मदद करता है।',warning:'पानी टूट जाए, नियमित दर्द आए, या हलचल कम हो — तुरंत अस्पताल जाएँ।'},
+  4:{baby:"The heart is beginning to beat. The embryo is about the size of a poppy seed. The neural tube — which becomes the brain and spinal cord — is forming.",mum:"Fatigue and nausea may begin. Hormones are surging rapidly. Tender breasts and mild cramping are normal.",test:"First doctor visit — blood group, thyroid, CBC, urine test. Start prenatal vitamins if you haven't.",food:"Fenugreek leaves, masoor dal, orange — all rich in folate which is critical right now.",warning:"Heavy bleeding or severe cramping is not normal — see your doctor immediately."},
+  8:{baby:"All major organs are beginning to form. Fingers are separating. The heartbeat is now audible on ultrasound — a beautiful moment.",mum:"Nausea tends to peak around week 8–10. Fatigue and heartburn are common. Rest as much as you can.",test:"Dating scan — confirms heartbeat and due date. Your most important first scan.",food:"Ginger tea and dry crackers help with nausea. Smelling lemon or cardamom can provide quick relief.",warning:"If nausea is so severe you cannot keep any food or water down (hyperemesis), see your doctor — it is treatable."},
+  12:{baby:"All organs are now in place. From here, growth is the primary focus. Baby can yawn and hiccup.",mum:"First trimester is almost over. Nausea should start easing. Energy may slowly return.",test:"NT Scan at 11–13 weeks. Double Marker Test (blood test for chromosomal screening).",food:"Ragi, sesame seeds, paneer — calcium is now essential as bone formation begins in earnest.",warning:"If your first ultrasound has not happened yet, do it this week."},
+  16:{baby:"Baby can now move arms and legs and make facial expressions. The skeletal system is hardening.",mum:"Your bump is becoming visible. Energy is returning — this is the start of the golden second trimester.",test:"If NT Scan was missed, get Triple Marker Test now.",food:"Iron sources: rajma, chana, spinach. Always squeeze lemon on top — Vitamin C doubles iron absorption.",warning:"From week 16 onward, start noticing baby's movements. You should feel flutters soon."},
+  20:{baby:"Baby can now hear your voice — talk and sing to them. Hair and eyebrows are forming. Baby is swallowing amniotic fluid.",mum:"Bump is fully visible. Back pain may begin. Some people experience round ligament pain.",test:"Anomaly Scan (18–20 weeks) — the most comprehensive ultrasound. Checks all organs and baby's anatomy.",food:"Omega-3 for brain development: walnuts, flaxseed, eggs. Brain is growing fastest right now.",warning:"If the anomaly scan flags anything, see a fetal medicine specialist — most findings are manageable."},
+  24:{baby:"Lungs are beginning to produce surfactant. Baby can sense light and respond to loud sounds.",mum:"Leg swelling and heartburn are normal. Sleep may become harder as the bump grows.",test:"Glucose Tolerance Test (GTT) at 24–28 weeks to screen for gestational diabetes. Do not skip this.",food:"Reduce sugary drinks and refined carbs. Risk of gestational diabetes is highest around now.",warning:"Severe headache, blurry vision, or sudden swelling in hands/face — these can be signs of pre-eclampsia. Call your doctor."},
+  28:{baby:"Baby can open and close eyes. Weight is gaining rapidly — about 1kg by now.",mum:"Third trimester begins. Breathlessness and back pain will increase. Rest more intentionally.",test:"Growth Scan. Repeat CBC to check for anaemia — very common at this stage.",food:"Drumstick leaves (moringa), ragi, and jamun are exceptional for iron and calcium together.",warning:"From 28 weeks onward, count baby kicks every evening — 10 kicks in 2 hours is the target. Less than that, call your doctor."},
+  32:{baby:"Baby weighs about 1.7kg. Bones are hardening. Baby is practicing breathing movements.",mum:"Braxton Hicks contractions may begin — tightening sensations that are not real labour. Sleep is becoming harder.",test:"Growth Scan — checks baby's position, growth, and amniotic fluid levels.",food:"Protein at every meal. Turmeric milk at night — reduces inflammation and supports sleep.",warning:"If baby is still in breech position, do not worry yet — most babies turn by 36 weeks."},
+  36:{baby:"Lungs are nearly mature. Baby weighs close to 3kg and is gaining about 28g per day.",mum:"'Lightening' may happen — baby drops lower into the pelvis. Breathing may feel easier.",test:"Growth Scan — position and fluid level check. Group B Strep (GBS) swab.",food:"Eat small, frequent meals — the stomach has very little room now. Avoid large portions.",warning:"From 37 weeks, labour can begin any time. Hospital bag should be packed and ready."},
+  40:{baby:"Fully developed and ready to meet you. Baby weighs approximately 3.4–3.6kg.",mum:"Delivery is imminent. Braxton Hicks are intensifying. Cervix is softening and preparing.",test:"Weekly monitoring with your doctor until delivery.",food:"Dates have research support for cervical ripening — 6 dates a day from 36 weeks onward.",warning:"Water breaking, regular tightening contractions, or reduced baby movement — go to hospital immediately."},
 };
 function getWeekGuide(w){
   const keys=Object.keys(weekGuide).map(Number).sort((a,b)=>a-b);
@@ -721,25 +723,25 @@ function getWeekGuide(w){
 
 // ── FOOD DATA ──
 const foodData={
-  1:{eat:['🥦 मेथी / पालक','🍊 संतरा / आँवला','🥚 अंडा (उबला)','🫘 मसूर दाल / राजमा','🥛 दूध / दही','🥜 मूँगफली / बादाम','🫐 बेरीज़','🌾 साबुत अनाज','🧄 लहसुन, अदरक','🍋 नींबू'],avoid:['🍈 कच्चा पपीता बिल्कुल नहीं','🍍 कच्चा अनानास नहीं','🧀 बिना पाश्चुरीकृत पनीर','🍷 शराब — पूरी तरह','☕ कैफीन सीमित','🌶️ बहुत मसालेदार खाना','🍟 बाहर का तला हुआ','🥩 कच्चा / कम पका माँस'],nutrients:[{icon:'🌿',name:'फोलिक एसिड',why:'तंत्रिका तंत्र के विकास के लिए। मेथी, राजमा, और फोर्टिफाइड अनाज से 400-800 mcg रोज़ लें।'},{icon:'🩸',name:'आयरन',why:'रक्त की मात्रा बढ़ रही है। पालक, रागी, राजमा खाएँ — साथ में नींबू निचोड़ें।'},{icon:'🥛',name:'कैल्शियम',why:'हड्डियों के शुरुआती निर्माण के लिए। दूध, दही, तिल और रागी उत्तम हैं।'}]},
-  2:{eat:['🐟 अलसी / अखरोट (ओमेगा-3)','🥦 हरी पत्तेदार सब्ज़ियाँ','🍠 शकरकंद','🥑 एवोकाडो','🫘 सभी दालें','🌾 ओट्स / रागी','🧄 अदरक (मिचली के लिए)','🍓 विटामिन-C फल','🥕 गाजर','🧈 घी (सीमित मात्रा में)'],avoid:['🐟 पारे वाली मछली','🥩 कम पका माँस','🧀 सॉफ्ट चीज़','☕ कैफीन सीमित','🫙 पैकेज्ड / प्रिज़र्वेटिव युक्त खाना','🧂 ज़्यादा नमक','🍭 ज़्यादा मीठा'],nutrients:[{icon:'🦴',name:'कैल्शियम + विटामिन D',why:'शिशु की हड्डियाँ और दाँत तेज़ी से बन रहे हैं। रागी 100g में 364mg कैल्शियम।'},{icon:'🧠',name:'DHA (ओमेगा-3)',why:'मस्तिष्क और आँखों का विकास। अखरोट, अलसी, मछली।'},{icon:'🩸',name:'आयरन',why:'खून दोगुना हो रहा है। नींबू के साथ आयरन का अवशोषण बढ़ता है।'}]},
-  3:{eat:['🥛 उच्च कैल्शियम खाद्य','🫘 हर भोजन में प्रोटीन','🌾 जटिल कार्बोहाइड्रेट','🥦 मैग्नीशियम युक्त सब्ज़ियाँ','🍌 केला (पोटेशियम)','🐟 अखरोट / अलसी','💧 पानी युक्त फल','🍠 फाइबर युक्त सब्जियाँ','🌰 मेवे और बीज','🌿 हल्दी का दूध'],avoid:['🧂 ज़्यादा नमक (सूजन बढ़ती है)','☕ कैफीन न्यूनतम','🌶️ बहुत मसालेदार (हार्टबर्न)','🍕 बड़े भोजन — छोटे-छोटे खाएँ','🥩 कच्चा खाना','🍟 तला-भुना खाना'],nutrients:[{icon:'🦴',name:'कैल्शियम',why:'अंतिम हफ्तों में हड्डियाँ बन रही हैं। बादाम, तिल, दूध।'},{icon:'💪',name:'प्रोटीन',why:'शिशु की मांसपेशियाँ और प्रसव की तैयारी। अंडा, दाल, पनीर।'},{icon:'⚡',name:'मैग्नीशियम',why:'पैर की ऐंठन कम करता है। कद्दू के बीज, बादाम, काली चॉकलेट।'}]}
+  1:{eat:['🥦 Fenugreek / Spinach','🍊 Orange / Amla (Indian gooseberry)','🥚 Eggs (boiled)','🫘 Masoor dal / Rajma','🥛 Milk / Curd / Yoghurt','🥜 Peanuts / Almonds','🫐 Berries','🌾 Whole grains / Oats','🧄 Garlic, Ginger','🍋 Lemon / Citrus fruits'],avoid:['🍈 Raw papaya — avoid completely','🍍 Raw pineapple — avoid completely','🧀 Unpasteurised cheese / soft cheese','🍷 Alcohol — completely off limits','☕ Limit caffeine to 1 cup/day','🌶️ Very spicy food (worsens nausea)','🍟 Deep-fried outside food','🥚 Raw or undercooked eggs'],nutrients:[{icon:'🌿',name:'Folic Acid',why:'Critical for neural tube development. Aim for 400–800 mcg daily from fenugreek, rajma, and fortified cereals.'},{icon:'🩸',name:'Iron',why:'Blood volume is increasing. Eat spinach, ragi, rajma — squeeze lemon on top for better absorption.'},{icon:'🥛',name:'Calcium',why:'Early bone formation is starting. Milk, curd, sesame seeds, and ragi are excellent sources.'}]},
+  2:{eat:['🥜 Walnuts / Flaxseed (Omega-3)','🥦 Dark leafy greens','🍠 Sweet potato','🥑 Avocado','🫘 All lentils and legumes','🌾 Oats / Ragi','🧄 Ginger (great for nausea)','🍓 Vitamin-C rich fruits','🥕 Carrots','🧈 Ghee (in moderation)'],avoid:['🐟 High-mercury fish (swordfish, king mackerel)','🥩 Undercooked or raw meat','🧀 Soft or unpasteurised cheese','☕ Limit caffeine','🫙 Packaged / preservative-heavy food','🧂 Excess salt','🍭 Excess sugar and sweets'],nutrients:[{icon:'🦴',name:'Calcium + Vitamin D',why:"Baby's bones and teeth are forming rapidly. Ragi has 364mg calcium per 100g — one of the richest sources."},{icon:'🧠',name:'DHA (Omega-3)',why:'Brain and eye development peaks now. Walnuts, flaxseed, and eggs are excellent plant-based sources.'},{icon:'🩸',name:'Iron',why:'Blood volume nearly doubles during pregnancy. Pair iron foods with lemon/Vitamin C for maximum absorption.'}]},
+  3:{eat:['🥛 High-calcium foods daily','🫘 Protein in every meal','🌾 Complex carbohydrates','🥦 Magnesium-rich vegetables','🍌 Banana (potassium for cramps)','🥜 Walnuts / Flaxseed','💧 Water-rich fruits (cucumber, watermelon)','🍠 Fibre-rich vegetables','🌰 Nuts and seeds','🌿 Turmeric milk at night'],avoid:['🧂 Excess salt — worsens swelling','☕ Minimal caffeine only','🌶️ Very spicy food (triggers heartburn)','🍕 Large meals — eat small portions frequently','🥩 Raw or undercooked food','🍟 Deep-fried or heavy food'],nutrients:[{icon:'🦴',name:'Calcium',why:'Baby is building bone mass rapidly in the final weeks. Almonds, sesame seeds, and milk every day.'},{icon:'💪',name:'Protein',why:"Supports baby's muscle growth and prepares your body for labour. Eggs, dal, paneer at every meal."},{icon:'⚡',name:'Magnesium',why:'Prevents muscle cramps and supports sleep quality. Pumpkin seeds, almonds, and dark chocolate.'}]}
 };
 
 // ── YOGA DATA ──
 const yogaPoses=[
-  {id:'tadasana',name:'Tadasana (Mountain Pose)',benefit:'मुद्रा सुधारता है, पीठ दर्द कम करता है',tri:[1,2,3],steps:['सीधे खड़ी हों, पैर कूल्हे की चौड़ाई पर','भुजाएँ बगल में, साँस लें और रीढ़ लंबी करें','कंधे पीछे और नीचे करें','30 सेकंड रुकें, सामान्य साँस लें'],anim:'breathe'},
-  {id:'baddha',name:'Baddha Konasana (Butterfly)',benefit:'कूल्हे खुलते हैं, श्रोणि लचीली होती है',tri:[1,2,3],steps:['बैठें, पैरों के तलवे आपस में मिलाएँ','घुटनों को धीरे-धीरे नीचे की ओर दबाएँ','रीढ़ सीधी रखें','1-2 मिनट रुकें'],anim:'sway'},
-  {id:'cat_cow',name:'Marjaryasana (Cat-Cow)',benefit:'पीठ दर्द कम करता है, शिशु की position सुधारता है',tri:[1,2,3],steps:['चारों हाथ-घुटनों पर आएँ','साँस लेते हुए — पेट नीचे, सिर ऊपर (Cow)','साँस छोड़ते हुए — पीठ ऊपर, ठुड्डी छाती में (Cat)','10 बार दोहराएँ'],anim:'tilt'},
-  {id:'virabhadra',name:'Virabhadrasana (Warrior I)',benefit:'पैर मज़बूत होते हैं, स्थिरता बढ़ती है',tri:[1,2],steps:['एक पैर आगे, दूसरा पीछे करें','आगे के घुटने को 90° मोड़ें','भुजाएँ ऊपर उठाएँ','30 सेकंड रुकें, दूसरी तरफ दोहराएँ'],anim:'stretch'},
-  {id:'utkatasana',name:'Utkatasana (Chair Pose)',benefit:'जाँघें और श्रोणि मज़बूत होती है',tri:[1,2],steps:['पैर कूल्हे की चौड़ाई पर खड़ी हों','धीरे-धीरे बैठने की स्थिति में आएँ (कुर्सी जैसी)','भुजाएँ आगे या ऊपर करें','20-30 सेकंड रुकें'],anim:'squat'},
-  {id:'malasana',name:'Malasana (Squat)',benefit:'श्रोणि खुलती है, प्रसव में मदद करती है',tri:[2,3],steps:['पैर कंधे की चौड़ाई से थोड़ा बाहर करें','धीरे-धीरे स्क्वाट में बैठें','हाथ नमस्कार की मुद्रा में','1-2 मिनट रुकें — सहारा ले सकती हैं'],anim:'squat'},
-  {id:'viparita',name:'Viparita Karani (Legs up wall)',benefit:'सूजन कम करता है, थकान दूर करता है',tri:[2,3],steps:['दीवार के पास लेट जाएँ','पैरों को दीवार पर ऊपर करें','बाईं करवट पर सो जाएँ बाद में','5-10 मिनट आराम करें'],anim:'float'},
-  {id:'kegel',name:'Kegel Exercise',benefit:'श्रोणि तल मज़बूत होता है, प्रसव आसान होता है',tri:[1,2,3],steps:['बैठें या लेट जाएँ','पेशाब रोकने वाली मांसपेशियाँ कसें','5-10 सेकंड रोकें','10 बार दोहराएँ — दिन में 3 बार'],anim:'kegel'},
-  {id:'pelvic_tilt',name:'Pelvic Tilt',benefit:'पीठ दर्द कम करता है, प्रसव में मदद',tri:[1,2,3],steps:['चारों हाथ-घुटनों पर आएँ','साँस छोड़ते हुए पेट अंदर खींचें','5 सेकंड रोकें','10 बार दोहराएँ'],anim:'tilt'},
-  {id:'prasarita',name:'Prasarita Padottanasana',benefit:'हैमस्ट्रिंग और कूल्हे खिंचते हैं',tri:[1,2],steps:['पैर चौड़े करके खड़ी हों','धीरे-धीरे आगे झुकें','हाथों को ज़मीन या पिंडलियों पर रखें','30 सेकंड रुकें'],anim:'stretch'},
-  {id:'parsvakonasana',name:'Parsvakonasana (Side Angle)',benefit:'कमर और पसलियाँ खुलती हैं',tri:[1,2],steps:['पैर चौड़े, एक घुटना मोड़ें','उसी तरफ झुकें, हाथ घुटने पर','दूसरा हाथ कान के पास ऊपर करें','30 सेकंड, दोनों तरफ'],anim:'sway'},
-  {id:'shavasana',name:'Shavasana (Left Side)',benefit:'गहरी विश्राम, रक्त प्रवाह बेहतर होता है',tri:[2,3],steps:['बाईं करवट लेट जाएँ','घुटनों के बीच तकिया रखें','आँखें बंद करें, साँस सामान्य करें','10-15 मिनट आराम करें'],anim:'float'},
+  {id:'tadasana',name:'Tadasana (Mountain Pose)',benefit:'Improves posture, relieves back pain, grounds the body',tri:[1,2,3],steps:['Stand tall, feet hip-width apart, arms relaxed at sides','Inhale and lengthen your spine upward','Roll shoulders back and down, open your chest','Hold 30 seconds with normal breathing, repeat 3 times'],anim:'standing',yt:'https://www.youtube.com/results?search_query=tadasana+prenatal+yoga+pregnancy'},
+  {id:'baddha',name:'Baddha Konasana (Butterfly)',benefit:'Opens hips, increases pelvic flexibility for labour',tri:[1,2,3],steps:['Sit on the floor, bring soles of feet together','Gently press knees down toward the floor','Keep spine tall, hold your feet with both hands','Hold 1-2 minutes, breathe deeply'],anim:'butterfly',yt:'https://www.youtube.com/results?search_query=butterfly+pose+baddha+konasana+prenatal+yoga'},
+  {id:'cat_cow',name:'Marjaryasana (Cat-Cow)',benefit:'Relieves back pain, encourages optimal baby positioning',tri:[1,2,3],steps:['Come onto hands and knees, wrists under shoulders','Inhale — drop belly down, lift head (Cow)','Exhale — round spine up, tuck chin (Cat)','Flow slowly between poses, 10 rounds'],anim:'catcow',yt:'https://www.youtube.com/results?search_query=cat+cow+pose+prenatal+yoga+pregnancy'},
+  {id:'virabhadra',name:'Virabhadrasana I (Warrior I)',benefit:'Strengthens legs, builds stamina for labour',tri:[1,2],steps:['Step one foot forward, back foot at 45°','Bend front knee over ankle, keep back leg straight','Raise both arms overhead, palms facing each other','Hold 30 seconds, switch sides'],anim:'warrior',yt:'https://www.youtube.com/results?search_query=warrior+pose+prenatal+yoga+pregnancy'},
+  {id:'utkatasana',name:'Utkatasana (Chair Pose)',benefit:'Strengthens thighs and pelvic floor muscles',tri:[1,2],steps:['Stand with feet hip-width apart','Bend knees and sink hips as if sitting in a chair','Extend arms forward or overhead','Hold 20-30 seconds, breathe steadily'],anim:'chair',yt:'https://www.youtube.com/results?search_query=chair+pose+utkatasana+prenatal+yoga'},
+  {id:'malasana',name:'Malasana (Garland / Deep Squat)',benefit:'Opens pelvis wide, prepares body for labour',tri:[2,3],steps:['Stand with feet wider than hips, toes turned out','Slowly lower into a deep squat','Bring palms together at chest in prayer position','Hold 1-2 minutes — use a folded blanket under heels if needed'],anim:'squat',yt:'https://www.youtube.com/results?search_query=malasana+garland+pose+prenatal+yoga'},
+  {id:'viparita',name:'Viparita Karani (Legs up the Wall)',benefit:'Reduces swelling in legs and feet, deeply restoring',tri:[2,3],steps:['Sit sideways next to a wall','Swing legs up the wall as you lower your back down','Arms relaxed at sides, palms up','Stay 5-10 minutes, then roll to left side to come out'],anim:'legswall',yt:'https://www.youtube.com/results?search_query=legs+up+wall+viparita+karani+prenatal+yoga'},
+  {id:'kegel',name:'Kegel Exercise',benefit:'Strengthens pelvic floor, eases pushing during labour',tri:[1,2,3],steps:['Sit comfortably or lie on left side','Tighten the muscles you would use to stop urine flow','Hold for 5-10 seconds, then fully release','Repeat 10 times — do 3 sets daily'],anim:'seated',yt:'https://www.youtube.com/results?search_query=kegel+exercises+pregnancy+prenatal'},
+  {id:'pelvic_tilt',name:'Pelvic Tilt (on all fours)',benefit:'Relieves lower back pain, strengthens core gently',tri:[1,2,3],steps:['Come onto hands and knees','Exhale and draw your belly gently inward and upward','Hold 5 seconds, then release completely','Repeat 10 times slowly'],anim:'catcow',yt:'https://www.youtube.com/results?search_query=pelvic+tilt+prenatal+pregnancy+exercise'},
+  {id:'prasarita',name:'Prasarita Padottanasana (Wide Leg Forward Fold)',benefit:'Stretches hamstrings and inner thighs, calms the mind',tri:[1,2],steps:['Stand with feet wide apart (3-4 feet)','Inhale and lengthen spine, exhale fold forward gently','Place hands on floor, shins, or a block','Hold 30 seconds, breathe deeply'],anim:'fold',yt:'https://www.youtube.com/results?search_query=prasarita+padottanasana+prenatal+yoga'},
+  {id:'parsvakonasana',name:'Parsvakonasana (Extended Side Angle)',benefit:'Opens the side body, strengthens legs and hips',tri:[1,2],steps:['Stand with feet wide, turn right foot out 90°','Bend right knee, lower right hand to knee or floor','Extend left arm overhead alongside your ear','Hold 30 seconds, repeat on other side'],anim:'sideangle',yt:'https://www.youtube.com/results?search_query=side+angle+pose+prenatal+yoga+pregnancy'},
+  {id:'shavasana',name:'Side-lying Shavasana (Rest Pose)',benefit:'Deep rest, improves blood flow to baby, reduces fatigue',tri:[2,3],steps:['Lie on your left side','Place a pillow between your knees and under your belly','Close your eyes, let your body completely relax','Rest for 10-15 minutes — this is yoga too'],anim:'sidelying',yt:'https://www.youtube.com/results?search_query=prenatal+shavasana+side+lying+relaxation'},
 ];
 
 function getYogaForTrimester(w){
@@ -755,10 +757,24 @@ function getRecommendedYoga(w){
 
 // ── EXERCISE DATA ──
 const exerciseData={
-  t1:[{name:'Morning Walk',desc:'प्रतिदिन 20-30 मिनट हल्की सैर। रक्त शर्करा नियंत्रित रहती है और ऊर्जा बनी रहती है। सुबह खाली पेट न जाएँ।',tags:['T1','T2','T3','20-30 मिनट']},{name:'Breathing Exercises',desc:'4 की गिनती पर साँस लें, 4 पर रोकें, 4 पर छोड़ें। दिन में 5-10 मिनट। मिचली और चिंता कम होती है।',tags:['T1','T2','T3','5-10 मिनट']},{name:'Light Stretching',desc:'गर्दन, कंधे और कमर की हल्की stretching। सुबह उठते ही 10 मिनट। मांसपेशियाँ लचीली रहती हैं।',tags:['T1','T2','T3','10 मिनट']}],
-  t2:[{name:'Supported Squats',desc:'दीवार या कुर्सी का सहारा लेकर 10-15 स्क्वाट। श्रोणि मज़बूत होती है, प्रसव आसान होता है। धीरे-धीरे करें।',tags:['T2','T3','10-15 मिनट']},{name:'Swimming / Water Aerobics',desc:'सप्ताह में 2-3 बार 30 मिनट। जोड़ों पर दबाव नहीं, पूरे शरीर का व्यायाम। सूजन कम होती है।',tags:['T2','T3','30 मिनट']},{name:'Birthing Ball Exercises',desc:'बर्थिंग बॉल पर बैठकर धीरे-धीरे गोल घुमाएँ। शिशु की सही position में मदद करता है। पीठ दर्द कम होता है।',tags:['T2','T3','15-20 मिनट']},{name:'Pelvic Tilts',desc:'चारों हाथ-घुटनों पर या खड़े होकर। पीठ को आगे-पीछे घुमाएँ। पीठ दर्द में राहत मिलती है।',tags:['T1','T2','T3','10 मिनट']}],
-  t3:[{name:'Kegel Exercises',desc:'1 सेकंड कसें, 1 सेकंड छोड़ें — 10 बार। फिर 10 सेकंड कसें, 10 छोड़ें — 5 बार। दिन में 3 बार। प्रसव में बहुत मदद।',tags:['T3','दिन में 3 बार']},{name:'Ankle Circles',desc:'कुर्सी पर बैठकर पैरों की एड़ियाँ घुमाएँ। पैरों की सूजन कम होती है। दिन में 5-6 बार।',tags:['T2','T3','5 मिनट']},{name:'Cat-Cow Stretches',desc:'चारों हाथ-घुटनों पर। साँस के साथ पीठ ऊपर-नीचे। शिशु की position सुधरती है। पीठ दर्द कम होता है।',tags:['T1','T2','T3','10 मिनट']},{name:'Deep Breathing for Labor',desc:'4-7-8 विधि: 4 पर लें, 7 पर रोकें, 8 पर छोड़ें। प्रसव की तैयारी के लिए रोज़ 10 मिनट।',tags:['T3','10 मिनट']}],
-  avoid:['Contact sports (football, basketball)','High-impact jumping or bouncing','Back-lying exercises after T1','Hot yoga or Bikram yoga','Horse riding, skiing, scuba diving','Heavy weight lifting','Exercises with fall risk']
+  t1:[
+    {name:'Morning Walk',desc:'20–30 minutes of gentle walking daily. Keeps blood sugar stable and energy up. Do not go on an empty stomach.',tags:['T1','T2','T3','20–30 mins']},
+    {name:'Breathing Exercises',desc:'Inhale for 4 counts, hold for 4, exhale for 4. Do 5–10 minutes daily. Significantly reduces nausea and anxiety.',tags:['T1','T2','T3','5–10 mins']},
+    {name:'Light Stretching',desc:'Gentle neck, shoulder, and lower back stretching. 10 minutes after waking up. Keeps muscles flexible and relieves morning stiffness.',tags:['T1','T2','T3','10 mins']}
+  ],
+  t2:[
+    {name:'Supported Squats',desc:'10–15 squats holding a wall or chair for support. Strengthens the pelvic floor and inner thighs. Do slowly and mindfully.',tags:['T2','T3','10–15 mins']},
+    {name:'Swimming / Water Aerobics',desc:'30 minutes, 2–3 times a week. Zero joint impact, full-body workout. Naturally reduces swelling in legs and feet.',tags:['T2','T3','30 mins']},
+    {name:'Birthing Ball Exercises',desc:'Sit on a birthing ball and gently rock or circle your hips. Encourages optimal baby positioning and relieves back pain.',tags:['T2','T3','15–20 mins']},
+    {name:'Pelvic Tilts',desc:'On all fours or standing. Gently tilt your pelvis forward and back. One of the best exercises for lower back pain in pregnancy.',tags:['T1','T2','T3','10 mins']}
+  ],
+  t3:[
+    {name:'Kegel Exercises',desc:'Tighten pelvic floor muscles for 5–10 seconds, fully release. 10 reps, 3 times daily. Builds pushing strength and speeds postpartum recovery.',tags:['T3','3x daily']},
+    {name:'Ankle Circles',desc:'Seated in a chair, rotate both ankles in circles — 10 each direction. Reduces swelling. Do 5–6 times throughout the day.',tags:['T2','T3','5 mins']},
+    {name:'Cat-Cow Stretches',desc:'On hands and knees, arch and round your back with each breath. Encourages baby to descend and relieves back pressure.',tags:['T1','T2','T3','10 mins']},
+    {name:'Labour Breathing (4-7-8)',desc:'Inhale for 4, hold for 7, exhale for 8. Practice daily for 10 minutes. This is your main coping tool during contractions.',tags:['T3','10 mins']}
+  ],
+  avoid:['Contact sports (football, basketball)','High-impact jumping or bouncing','Lying flat on your back after the first trimester','Hot yoga or Bikram yoga','Horse riding, skiing, scuba diving','Heavy weight lifting','Any exercise with a fall risk']
 };
 
 // ── BOOKS ──
@@ -1045,17 +1061,307 @@ function setWellnessTab(tab,btn){
 }
 
 function makeYogaSVG(anim){
-  const col='#E8748A';
+  const skin='#F4C5A0',hair='#5C3317',rose='#E8748A',belly='#F8D5B8',sage='#7BAF8E';
   const svgs={
-    breathe:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-breathe"><ellipse cx="28" cy="42" rx="12" ry="6" fill="${col}" opacity=".3"/><circle cx="28" cy="18" r="8" fill="${col}" opacity=".8"/><rect x="23" y="26" width="10" height="16" rx="5" fill="${col}" opacity=".7"/><rect x="14" y="30" width="12" height="4" rx="2" fill="${col}" opacity=".6"/><rect x="30" y="30" width="12" height="4" rx="2" fill="${col}" opacity=".6"/><rect x="22" y="42" width="5" height="10" rx="2" fill="${col}" opacity=".6"/><rect x="29" y="42" width="5" height="10" rx="2" fill="${col}" opacity=".6"/></g></svg>`,
-    sway:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-sway"><circle cx="28" cy="10" r="7" fill="${col}" opacity=".8"/><rect x="23" y="17" width="10" height="14" rx="5" fill="${col}" opacity=".7"/><rect x="12" y="20" width="13" height="3.5" rx="2" fill="${col}" opacity=".6"/><rect x="31" y="20" width="13" height="3.5" rx="2" fill="${col}" opacity=".6"/><rect x="21" y="31" width="6" height="12" rx="3" fill="${col}" opacity=".6"/><rect x="29" y="31" width="6" height="12" rx="3" fill="${col}" opacity=".6"/></g></svg>`,
-    squat:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-squat"><circle cx="28" cy="8" r="7" fill="${col}" opacity=".8"/><rect x="23" y="15" width="10" height="12" rx="5" fill="${col}" opacity=".7"/><line x1="18" y1="18" x2="10" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="38" y1="18" x2="46" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="22" y1="27" x2="14" y2="44" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/><line x1="34" y1="27" x2="42" y2="44" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/></g></svg>`,
-    stretch:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-stretch"><circle cx="28" cy="10" r="7" fill="${col}" opacity=".8"/><rect x="23" y="17" width="10" height="12" rx="5" fill="${col}" opacity=".7"/><line x1="28" y1="18" x2="6" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="28" y1="18" x2="50" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="24" y1="29" x2="20" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/><line x1="32" y1="29" x2="36" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/></g></svg>`,
-    kegel:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-kegel"><circle cx="28" cy="10" r="7" fill="${col}" opacity=".8"/><rect x="23" y="17" width="10" height="12" rx="5" fill="${col}" opacity=".7"/><line x1="23" y1="20" x2="14" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="33" y1="20" x2="42" y2="28" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><ellipse cx="28" cy="31" rx="8" ry="5" fill="${col}" opacity=".4"/><line x1="24" y1="29" x2="22" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/><line x1="32" y1="29" x2="34" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/></g></svg>`,
-    tilt:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-tilt"><circle cx="28" cy="9" r="6" fill="${col}" opacity=".8"/><line x1="28" y1="15" x2="28" y2="30" stroke="${col}" stroke-width="8" stroke-linecap="round" opacity=".7"/><line x1="16" y1="22" x2="40" y2="22" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".6"/><line x1="16" y1="30" x2="8" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/><line x1="40" y1="30" x2="48" y2="46" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".6"/></g></svg>`,
-    float:`<svg viewBox="0 0 56 56" class="yoga-anim"><g class="anim-float"><circle cx="28" cy="14" r="7" fill="${col}" opacity=".8"/><rect x="12" y="22" width="32" height="14" rx="7" fill="${col}" opacity=".6"/><line x1="12" y1="29" x2="4" y2="38" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".5"/><line x1="44" y1="29" x2="52" y2="38" stroke="${col}" stroke-width="4" stroke-linecap="round" opacity=".5"/><line x1="22" y1="36" x2="18" y2="52" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".5"/><line x1="34" y1="36" x2="38" y2="52" stroke="${col}" stroke-width="5" stroke-linecap="round" opacity=".5"/></g></svg>`
+    // Mountain Pose — standing upright, arms at sides, breathing animation
+    standing:`<svg viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg">
+      <g class="anim-breathe" style="transform-origin:40px 55px">
+        <ellipse cx="40" cy="105" rx="18" ry="5" fill="${rose}" opacity=".15"/>
+        <!-- hair -->
+        <ellipse cx="40" cy="14" rx="11" ry="13" fill="${hair}"/>
+        <!-- head -->
+        <circle cx="40" cy="16" r="9" fill="${skin}"/>
+        <!-- neck -->
+        <rect x="37" y="24" width="6" height="5" fill="${skin}"/>
+        <!-- torso -->
+        <path d="M28 29 Q40 27 52 29 L50 58 Q40 61 30 58 Z" fill="${rose}" opacity=".8"/>
+        <!-- belly bump -->
+        <ellipse cx="40" cy="50" rx="14" ry="10" fill="${belly}" opacity=".9"/>
+        <!-- left arm -->
+        <path d="M28 32 L18 55 L20 56 L30 34" fill="${skin}"/>
+        <!-- right arm -->
+        <path d="M52 32 L62 55 L60 56 L50 34" fill="${skin}"/>
+        <!-- left leg -->
+        <path d="M33 58 L29 90 L34 90 L37 62" fill="${skin}"/>
+        <!-- right leg -->
+        <path d="M47 58 L51 90 L46 90 L43 62" fill="${skin}"/>
+        <!-- feet -->
+        <ellipse cx="31" cy="91" rx="5" ry="3" fill="${skin}"/>
+        <ellipse cx="49" cy="91" rx="5" ry="3" fill="${skin}"/>
+      </g>
+    </svg>`,
+    // Butterfly pose — seated, soles together, knees out
+    butterfly:`<svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+      <g class="anim-sway" style="transform-origin:45px 45px">
+        <ellipse cx="45" cy="85" rx="30" ry="6" fill="${rose}" opacity=".15"/>
+        <!-- hair -->
+        <ellipse cx="45" cy="13" rx="11" ry="12" fill="${hair}"/>
+        <!-- head -->
+        <circle cx="45" cy="15" r="9" fill="${skin}"/>
+        <!-- torso/belly -->
+        <path d="M33 24 Q45 22 57 24 L55 50 Q45 54 35 50 Z" fill="${rose}" opacity=".8"/>
+        <ellipse cx="45" cy="44" rx="13" ry="9" fill="${belly}" opacity=".9"/>
+        <!-- left arm down -->
+        <path d="M33 28 L24 44 L26 45 L35 30" fill="${skin}"/>
+        <!-- right arm down -->
+        <path d="M57 28 L66 44 L64 45 L55 30" fill="${skin}"/>
+        <!-- ground line -->
+        <line x1="10" y1="74" x2="80" y2="74" stroke="${rose}" stroke-width="1.5" opacity=".3"/>
+        <!-- left leg/knee out -->
+        <path d="M37 50 Q20 60 18 72 L24 73 Q26 64 38 56" fill="${skin}"/>
+        <!-- right leg/knee out -->
+        <path d="M53 50 Q70 60 72 72 L66 73 Q64 64 52 56" fill="${skin}"/>
+        <!-- feet touching -->
+        <ellipse cx="45" cy="73" rx="10" ry="4" fill="${skin}"/>
+      </g>
+    </svg>`,
+    // Cat-Cow — on all fours, back arching
+    catcow:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+      <g class="anim-tilt" style="transform-origin:50px 40px">
+        <ellipse cx="50" cy="75" rx="35" ry="5" fill="${rose}" opacity=".15"/>
+        <!-- head (looking forward/down) -->
+        <ellipse cx="18" cy="28" rx="10" ry="9" fill="${skin}"/>
+        <ellipse cx="14" cy="22" rx="7" ry="9" fill="${hair}"/>
+        <!-- neck -->
+        <path d="M26 26 L32 30" stroke="${skin}" stroke-width="5" stroke-linecap="round"/>
+        <!-- spine/torso -->
+        <path d="M32 30 Q50 24 68 30" stroke="${rose}" stroke-width="10" stroke-linecap="round" fill="none" opacity=".8"/>
+        <!-- belly bump hanging down -->
+        <ellipse cx="50" cy="38" rx="12" ry="9" fill="${belly}" opacity=".9"/>
+        <!-- left front arm -->
+        <line x1="32" y1="32" x2="28" y2="58" stroke="${skin}" stroke-width="5" stroke-linecap="round"/>
+        <!-- right front arm -->
+        <line x1="44" y1="30" x2="40" y2="58" stroke="${skin}" stroke-width="5" stroke-linecap="round"/>
+        <!-- left back leg -->
+        <line x1="68" y1="32" x2="72" y2="58" stroke="${skin}" stroke-width="5" stroke-linecap="round"/>
+        <!-- right back leg -->
+        <line x1="60" y1="30" x2="64" y2="58" stroke="${skin}" stroke-width="5" stroke-linecap="round"/>
+        <!-- hands -->
+        <ellipse cx="28" cy="60" rx="5" ry="3" fill="${skin}"/>
+        <ellipse cx="40" cy="60" rx="5" ry="3" fill="${skin}"/>
+        <!-- knees -->
+        <ellipse cx="72" cy="60" rx="5" ry="3" fill="${skin}"/>
+        <ellipse cx="64" cy="60" rx="5" ry="3" fill="${skin}"/>
+      </g>
+    </svg>`,
+    // Warrior I — lunge with arms up
+    warrior:`<svg viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
+      <g class="anim-stretch" style="transform-origin:50px 55px">
+        <ellipse cx="50" cy="106" rx="28" ry="4" fill="${rose}" opacity=".15"/>
+        <!-- hair -->
+        <ellipse cx="50" cy="10" rx="10" ry="12" fill="${hair}"/>
+        <!-- head -->
+        <circle cx="50" cy="13" r="9" fill="${skin}"/>
+        <!-- arms up -->
+        <path d="M40 22 L32 5 L34 4 L43 22" fill="${skin}"/>
+        <path d="M60 22 L68 5 L66 4 L57 22" fill="${skin}"/>
+        <!-- hands -->
+        <circle cx="33" cy="4" r="3" fill="${skin}"/>
+        <circle cx="67" cy="4" r="3" fill="${skin}"/>
+        <!-- torso -->
+        <path d="M38 22 Q50 20 62 22 L60 50 Q50 53 40 50 Z" fill="${rose}" opacity=".8"/>
+        <!-- belly -->
+        <ellipse cx="50" cy="42" rx="13" ry="9" fill="${belly}" opacity=".9"/>
+        <!-- front leg bent -->
+        <path d="M44 50 L36 72 L30 72 Q28 80 32 92 L38 91 Q35 82 38 74 L44 74 L50 55" fill="${skin}"/>
+        <!-- back leg straight -->
+        <path d="M56 50 L68 72 L72 72 Q76 80 74 92 L68 91 Q70 82 67 74 L63 74 L55 55" fill="${skin}"/>
+        <!-- feet -->
+        <ellipse cx="35" cy="93" rx="6" ry="3" fill="${skin}"/>
+        <ellipse cx="71" cy="93" rx="8" ry="3" fill="${skin}"/>
+      </g>
+    </svg>`,
+    // Chair pose — sitting back, arms forward
+    chair:`<svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
+      <g class="anim-squat" style="transform-origin:40px 60px">
+        <ellipse cx="40" cy="97" rx="22" ry="4" fill="${rose}" opacity=".15"/>
+        <!-- hair -->
+        <ellipse cx="40" cy="10" rx="11" ry="12" fill="${hair}"/>
+        <!-- head -->
+        <circle cx="40" cy="13" r="9" fill="${skin}"/>
+        <!-- torso leaning slightly forward -->
+        <path d="M28 22 Q40 20 52 22 L50 48 Q40 51 30 48 Z" fill="${rose}" opacity=".8"/>
+        <!-- belly -->
+        <ellipse cx="40" cy="40" rx="13" ry="9" fill="${belly}" opacity=".9"/>
+        <!-- arms forward/up -->
+        <path d="M28 26 L10 36 L11 39 L30 29" fill="${skin}"/>
+        <path d="M52 26 L70 36 L69 39 L50 29" fill="${skin}"/>
+        <!-- thighs bent -->
+        <path d="M32 48 L22 68 L28 70 L38 52" fill="${skin}"/>
+        <path d="M48 48 L58 68 L52 70 L42 52" fill="${skin}"/>
+        <!-- lower legs -->
+        <path d="M22 70 L24 92 L30 91 L28 70" fill="${skin}"/>
+        <path d="M58 70 L56 92 L50 91 L52 70" fill="${skin}"/>
+        <!-- feet -->
+        <ellipse cx="27" cy="93" rx="6" ry="3" fill="${skin}"/>
+        <ellipse cx="53" cy="93" rx="6" ry="3" fill="${skin}"/>
+      </g>
+    </svg>`,
+    // Deep squat / Malasana
+    squat:`<svg viewBox="0 0 100 90" xmlns="http://www.w3.org/2000/svg">
+      <g class="anim-squat" style="transform-origin:50px 55px">
+        <ellipse cx="50" cy="87" rx="30" ry="4" fill="${rose}" opacity=".15"/>
+        <!-- hair -->
+        <ellipse cx="50" cy="11" rx="11" ry="13" fill="${hair}"/>
+        <!-- head -->
+        <circle cx="50" cy="14" r="9" fill="${skin}"/>
+        <!-- torso -->
+        <path d="M37 23 Q50 21 63 23 L61 42 Q50 45 39 42 Z" fill="${rose}" opacity=".8"/>
+        <!-- belly bump -->
+        <ellipse cx="50" cy="36" rx="13" ry="9" fill="${belly}" opacity=".9"/>
+        <!-- prayer hands -->
+        <path d="M37 30 L28 36 L29 39 L38 33" fill="${skin}"/>
+        <path d="M63 30 L72 36 L71 39 L62 33" fill="${skin}"/>
+        <rect x="44" y="33" width="12" height="8" rx="3" fill="${skin}" opacity=".8"/>
+        <!-- left thigh out -->
+        <path d="M40 42 L18 56 L20 62 L43 50" fill="${skin}"/>
+        <!-- right thigh out -->
+        <path d="M60 42 L82 56 L80 62 L57 50" fill="${skin}"/>
+        <!-- left lower leg -->
+        <path d="M18 60 L16 78 L22 79 L24 62" fill="${skin}"/>
+        <!-- right lower leg -->
+        <path d="M82 60 L84 78 L78 79 L76 62" fill="${skin}"/>
+        <!-- feet -->
+        <ellipse cx="19" cy="80" rx="6" ry="3" fill="${skin}"/>
+        <ellipse cx="81" cy="80" rx="6" ry="3" fill="${skin}"/>
+      </g>
+    </svg>`,
+    // Legs up the wall
+    legswall:`<svg viewBox="0 0 110 80" xmlns="http://www.w3.org/2000/svg">
+      <g class="anim-float" style="transform-origin:55px 40px">
+        <!-- wall -->
+        <rect x="88" y="0" width="6" height="80" fill="${rose}" opacity=".2" rx="2"/>
+        <!-- floor -->
+        <line x1="0" y1="68" x2="90" y2="68" stroke="${rose}" stroke-width="1.5" opacity=".3"/>
+        <!-- lying body -->
+        <!-- head -->
+        <circle cx="14" cy="52" r="9" fill="${skin}"/>
+        <ellipse cx="11" cy="46" rx="8" ry="10" fill="${hair}"/>
+        <!-- torso lying flat -->
+        <path d="M22 48 L72 44 L72 58 L22 62 Z" fill="${rose}" opacity=".8"/>
+        <!-- belly bump upward -->
+        <ellipse cx="47" cy="47" rx="13" ry="9" fill="${belly}" opacity=".9"/>
+        <!-- arms at sides -->
+        <path d="M22 54 L8 60 L9 63 L23 57" fill="${skin}"/>
+        <path d="M22 52 L8 46 L9 43 L23 49" fill="${skin}"/>
+        <!-- left leg up -->
+        <path d="M64 50 L80 20 L86 22 L70 52" fill="${skin}"/>
+        <!-- right leg up -->
+        <path d="M72 50 L86 22 L90 24 L76 52" fill="${skin}"/>
+        <!-- feet at wall -->
+        <ellipse cx="87" cy="20" rx="4" ry="7" fill="${skin}" transform="rotate(-15,87,20)"/>
+        <ellipse cx="90" cy="22" rx="4" ry="7" fill="${skin}" transform="rotate(-15,90,22)"/>
+      </g>
+    </svg>`,
+    // Seated — for kegel
+    seated:`<svg viewBox="0 0 80 95" xmlns="http://www.w3.org/2000/svg">
+      <g class="anim-kegel" style="transform-origin:40px 55px">
+        <ellipse cx="40" cy="90" rx="25" ry="5" fill="${rose}" opacity=".15"/>
+        <!-- hair -->
+        <ellipse cx="40" cy="10" rx="11" ry="13" fill="${hair}"/>
+        <!-- head -->
+        <circle cx="40" cy="13" r="9" fill="${skin}"/>
+        <!-- torso -->
+        <path d="M28 22 Q40 20 52 22 L50 50 Q40 54 30 50 Z" fill="${rose}" opacity=".8"/>
+        <!-- belly -->
+        <ellipse cx="40" cy="42" rx="13" ry="10" fill="${belly}" opacity=".9"/>
+        <!-- hands on knees -->
+        <path d="M28 30 L18 48 L22 50 L32 34" fill="${skin}"/>
+        <path d="M52 30 L62 48 L58 50 L48 34" fill="${skin}"/>
+        <!-- seat / legs crossed -->
+        <path d="M30 50 L20 65 L60 65 L50 50" fill="${skin}" opacity=".7"/>
+        <!-- left leg -->
+        <path d="M20 65 L14 80 L24 80 L28 68" fill="${skin}"/>
+        <!-- right leg -->
+        <path d="M60 65 L66 80 L56 80 L52 68" fill="${skin}"/>
+        <!-- floor -->
+        <line x1="5" y1="82" x2="75" y2="82" stroke="${rose}" stroke-width="1.5" opacity=".3"/>
+      </g>
+    </svg>`,
+    // Wide-leg forward fold
+    fold:`<svg viewBox="0 0 110 90" xmlns="http://www.w3.org/2000/svg">
+      <g class="anim-stretch" style="transform-origin:55px 50px">
+        <ellipse cx="55" cy="86" rx="40" ry="4" fill="${rose}" opacity=".15"/>
+        <!-- head hanging down -->
+        <circle cx="55" cy="50" r="9" fill="${skin}"/>
+        <ellipse cx="55" cy="44" rx="10" ry="11" fill="${hair}"/>
+        <!-- torso folded forward -->
+        <path d="M42 52 Q55 46 68 52 L66 66 Q55 68 44 66 Z" fill="${rose}" opacity=".8"/>
+        <!-- belly hanging -->
+        <ellipse cx="55" cy="62" rx="11" ry="8" fill="${belly}" opacity=".9"/>
+        <!-- arms to floor -->
+        <path d="M44 56 L34 72 L38 74 L48 60" fill="${skin}"/>
+        <path d="M66 56 L76 72 L72 74 L62 60" fill="${skin}"/>
+        <!-- hands on floor -->
+        <circle cx="36" cy="75" r="4" fill="${skin}"/>
+        <circle cx="74" cy="75" r="4" fill="${skin}"/>
+        <!-- left leg wide -->
+        <path d="M44 66 L14 72 L15 78 L46 72" fill="${skin}"/>
+        <!-- right leg wide -->
+        <path d="M66 66 L96 72 L95 78 L64 72" fill="${skin}"/>
+        <!-- feet -->
+        <ellipse cx="13" cy="78" rx="6" ry="3" fill="${skin}" transform="rotate(-10,13,78)"/>
+        <ellipse cx="97" cy="78" rx="6" ry="3" fill="${skin}" transform="rotate(10,97,78)"/>
+        <!-- floor line -->
+        <line x1="5" y1="80" x2="105" y2="80" stroke="${rose}" stroke-width="1.5" opacity=".3"/>
+      </g>
+    </svg>`,
+    // Side angle pose
+    sideangle:`<svg viewBox="0 0 110 100" xmlns="http://www.w3.org/2000/svg">
+      <g class="anim-sway" style="transform-origin:55px 55px">
+        <ellipse cx="55" cy="97" rx="38" ry="4" fill="${rose}" opacity=".15"/>
+        <!-- hair -->
+        <ellipse cx="78" cy="20" rx="10" ry="12" fill="${hair}"/>
+        <!-- head tilted -->
+        <circle cx="78" cy="23" r="9" fill="${skin}"/>
+        <!-- top arm up -->
+        <path d="M72 30 L88 10 L90 12 L75 32" fill="${skin}"/>
+        <circle cx="89" cy="10" r="3" fill="${skin}"/>
+        <!-- torso angled -->
+        <path d="M65 34 Q73 28 81 32 L74 55 Q65 57 57 53 Z" fill="${rose}" opacity=".8"/>
+        <!-- belly -->
+        <ellipse cx="67" cy="46" rx="12" ry="8" fill="${belly}" opacity=".9"/>
+        <!-- lower arm to floor -->
+        <path d="M65 38 L42 58 L44 62 L68 44" fill="${skin}"/>
+        <circle cx="42" cy="60" r="4" fill="${skin}"/>
+        <!-- front leg bent -->
+        <path d="M57 53 L38 70 L30 70 L26 90 L32 91 L36 72 L44 72 L62 58" fill="${skin}"/>
+        <!-- back leg straight wide -->
+        <path d="M74 55 L90 70 L96 68 L100 90 L94 91 L90 72 L84 72 L70 60" fill="${skin}"/>
+        <!-- feet -->
+        <ellipse cx="29" cy="92" rx="7" ry="3" fill="${skin}"/>
+        <ellipse cx="97" cy="92" rx="8" ry="3" fill="${skin}"/>
+        <!-- floor -->
+        <line x1="5" y1="93" x2="105" y2="93" stroke="${rose}" stroke-width="1.5" opacity=".3"/>
+      </g>
+    </svg>`,
+    // Side-lying shavasana
+    sidelying:`<svg viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg">
+      <g class="anim-float" style="transform-origin:60px 40px">
+        <!-- floor -->
+        <line x1="5" y1="60" x2="115" y2="60" stroke="${rose}" stroke-width="1.5" opacity=".3"/>
+        <!-- pillow -->
+        <ellipse cx="18" cy="47" rx="14" ry="9" fill="#F5D0DC" opacity=".7"/>
+        <!-- head on pillow -->
+        <circle cx="18" cy="44" r="8" fill="${skin}"/>
+        <ellipse cx="15" cy="38" rx="8" ry="10" fill="${hair}"/>
+        <!-- body lying on side -->
+        <path d="M24 46 L90 42 L90 55 L24 58 Z" fill="${rose}" opacity=".8"/>
+        <!-- belly bump up -->
+        <ellipse cx="57" cy="41" rx="14" ry="9" fill="${belly}" opacity=".9"/>
+        <!-- top arm forward -->
+        <path d="M30 48 L20 58 L24 60 L34 52" fill="${skin}"/>
+        <!-- bottom arm under -->
+        <path d="M26 52 L8 54 L8 57 L26 56" fill="${skin}" opacity=".6"/>
+        <!-- legs slightly bent, pillow between -->
+        <path d="M88 44 L104 40 L106 46 L90 50" fill="${skin}"/>
+        <path d="M88 52 L106 48 L107 54 L90 57" fill="${skin}"/>
+        <!-- knee pillow -->
+        <ellipse cx="98" cy="47" rx="8" ry="5" fill="#F5D0DC" opacity=".6"/>
+      </g>
+    </svg>`
   };
-  return svgs[anim]||svgs.breathe;
+  return svgs[anim]||svgs.standing;
 }
 
 function renderYoga(){
@@ -1085,13 +1391,11 @@ function renderYoga(){
 
 function renderPoseCard(p,isRec){
   return`<div class="yoga-pose-card">
-    <div class="yoga-pose-header">
-      <div class="yoga-anim">${makeYogaSVG(p.anim)}</div>
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:6px">
-          <div class="yoga-pose-name">${p.name}</div>
-          ${isRec?'<span class="yoga-recommended">⭐ Recommended</span>':''}
-        </div>
+    ${isRec?'<span class="yoga-recommended" style="display:inline-block;margin-bottom:8px">⭐ Recommended this week</span>':''}
+    <div style="display:flex;gap:14px;align-items:flex-start">
+      <div style="flex-shrink:0;background:var(--rose-pale);border-radius:12px;padding:8px;display:flex;align-items:center;justify-content:center">${makeYogaSVG(p.anim)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="yoga-pose-name">${p.name}</div>
         <div class="yoga-pose-benefit">${p.benefit}</div>
         <div class="yoga-trimester-pills">${p.tri.map(t=>`<span class="yoga-tri-pill">T${t}</span>`).join('')}</div>
       </div>
@@ -1099,6 +1403,7 @@ function renderPoseCard(p,isRec){
     <button class="yoga-expand-btn" onclick="toggleYogaDetails(this)">How to do it ▾</button>
     <div class="yoga-details">
       ${p.steps.map((s,i)=>`<div class="yoga-step"><span class="yoga-step-num">${i+1}.</span><span>${s}</span></div>`).join('')}
+      <a class="yt-btn" href="${p.yt}" target="_blank" rel="noopener">▶ Watch on YouTube</a>
     </div>
   </div>`;
 }
@@ -1198,8 +1503,8 @@ function renderFoodTab(t,btn){
 }
 function renderFoodContent(f){
   document.getElementById('foodTabContent').innerHTML=`
-    <div class="food-section"><div class="food-section-head"><span>✅</span><span class="label eat">खाएँ — Eat</span></div><div class="food-pills">${f.eat.map(i=>`<span class="food-pill eat">${i}</span>`).join('')}</div></div>
-    <div class="food-section"><div class="food-section-head"><span>⛔</span><span class="label avoid">परहेज़ करें — Avoid</span></div><div class="food-pills">${f.avoid.map(i=>`<span class="food-pill avoid">${i}</span>`).join('')}</div></div>
+    <div class="food-section"><div class="food-section-head"><span>✅</span><span class="label eat">Eat plenty of</span></div><div class="food-pills">${f.eat.map(i=>`<span class="food-pill eat">${i}</span>`).join('')}</div></div>
+    <div class="food-section"><div class="food-section-head"><span>⛔</span><span class="label avoid">Avoid or limit</span></div><div class="food-pills">${f.avoid.map(i=>`<span class="food-pill avoid">${i}</span>`).join('')}</div></div>
     <div class="section-title">Key nutrients</div>
     ${f.nutrients.map(n=>`<div class="nutrient-card"><span class="nutrient-icon">${n.icon}</span><div><div class="nutrient-name">${n.name}</div><div class="nutrient-why">${n.why}</div></div></div>`).join('')}`;
 }
