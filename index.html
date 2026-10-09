@@ -292,7 +292,18 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .visit-date{font-size:11px;color:var(--ink-light);margin-top:1px}
 .visit-week-badge{font-size:10px;padding:2px 9px;border-radius:20px;background:var(--rose-pale);color:var(--rose)}
 .visit-notes{font-size:12px;color:var(--ink-mid);line-height:1.5;margin-top:6px}
-.visit-attachment{margin-top:8px;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--plum);font-weight:500}
+.visit-attachment{margin-top:8px;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--plum);font-weight:500;flex-wrap:wrap}
+.file-action-btn{font-size:10px;padding:3px 9px;border-radius:20px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
+.file-action-view{background:var(--plum);color:#fff}
+.file-action-replace{background:var(--amber-pale);color:var(--amber);border:1px solid #F5D8A0}
+.file-action-delete{background:var(--rose-pale);color:var(--rose);border:1px solid var(--rose-light)}
+/* File viewer overlay */
+.file-viewer{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:600;display:none;flex-direction:column;align-items:center;justify-content:center}
+.file-viewer.open{display:flex}
+.file-viewer-close{position:absolute;top:20px;right:20px;background:none;border:none;color:#fff;font-size:28px;cursor:pointer;z-index:10}
+.file-viewer-name{color:rgba(255,255,255,.7);font-size:13px;margin-top:12px;max-width:90vw;text-align:center}
+.file-viewer img{max-width:95vw;max-height:80vh;border-radius:8px;object-fit:contain}
+.file-viewer iframe{width:95vw;height:80vh;border:none;border-radius:8px;background:#fff}
 .reminder-toggle{display:flex;align-items:center;gap:9px;margin-bottom:12px}
 .reminder-toggle .toggle-label-text{font-size:12px}
 
@@ -351,7 +362,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 <div id="lockScreen">
   <div class="lock-emoji">🌸</div>
   <h1 class="lock-title">Baby Journal</h1>
-  <p class="lock-sub">Our little secret — enter PIN</p>
+  <p class="lock-sub">Our little secret - enter PIN</p>
   <div class="pin-dots" id="pinDots">
     <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div>
     <div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
@@ -380,6 +391,13 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
   <img class="lightbox-img" id="lightboxImg" src="" alt="">
   <div class="lightbox-date" id="lightboxDate"></div>
+</div>
+
+<!-- FILE VIEWER -->
+<div class="file-viewer" id="fileViewer">
+  <button class="file-viewer-close" onclick="closeFileViewer()">✕</button>
+  <div id="fileViewerContent"></div>
+  <div class="file-viewer-name" id="fileViewerName"></div>
 </div>
 
 <!-- MODALS -->
@@ -478,7 +496,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
       <!-- Fun fact strip -->
       <div class="fun-fact-strip" onclick="nextFunFact()" id="funFactStrip">
         <span class="fun-fact-icon">🐘</span>
-        <span class="fun-fact-text" id="funFactText">Elephants are pregnant for 22 months — the longest of any land animal!</span>
+        <span class="fun-fact-text" id="funFactText">Elephants are pregnant for 22 months - the longest of any land animal!</span>
         <span class="fun-fact-next">tap for more ›</span>
       </div>
 
@@ -584,10 +602,10 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     <div class="input-group"><label class="input-label">🍫 Cravings today</label><input class="input-field" id="cravingsInput" placeholder="What are you craving?"></div>
     <div class="input-group"><label class="input-label">📝 Journal</label><textarea class="input-field" id="journalInput" rows="4" placeholder="How was your day?"></textarea></div>
     <div class="input-group">
-      <label class="input-label">📸 Bump photos (up to 2)</label>
+      <label class="input-label">📸 Bump photos <span style="font-weight:400;color:var(--ink-light)">(select multiple)</span></label>
       <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
         <div style="font-size:26px">📷</div>
-        <div style="font-size:12px;color:var(--ink-light);margin-top:5px">Tap to add photo</div>
+        <div style="font-size:12px;color:var(--ink-light);margin-top:5px">Tap to add photos - select multiple at once</div>
         <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this)">
       </div>
       <div class="photo-preview-row" id="photoPreviewRow"></div>
@@ -732,36 +750,36 @@ function getWeekInfo(w){return weekData.find(d=>d.w===w)||weekData[weekData.leng
 const garbhSanskar=[
   {shloka:'गर्भस्थ शिशु सुखी भव।\nसर्वेऽत्र सुखिनः सन्तु।',trans:'Garbhastha Shishu Sukhi Bhava.\nSarve atra sukhinaḥ santu.',meaning:'गर्भ में पल रहे शिशु सुखी हो। यहाँ सभी सुखी हों। यह श्लोक माँ और शिशु के बीच प्रेम और शांति की भावना को जागृत करता है।',practice:'प्रतिदिन सुबह दीपक जलाकर इस मंत्र को तीन बार पढ़ें। शिशु को मन में विचार करते हुए प्रेम भेजें।',music:'प्रातः: भैरवी राग सुनें (शांति और करुणा के लिए)'},
   {shloka:'सुप्रजाः सुखसम्पन्नाः\nदीर्घायुष्माश्च सन्तु ते।',trans:'Suprajāḥ sukhasampannāḥ\ndīrghāyuṣmāśca santu te.',meaning:'तुम्हारी संतान सुंदर, सुखी और दीर्घायु हो। यह वेदिक आशीर्वाद माँ के गर्भस्थ शिशु के स्वस्थ जीवन की कामना करता है।',practice:'सोने से पहले इस श्लोक को पढ़ें और शिशु के स्वस्थ, दीर्घायु जीवन की कल्पना करें।',music:'सायं: यमन राग सुनें (हृदय को खोलने के लिए)'},
-  {shloka:'ॐ नमो भगवते वासुदेवाय।\nशिशोः रक्षां कुरु कुरु स्वाहा।',trans:'Om Namo Bhagavate Vāsudevāya.\nShishoḥ rakṣāṃ kuru kuru svāhā.',meaning:'हे भगवान वासुदेव, इस शिशु की रक्षा करो। भगवान विष्णु को समर्पित यह मंत्र शिशु के लिए दैवीय सुरक्षा का आह्वान करता है।',practice:'श्रीमद् भगवद्गीता का एक अध्याय ऊँचे स्वर में पढ़ें — शिशु की सुनने की क्षमता विकसित हो रही है।',music:'बाँसुरी की शास्त्रीय धुन सुनें — विशेषतः श्याम कल्याण राग'},
+  {shloka:'ॐ नमो भगवते वासुदेवाय।\nशिशोः रक्षां कुरु कुरु स्वाहा।',trans:'Om Namo Bhagavate Vāsudevāya.\nShishoḥ rakṣāṃ kuru kuru svāhā.',meaning:'हे भगवान वासुदेव, इस शिशु की रक्षा करो। भगवान विष्णु को समर्पित यह मंत्र शिशु के लिए दैवीय सुरक्षा का आह्वान करता है।',practice:'श्रीमद् भगवद्गीता का एक अध्याय ऊँचे स्वर में पढ़ें - शिशु की सुनने की क्षमता विकसित हो रही है।',music:'बाँसुरी की शास्त्रीय धुन सुनें - विशेषतः श्याम कल्याण राग'},
   {shloka:'सर्वे भवन्तु सुखिनः।\nसर्वे सन्तु निरामयाः।\nसर्वे भद्राणि पश्यन्तु।',trans:'Sarve bhavantu sukhinaḥ.\nSarve santu nirāmayāḥ.\nSarve bhadrāṇi paśyantu.',meaning:'सभी सुखी हों, सभी निरोगी हों, सभी का कल्याण हो। यह शांति पाठ माँ के मन में सकारात्मकता और करुणा भरता है, जो शिशु तक पहुँचती है।',practice:'दिन में एक बार 5 मिनट ध्यान करें। साँस के साथ "सुख" और "शांति" शब्द मन में दोहराएँ।',music:'हनुमान चालीसा या किसी मंदिर का स्तोत्र शांत स्वर में सुनें'},
-  {shloka:'त्वमेव माता च पिता त्वमेव।\nत्वमेव बन्धुश्च सखा त्वमेव।',trans:'Tvameva mātā ca pitā tvameva.\nTvameva bandhuśca sakhā tvameva.',meaning:'तू ही माँ है, तू ही पिता है, तू ही बंधु है, तू ही मित्र है — ईश्वर को समर्पित यह भाव माँ के हृदय को प्रेम और कृतज्ञता से भरता है।',practice:'पति के साथ मिलकर शाम को दीपक जलाएँ और इस श्लोक को साथ पढ़ें।',music:'शाम को भीमपलासी राग सुनें — भावनाओं को शांत करता है'},
-  {shloka:'ॐ शान्तिः शान्तिः शान्तिः।\nगर्भे शिशोः सुखं भव।',trans:'Om Śāntiḥ Śāntiḥ Śāntiḥ.\nGarbhe śishoḥ sukhaṃ bhava.',meaning:'तीन बार शांति का उच्चारण — शरीर, मन और आत्मा की शांति के लिए। गर्भस्थ शिशु सुखी हो। यह मंत्र विशेष रूप से गर्भावस्था के मध्य काल के लिए है।',practice:'स्नान के बाद गर्भ पर हाथ रखकर यह मंत्र तीन बार बोलें। शिशु को शांति और सुरक्षा का अनुभव कराएँ।',music:'ध्रुपद शैली में ॐ का उच्चारण या किसी नदी का प्रवाह ध्वनि सुनें'},
-  {shloka:'यत्र नार्यस्तु पूज्यन्ते\nरमन्ते तत्र देवताः।',trans:'Yatra nāryastu pūjyante\nramante tatra devatāḥ.',meaning:'जहाँ नारी की पूजा होती है, वहाँ देवता निवास करते हैं। मनुस्मृति का यह श्लोक माँ को स्वयं के सम्मान और दिव्यता का स्मरण कराता है।',practice:'आज अपने लिए कुछ सुंदर करें — फूल लाएँ, अपना पसंदीदा भोजन बनाएँ, या बस आराम करें।',music:'सरस्वती वंदना सुनें या माँ दुर्गा के भजन — तीसरी तिमाही की शक्ति के लिए'},
-  {shloka:'आयुर्बलं यशो वर्चः\nप्रजाः पशुवसूनि च।\nब्रह्मप्रज्ञां च मेधां च\nत्वं नो देहि वनस्पते।',trans:'Āyur balaṃ yaśo varcaḥ\nprajāḥ paśuvasūni ca.\nBrahmaprjñāṃ ca medhāṃ ca\ntvaṃ no dehi vanaspate.',meaning:'हे वनस्पति देव, हमें आयु, बल, यश, तेज, संतान, बुद्धि और ज्ञान दो। अथर्ववेद का यह मंत्र शिशु की समग्र समृद्धि के लिए है।',practice:'किसी पौधे को पानी दें और उसके पास यह मंत्र पढ़ें। प्रकृति से जुड़ाव शिशु को शांति देता है।',music:'प्रकृति की आवाजें सुनें — पक्षियों का गाना, जलधारा — विशेष रूप से सुबह'},
-  {shloka:'ॐ पूर्णमदः पूर्णमिदम्\nपूर्णात् पूर्णमुदच्यते।\nपूर्णस्य पूर्णमादाय\nपूर्णमेवावशिष्यते।',trans:'Om pūrṇamadaḥ pūrṇamidam\npūrṇāt pūrṇamudacyate.\npūrṇasya pūrṇamādāya\npūrṇamevāvaśiṣyate.',meaning:'वह पूर्ण है, यह भी पूर्ण है। पूर्ण से पूर्ण निकालने पर भी पूर्ण ही शेष रहता है। ईशोपनिषद का यह श्लोक माँ को याद दिलाता है — तुम और तुम्हारा शिशु दोनों पूर्ण हैं।',practice:'प्रसव की तैयारी में यह मंत्र हर रात सोने से पहले पढ़ें। स्वयं को और शिशु को पूर्णता का अनुभव कराएँ।',music:'शाम को भैरवी राग — जन्म की तैयारी और समर्पण के लिए'},
+  {shloka:'त्वमेव माता च पिता त्वमेव।\nत्वमेव बन्धुश्च सखा त्वमेव।',trans:'Tvameva mātā ca pitā tvameva.\nTvameva bandhuśca sakhā tvameva.',meaning:'तू ही माँ है, तू ही पिता है, तू ही बंधु है, तू ही मित्र है - ईश्वर को समर्पित यह भाव माँ के हृदय को प्रेम और कृतज्ञता से भरता है।',practice:'पति के साथ मिलकर शाम को दीपक जलाएँ और इस श्लोक को साथ पढ़ें।',music:'शाम को भीमपलासी राग सुनें - भावनाओं को शांत करता है'},
+  {shloka:'ॐ शान्तिः शान्तिः शान्तिः।\nगर्भे शिशोः सुखं भव।',trans:'Om Śāntiḥ Śāntiḥ Śāntiḥ.\nGarbhe śishoḥ sukhaṃ bhava.',meaning:'तीन बार शांति का उच्चारण - शरीर, मन और आत्मा की शांति के लिए। गर्भस्थ शिशु सुखी हो। यह मंत्र विशेष रूप से गर्भावस्था के मध्य काल के लिए है।',practice:'स्नान के बाद गर्भ पर हाथ रखकर यह मंत्र तीन बार बोलें। शिशु को शांति और सुरक्षा का अनुभव कराएँ।',music:'ध्रुपद शैली में ॐ का उच्चारण या किसी नदी का प्रवाह ध्वनि सुनें'},
+  {shloka:'यत्र नार्यस्तु पूज्यन्ते\nरमन्ते तत्र देवताः।',trans:'Yatra nāryastu pūjyante\nramante tatra devatāḥ.',meaning:'जहाँ नारी की पूजा होती है, वहाँ देवता निवास करते हैं। मनुस्मृति का यह श्लोक माँ को स्वयं के सम्मान और दिव्यता का स्मरण कराता है।',practice:'आज अपने लिए कुछ सुंदर करें - फूल लाएँ, अपना पसंदीदा भोजन बनाएँ, या बस आराम करें।',music:'सरस्वती वंदना सुनें या माँ दुर्गा के भजन - तीसरी तिमाही की शक्ति के लिए'},
+  {shloka:'आयुर्बलं यशो वर्चः\nप्रजाः पशुवसूनि च।\nब्रह्मप्रज्ञां च मेधां च\nत्वं नो देहि वनस्पते।',trans:'Āyur balaṃ yaśo varcaḥ\nprajāḥ paśuvasūni ca.\nBrahmaprjñāṃ ca medhāṃ ca\ntvaṃ no dehi vanaspate.',meaning:'हे वनस्पति देव, हमें आयु, बल, यश, तेज, संतान, बुद्धि और ज्ञान दो। अथर्ववेद का यह मंत्र शिशु की समग्र समृद्धि के लिए है।',practice:'किसी पौधे को पानी दें और उसके पास यह मंत्र पढ़ें। प्रकृति से जुड़ाव शिशु को शांति देता है।',music:'प्रकृति की आवाजें सुनें - पक्षियों का गाना, जलधारा - विशेष रूप से सुबह'},
+  {shloka:'ॐ पूर्णमदः पूर्णमिदम्\nपूर्णात् पूर्णमुदच्यते।\nपूर्णस्य पूर्णमादाय\nपूर्णमेवावशिष्यते।',trans:'Om pūrṇamadaḥ pūrṇamidam\npūrṇāt pūrṇamudacyate.\npūrṇasya pūrṇamādāya\npūrṇamevāvaśiṣyate.',meaning:'वह पूर्ण है, यह भी पूर्ण है। पूर्ण से पूर्ण निकालने पर भी पूर्ण ही शेष रहता है। ईशोपनिषद का यह श्लोक माँ को याद दिलाता है - तुम और तुम्हारा शिशु दोनों पूर्ण हैं।',practice:'प्रसव की तैयारी में यह मंत्र हर रात सोने से पहले पढ़ें। स्वयं को और शिशु को पूर्णता का अनुभव कराएँ।',music:'शाम को भैरवी राग - जन्म की तैयारी और समर्पण के लिए'},
 ];
 function getGSForWeek(w){const idx=Math.floor(((w-1)/40)*garbhSanskar.length);return garbhSanskar[Math.min(idx,garbhSanskar.length-1)]}
 
 // ── DOS DONTS ──
 const dosDonts={
-  t1:{dos:['Eat fresh home-cooked meals in small, frequent portions','Drink 2.5–3 litres of water daily — stay well hydrated','Take folic acid and prenatal vitamins every single day','Go for a gentle 20–30 minute walk daily','Sleep early and get 8+ hours of rest'],donts:['No raw papaya or raw pineapple — avoid completely','Avoid junk food and deep-fried outside food','Never self-medicate — always check with your doctor first','Avoid stress and heavy lifting or strenuous work','No saunas or very hot baths — can raise body temperature']},
-  t2:{dos:['Include protein in every meal — dal, paneer, eggs','Eat calcium-rich foods: ragi, curd, sesame seeds daily','Continue prenatal yoga and light exercise','Start tracking baby movements from week 16 onward','Schedule your anomaly scan at 18–20 weeks'],donts:['Avoid high-mercury fish (king mackerel, swordfish, tuna)','Avoid unpasteurised milk and soft cheeses','Limit caffeine to no more than one cup per day','Avoid heavy lifting and prolonged standing','Reduce late-night screen time and avoid staying up past 11pm']},
-  t3:{dos:['Eat iron-rich foods: drumstick leaves, rajma, ragi, spinach','Walk a little every hour — helps reduce leg swelling','Do Kegel exercises daily — builds strength for labour','Prepare your birth plan and pack your hospital bag','Sleep on your left side — improves blood flow to baby'],donts:['Cut back on salt and spicy food — worsens swelling','Avoid long travel or flying after 34 weeks','Do not sleep flat on your back — puts pressure on blood vessels','Limit raw vegetables — can cause gas and bloating','If baby movements reduce noticeably, call your doctor immediately']},
+  t1:{dos:['Eat fresh home-cooked meals in small, frequent portions','Drink 2.5–3 litres of water daily - stay well hydrated','Take folic acid and prenatal vitamins every single day','Go for a gentle 20–30 minute walk daily','Sleep early and get 8+ hours of rest'],donts:['No raw papaya or raw pineapple - avoid completely','Avoid junk food and deep-fried outside food','Never self-medicate - always check with your doctor first','Avoid stress and heavy lifting or strenuous work','No saunas or very hot baths - can raise body temperature']},
+  t2:{dos:['Include protein in every meal - dal, paneer, eggs','Eat calcium-rich foods: ragi, curd, sesame seeds daily','Continue prenatal yoga and light exercise','Start tracking baby movements from week 16 onward','Schedule your anomaly scan at 18–20 weeks'],donts:['Avoid high-mercury fish (king mackerel, swordfish, tuna)','Avoid unpasteurised milk and soft cheeses','Limit caffeine to no more than one cup per day','Avoid heavy lifting and prolonged standing','Reduce late-night screen time and avoid staying up past 11pm']},
+  t3:{dos:['Eat iron-rich foods: drumstick leaves, rajma, ragi, spinach','Walk a little every hour - helps reduce leg swelling','Do Kegel exercises daily - builds strength for labour','Prepare your birth plan and pack your hospital bag','Sleep on your left side - improves blood flow to baby'],donts:['Cut back on salt and spicy food - worsens swelling','Avoid long travel or flying after 34 weeks','Do not sleep flat on your back - puts pressure on blood vessels','Limit raw vegetables - can cause gas and bloating','If baby movements reduce noticeably, call your doctor immediately']},
 };
 function getDosForWeek(w){return w<=12?dosDonts.t1:w<=27?dosDonts.t2:dosDonts.t3}
 
 // ── WEEK GUIDE ──
 const weekGuide={
-  4:{baby:"The heart is beginning to beat. The embryo is about the size of a poppy seed. The neural tube — which becomes the brain and spinal cord — is forming.",mum:"Fatigue and nausea may begin. Hormones are surging rapidly. Tender breasts and mild cramping are normal.",test:"First doctor visit — blood group, thyroid, CBC, urine test. Start prenatal vitamins if you haven't.",food:"Fenugreek leaves, masoor dal, orange — all rich in folate which is critical right now.",warning:"Heavy bleeding or severe cramping is not normal — see your doctor immediately."},
-  8:{baby:"All major organs are beginning to form. Fingers are separating. The heartbeat is now audible on ultrasound — a beautiful moment.",mum:"Nausea tends to peak around week 8–10. Fatigue and heartburn are common. Rest as much as you can.",test:"Dating scan — confirms heartbeat and due date. Your most important first scan.",food:"Ginger tea and dry crackers help with nausea. Smelling lemon or cardamom can provide quick relief.",warning:"If nausea is so severe you cannot keep any food or water down (hyperemesis), see your doctor — it is treatable."},
-  12:{baby:"All organs are now in place. From here, growth is the primary focus. Baby can yawn and hiccup.",mum:"First trimester is almost over. Nausea should start easing. Energy may slowly return.",test:"NT Scan at 11–13 weeks. Double Marker Test (blood test for chromosomal screening).",food:"Ragi, sesame seeds, paneer — calcium is now essential as bone formation begins in earnest.",warning:"If your first ultrasound has not happened yet, do it this week."},
-  16:{baby:"Baby can now move arms and legs and make facial expressions. The skeletal system is hardening.",mum:"Your bump is becoming visible. Energy is returning — this is the start of the golden second trimester.",test:"If NT Scan was missed, get Triple Marker Test now.",food:"Iron sources: rajma, chana, spinach. Always squeeze lemon on top — Vitamin C doubles iron absorption.",warning:"From week 16 onward, start noticing baby's movements. You should feel flutters soon."},
-  20:{baby:"Baby can now hear your voice — talk and sing to them. Hair and eyebrows are forming. Baby is swallowing amniotic fluid.",mum:"Bump is fully visible. Back pain may begin. Some people experience round ligament pain.",test:"Anomaly Scan (18–20 weeks) — the most comprehensive ultrasound. Checks all organs and baby's anatomy.",food:"Omega-3 for brain development: walnuts, flaxseed, eggs. Brain is growing fastest right now.",warning:"If the anomaly scan flags anything, see a fetal medicine specialist — most findings are manageable."},
-  24:{baby:"Lungs are beginning to produce surfactant. Baby can sense light and respond to loud sounds.",mum:"Leg swelling and heartburn are normal. Sleep may become harder as the bump grows.",test:"Glucose Tolerance Test (GTT) at 24–28 weeks to screen for gestational diabetes. Do not skip this.",food:"Reduce sugary drinks and refined carbs. Risk of gestational diabetes is highest around now.",warning:"Severe headache, blurry vision, or sudden swelling in hands/face — these can be signs of pre-eclampsia. Call your doctor."},
-  28:{baby:"Baby can open and close eyes. Weight is gaining rapidly — about 1kg by now.",mum:"Third trimester begins. Breathlessness and back pain will increase. Rest more intentionally.",test:"Growth Scan. Repeat CBC to check for anaemia — very common at this stage.",food:"Drumstick leaves (moringa), ragi, and jamun are exceptional for iron and calcium together.",warning:"From 28 weeks onward, count baby kicks every evening — 10 kicks in 2 hours is the target. Less than that, call your doctor."},
-  32:{baby:"Baby weighs about 1.7kg. Bones are hardening. Baby is practicing breathing movements.",mum:"Braxton Hicks contractions may begin — tightening sensations that are not real labour. Sleep is becoming harder.",test:"Growth Scan — checks baby's position, growth, and amniotic fluid levels.",food:"Protein at every meal. Turmeric milk at night — reduces inflammation and supports sleep.",warning:"If baby is still in breech position, do not worry yet — most babies turn by 36 weeks."},
-  36:{baby:"Lungs are nearly mature. Baby weighs close to 3kg and is gaining about 28g per day.",mum:"'Lightening' may happen — baby drops lower into the pelvis. Breathing may feel easier.",test:"Growth Scan — position and fluid level check. Group B Strep (GBS) swab.",food:"Eat small, frequent meals — the stomach has very little room now. Avoid large portions.",warning:"From 37 weeks, labour can begin any time. Hospital bag should be packed and ready."},
-  40:{baby:"Fully developed and ready to meet you. Baby weighs approximately 3.4–3.6kg.",mum:"Delivery is imminent. Braxton Hicks are intensifying. Cervix is softening and preparing.",test:"Weekly monitoring with your doctor until delivery.",food:"Dates have research support for cervical ripening — 6 dates a day from 36 weeks onward.",warning:"Water breaking, regular tightening contractions, or reduced baby movement — go to hospital immediately."},
+  4:{baby:"The heart is beginning to beat. The embryo is about the size of a poppy seed. The neural tube - which becomes the brain and spinal cord - is forming.",mum:"Fatigue and nausea may begin. Hormones are surging rapidly. Tender breasts and mild cramping are normal.",test:"First doctor visit - blood group, thyroid, CBC, urine test. Start prenatal vitamins if you haven't.",food:"Fenugreek leaves, masoor dal, orange - all rich in folate which is critical right now.",warning:"Heavy bleeding or severe cramping is not normal - see your doctor immediately."},
+  8:{baby:"All major organs are beginning to form. Fingers are separating. The heartbeat is now audible on ultrasound - a beautiful moment.",mum:"Nausea tends to peak around week 8–10. Fatigue and heartburn are common. Rest as much as you can.",test:"Dating scan - confirms heartbeat and due date. Your most important first scan.",food:"Ginger tea and dry crackers help with nausea. Smelling lemon or cardamom can provide quick relief.",warning:"If nausea is so severe you cannot keep any food or water down (hyperemesis), see your doctor - it is treatable."},
+  12:{baby:"All organs are now in place. From here, growth is the primary focus. Baby can yawn and hiccup.",mum:"First trimester is almost over. Nausea should start easing. Energy may slowly return.",test:"NT Scan at 11–13 weeks. Double Marker Test (blood test for chromosomal screening).",food:"Ragi, sesame seeds, paneer - calcium is now essential as bone formation begins in earnest.",warning:"If your first ultrasound has not happened yet, do it this week."},
+  16:{baby:"Baby can now move arms and legs and make facial expressions. The skeletal system is hardening.",mum:"Your bump is becoming visible. Energy is returning - this is the start of the golden second trimester.",test:"If NT Scan was missed, get Triple Marker Test now.",food:"Iron sources: rajma, chana, spinach. Always squeeze lemon on top - Vitamin C doubles iron absorption.",warning:"From week 16 onward, start noticing baby's movements. You should feel flutters soon."},
+  20:{baby:"Baby can now hear your voice - talk and sing to them. Hair and eyebrows are forming. Baby is swallowing amniotic fluid.",mum:"Bump is fully visible. Back pain may begin. Some people experience round ligament pain.",test:"Anomaly Scan (18–20 weeks) - the most comprehensive ultrasound. Checks all organs and baby's anatomy.",food:"Omega-3 for brain development: walnuts, flaxseed, eggs. Brain is growing fastest right now.",warning:"If the anomaly scan flags anything, see a fetal medicine specialist - most findings are manageable."},
+  24:{baby:"Lungs are beginning to produce surfactant. Baby can sense light and respond to loud sounds.",mum:"Leg swelling and heartburn are normal. Sleep may become harder as the bump grows.",test:"Glucose Tolerance Test (GTT) at 24–28 weeks to screen for gestational diabetes. Do not skip this.",food:"Reduce sugary drinks and refined carbs. Risk of gestational diabetes is highest around now.",warning:"Severe headache, blurry vision, or sudden swelling in hands/face - these can be signs of pre-eclampsia. Call your doctor."},
+  28:{baby:"Baby can open and close eyes. Weight is gaining rapidly - about 1kg by now.",mum:"Third trimester begins. Breathlessness and back pain will increase. Rest more intentionally.",test:"Growth Scan. Repeat CBC to check for anaemia - very common at this stage.",food:"Drumstick leaves (moringa), ragi, and jamun are exceptional for iron and calcium together.",warning:"From 28 weeks onward, count baby kicks every evening - 10 kicks in 2 hours is the target. Less than that, call your doctor."},
+  32:{baby:"Baby weighs about 1.7kg. Bones are hardening. Baby is practicing breathing movements.",mum:"Braxton Hicks contractions may begin - tightening sensations that are not real labour. Sleep is becoming harder.",test:"Growth Scan - checks baby's position, growth, and amniotic fluid levels.",food:"Protein at every meal. Turmeric milk at night - reduces inflammation and supports sleep.",warning:"If baby is still in breech position, do not worry yet - most babies turn by 36 weeks."},
+  36:{baby:"Lungs are nearly mature. Baby weighs close to 3kg and is gaining about 28g per day.",mum:"'Lightening' may happen - baby drops lower into the pelvis. Breathing may feel easier.",test:"Growth Scan - position and fluid level check. Group B Strep (GBS) swab.",food:"Eat small, frequent meals - the stomach has very little room now. Avoid large portions.",warning:"From 37 weeks, labour can begin any time. Hospital bag should be packed and ready."},
+  40:{baby:"Fully developed and ready to meet you. Baby weighs approximately 3.4–3.6kg.",mum:"Delivery is imminent. Braxton Hicks are intensifying. Cervix is softening and preparing.",test:"Weekly monitoring with your doctor until delivery.",food:"Dates have research support for cervical ripening - 6 dates a day from 36 weeks onward.",warning:"Water breaking, regular tightening contractions, or reduced baby movement - go to hospital immediately."},
 };
 function getWeekGuide(w){
   const keys=Object.keys(weekGuide).map(Number).sort((a,b)=>a-b);
@@ -772,25 +790,25 @@ function getWeekGuide(w){
 
 // ── FOOD DATA ──
 const foodData={
-  1:{eat:['🥦 Fenugreek / Spinach','🍊 Orange / Amla (Indian gooseberry)','🥚 Eggs (boiled)','🫘 Masoor dal / Rajma','🥛 Milk / Curd / Yoghurt','🥜 Peanuts / Almonds','🫐 Berries','🌾 Whole grains / Oats','🧄 Garlic, Ginger','🍋 Lemon / Citrus fruits'],avoid:['🍈 Raw papaya — avoid completely','🍍 Raw pineapple — avoid completely','🧀 Unpasteurised cheese / soft cheese','🍷 Alcohol — completely off limits','☕ Limit caffeine to 1 cup/day','🌶️ Very spicy food (worsens nausea)','🍟 Deep-fried outside food','🥚 Raw or undercooked eggs'],nutrients:[{icon:'🌿',name:'Folic Acid',why:'Critical for neural tube development. Aim for 400–800 mcg daily from fenugreek, rajma, and fortified cereals.'},{icon:'🩸',name:'Iron',why:'Blood volume is increasing. Eat spinach, ragi, rajma — squeeze lemon on top for better absorption.'},{icon:'🥛',name:'Calcium',why:'Early bone formation is starting. Milk, curd, sesame seeds, and ragi are excellent sources.'}]},
-  2:{eat:['🥜 Walnuts / Flaxseed (Omega-3)','🥦 Dark leafy greens','🍠 Sweet potato','🥑 Avocado','🫘 All lentils and legumes','🌾 Oats / Ragi','🧄 Ginger (great for nausea)','🍓 Vitamin-C rich fruits','🥕 Carrots','🧈 Ghee (in moderation)'],avoid:['🐟 High-mercury fish (swordfish, king mackerel)','🥩 Undercooked or raw meat','🧀 Soft or unpasteurised cheese','☕ Limit caffeine','🫙 Packaged / preservative-heavy food','🧂 Excess salt','🍭 Excess sugar and sweets'],nutrients:[{icon:'🦴',name:'Calcium + Vitamin D',why:"Baby's bones and teeth are forming rapidly. Ragi has 364mg calcium per 100g — one of the richest sources."},{icon:'🧠',name:'DHA (Omega-3)',why:'Brain and eye development peaks now. Walnuts, flaxseed, and eggs are excellent plant-based sources.'},{icon:'🩸',name:'Iron',why:'Blood volume nearly doubles during pregnancy. Pair iron foods with lemon/Vitamin C for maximum absorption.'}]},
-  3:{eat:['🥛 High-calcium foods daily','🫘 Protein in every meal','🌾 Complex carbohydrates','🥦 Magnesium-rich vegetables','🍌 Banana (potassium for cramps)','🥜 Walnuts / Flaxseed','💧 Water-rich fruits (cucumber, watermelon)','🍠 Fibre-rich vegetables','🌰 Nuts and seeds','🌿 Turmeric milk at night'],avoid:['🧂 Excess salt — worsens swelling','☕ Minimal caffeine only','🌶️ Very spicy food (triggers heartburn)','🍕 Large meals — eat small portions frequently','🥩 Raw or undercooked food','🍟 Deep-fried or heavy food'],nutrients:[{icon:'🦴',name:'Calcium',why:'Baby is building bone mass rapidly in the final weeks. Almonds, sesame seeds, and milk every day.'},{icon:'💪',name:'Protein',why:"Supports baby's muscle growth and prepares your body for labour. Eggs, dal, paneer at every meal."},{icon:'⚡',name:'Magnesium',why:'Prevents muscle cramps and supports sleep quality. Pumpkin seeds, almonds, and dark chocolate.'}]}
+  1:{eat:['🥦 Fenugreek / Spinach','🍊 Orange / Amla (Indian gooseberry)','🥚 Eggs (boiled)','🫘 Masoor dal / Rajma','🥛 Milk / Curd / Yoghurt','🥜 Peanuts / Almonds','🫐 Berries','🌾 Whole grains / Oats','🧄 Garlic, Ginger','🍋 Lemon / Citrus fruits'],avoid:['🍈 Raw papaya - avoid completely','🍍 Raw pineapple - avoid completely','🧀 Unpasteurised cheese / soft cheese','🍷 Alcohol - completely off limits','☕ Limit caffeine to 1 cup/day','🌶️ Very spicy food (worsens nausea)','🍟 Deep-fried outside food','🥚 Raw or undercooked eggs'],nutrients:[{icon:'🌿',name:'Folic Acid',why:'Critical for neural tube development. Aim for 400–800 mcg daily from fenugreek, rajma, and fortified cereals.'},{icon:'🩸',name:'Iron',why:'Blood volume is increasing. Eat spinach, ragi, rajma - squeeze lemon on top for better absorption.'},{icon:'🥛',name:'Calcium',why:'Early bone formation is starting. Milk, curd, sesame seeds, and ragi are excellent sources.'}]},
+  2:{eat:['🥜 Walnuts / Flaxseed (Omega-3)','🥦 Dark leafy greens','🍠 Sweet potato','🥑 Avocado','🫘 All lentils and legumes','🌾 Oats / Ragi','🧄 Ginger (great for nausea)','🍓 Vitamin-C rich fruits','🥕 Carrots','🧈 Ghee (in moderation)'],avoid:['🐟 High-mercury fish (swordfish, king mackerel)','🥩 Undercooked or raw meat','🧀 Soft or unpasteurised cheese','☕ Limit caffeine','🫙 Packaged / preservative-heavy food','🧂 Excess salt','🍭 Excess sugar and sweets'],nutrients:[{icon:'🦴',name:'Calcium + Vitamin D',why:"Baby's bones and teeth are forming rapidly. Ragi has 364mg calcium per 100g - one of the richest sources."},{icon:'🧠',name:'DHA (Omega-3)',why:'Brain and eye development peaks now. Walnuts, flaxseed, and eggs are excellent plant-based sources.'},{icon:'🩸',name:'Iron',why:'Blood volume nearly doubles during pregnancy. Pair iron foods with lemon/Vitamin C for maximum absorption.'}]},
+  3:{eat:['🥛 High-calcium foods daily','🫘 Protein in every meal','🌾 Complex carbohydrates','🥦 Magnesium-rich vegetables','🍌 Banana (potassium for cramps)','🥜 Walnuts / Flaxseed','💧 Water-rich fruits (cucumber, watermelon)','🍠 Fibre-rich vegetables','🌰 Nuts and seeds','🌿 Turmeric milk at night'],avoid:['🧂 Excess salt - worsens swelling','☕ Minimal caffeine only','🌶️ Very spicy food (triggers heartburn)','🍕 Large meals - eat small portions frequently','🥩 Raw or undercooked food','🍟 Deep-fried or heavy food'],nutrients:[{icon:'🦴',name:'Calcium',why:'Baby is building bone mass rapidly in the final weeks. Almonds, sesame seeds, and milk every day.'},{icon:'💪',name:'Protein',why:"Supports baby's muscle growth and prepares your body for labour. Eggs, dal, paneer at every meal."},{icon:'⚡',name:'Magnesium',why:'Prevents muscle cramps and supports sleep quality. Pumpkin seeds, almonds, and dark chocolate.'}]}
 };
 
 // ── YOGA DATA ──
 const yogaPoses=[
   {id:'tadasana',name:'Tadasana (Mountain Pose)',benefit:'Improves posture, relieves back pain, grounds the body',tri:[1,2,3],steps:['Stand tall, feet hip-width apart, arms relaxed at sides','Inhale and lengthen your spine upward','Roll shoulders back and down, open your chest','Hold 30 seconds with normal breathing, repeat 3 times'],anim:'standing',yt:'https://www.youtube.com/results?search_query=tadasana+prenatal+yoga+pregnancy'},
   {id:'baddha',name:'Baddha Konasana (Butterfly)',benefit:'Opens hips, increases pelvic flexibility for labour',tri:[1,2,3],steps:['Sit on the floor, bring soles of feet together','Gently press knees down toward the floor','Keep spine tall, hold your feet with both hands','Hold 1-2 minutes, breathe deeply'],anim:'butterfly',yt:'https://www.youtube.com/results?search_query=butterfly+pose+baddha+konasana+prenatal+yoga'},
-  {id:'cat_cow',name:'Marjaryasana (Cat-Cow)',benefit:'Relieves back pain, encourages optimal baby positioning',tri:[1,2,3],steps:['Come onto hands and knees, wrists under shoulders','Inhale — drop belly down, lift head (Cow)','Exhale — round spine up, tuck chin (Cat)','Flow slowly between poses, 10 rounds'],anim:'catcow',yt:'https://www.youtube.com/results?search_query=cat+cow+pose+prenatal+yoga+pregnancy'},
+  {id:'cat_cow',name:'Marjaryasana (Cat-Cow)',benefit:'Relieves back pain, encourages optimal baby positioning',tri:[1,2,3],steps:['Come onto hands and knees, wrists under shoulders','Inhale - drop belly down, lift head (Cow)','Exhale - round spine up, tuck chin (Cat)','Flow slowly between poses, 10 rounds'],anim:'catcow',yt:'https://www.youtube.com/results?search_query=cat+cow+pose+prenatal+yoga+pregnancy'},
   {id:'virabhadra',name:'Virabhadrasana I (Warrior I)',benefit:'Strengthens legs, builds stamina for labour',tri:[1,2],steps:['Step one foot forward, back foot at 45°','Bend front knee over ankle, keep back leg straight','Raise both arms overhead, palms facing each other','Hold 30 seconds, switch sides'],anim:'warrior',yt:'https://www.youtube.com/results?search_query=warrior+pose+prenatal+yoga+pregnancy'},
   {id:'utkatasana',name:'Utkatasana (Chair Pose)',benefit:'Strengthens thighs and pelvic floor muscles',tri:[1,2],steps:['Stand with feet hip-width apart','Bend knees and sink hips as if sitting in a chair','Extend arms forward or overhead','Hold 20-30 seconds, breathe steadily'],anim:'chair',yt:'https://www.youtube.com/results?search_query=chair+pose+utkatasana+prenatal+yoga'},
-  {id:'malasana',name:'Malasana (Garland / Deep Squat)',benefit:'Opens pelvis wide, prepares body for labour',tri:[2,3],steps:['Stand with feet wider than hips, toes turned out','Slowly lower into a deep squat','Bring palms together at chest in prayer position','Hold 1-2 minutes — use a folded blanket under heels if needed'],anim:'squat',yt:'https://www.youtube.com/results?search_query=malasana+garland+pose+prenatal+yoga'},
+  {id:'malasana',name:'Malasana (Garland / Deep Squat)',benefit:'Opens pelvis wide, prepares body for labour',tri:[2,3],steps:['Stand with feet wider than hips, toes turned out','Slowly lower into a deep squat','Bring palms together at chest in prayer position','Hold 1-2 minutes - use a folded blanket under heels if needed'],anim:'squat',yt:'https://www.youtube.com/results?search_query=malasana+garland+pose+prenatal+yoga'},
   {id:'viparita',name:'Viparita Karani (Legs up the Wall)',benefit:'Reduces swelling in legs and feet, deeply restoring',tri:[2,3],steps:['Sit sideways next to a wall','Swing legs up the wall as you lower your back down','Arms relaxed at sides, palms up','Stay 5-10 minutes, then roll to left side to come out'],anim:'legswall',yt:'https://www.youtube.com/results?search_query=legs+up+wall+viparita+karani+prenatal+yoga'},
-  {id:'kegel',name:'Kegel Exercise',benefit:'Strengthens pelvic floor, eases pushing during labour',tri:[1,2,3],steps:['Sit comfortably or lie on left side','Tighten the muscles you would use to stop urine flow','Hold for 5-10 seconds, then fully release','Repeat 10 times — do 3 sets daily'],anim:'seated',yt:'https://www.youtube.com/results?search_query=kegel+exercises+pregnancy+prenatal'},
+  {id:'kegel',name:'Kegel Exercise',benefit:'Strengthens pelvic floor, eases pushing during labour',tri:[1,2,3],steps:['Sit comfortably or lie on left side','Tighten the muscles you would use to stop urine flow','Hold for 5-10 seconds, then fully release','Repeat 10 times - do 3 sets daily'],anim:'seated',yt:'https://www.youtube.com/results?search_query=kegel+exercises+pregnancy+prenatal'},
   {id:'pelvic_tilt',name:'Pelvic Tilt (on all fours)',benefit:'Relieves lower back pain, strengthens core gently',tri:[1,2,3],steps:['Come onto hands and knees','Exhale and draw your belly gently inward and upward','Hold 5 seconds, then release completely','Repeat 10 times slowly'],anim:'catcow',yt:'https://www.youtube.com/results?search_query=pelvic+tilt+prenatal+pregnancy+exercise'},
   {id:'prasarita',name:'Prasarita Padottanasana (Wide Leg Forward Fold)',benefit:'Stretches hamstrings and inner thighs, calms the mind',tri:[1,2],steps:['Stand with feet wide apart (3-4 feet)','Inhale and lengthen spine, exhale fold forward gently','Place hands on floor, shins, or a block','Hold 30 seconds, breathe deeply'],anim:'fold',yt:'https://www.youtube.com/results?search_query=prasarita+padottanasana+prenatal+yoga'},
   {id:'parsvakonasana',name:'Parsvakonasana (Extended Side Angle)',benefit:'Opens the side body, strengthens legs and hips',tri:[1,2],steps:['Stand with feet wide, turn right foot out 90°','Bend right knee, lower right hand to knee or floor','Extend left arm overhead alongside your ear','Hold 30 seconds, repeat on other side'],anim:'sideangle',yt:'https://www.youtube.com/results?search_query=side+angle+pose+prenatal+yoga+pregnancy'},
-  {id:'shavasana',name:'Side-lying Shavasana (Rest Pose)',benefit:'Deep rest, improves blood flow to baby, reduces fatigue',tri:[2,3],steps:['Lie on your left side','Place a pillow between your knees and under your belly','Close your eyes, let your body completely relax','Rest for 10-15 minutes — this is yoga too'],anim:'sidelying',yt:'https://www.youtube.com/results?search_query=prenatal+shavasana+side+lying+relaxation'},
+  {id:'shavasana',name:'Side-lying Shavasana (Rest Pose)',benefit:'Deep rest, improves blood flow to baby, reduces fatigue',tri:[2,3],steps:['Lie on your left side','Place a pillow between your knees and under your belly','Close your eyes, let your body completely relax','Rest for 10-15 minutes - this is yoga too'],anim:'sidelying',yt:'https://www.youtube.com/results?search_query=prenatal+shavasana+side+lying+relaxation'},
 ];
 
 function getYogaForTrimester(w){
@@ -819,7 +837,7 @@ const exerciseData={
   ],
   t3:[
     {name:'Kegel Exercises',desc:'Tighten pelvic floor muscles for 5–10 seconds, fully release. 10 reps, 3 times daily. Builds pushing strength and speeds postpartum recovery.',tags:['T3','3x daily']},
-    {name:'Ankle Circles',desc:'Seated in a chair, rotate both ankles in circles — 10 each direction. Reduces swelling. Do 5–6 times throughout the day.',tags:['T2','T3','5 mins']},
+    {name:'Ankle Circles',desc:'Seated in a chair, rotate both ankles in circles - 10 each direction. Reduces swelling. Do 5–6 times throughout the day.',tags:['T2','T3','5 mins']},
     {name:'Cat-Cow Stretches',desc:'On hands and knees, arch and round your back with each breath. Encourages baby to descend and relieves back pressure.',tags:['T1','T2','T3','10 mins']},
     {name:'Labour Breathing (4-7-8)',desc:'Inhale for 4, hold for 7, exhale for 8. Practice daily for 10 minutes. This is your main coping tool during contractions.',tags:['T3','10 mins']}
   ],
@@ -839,13 +857,13 @@ const books=[
 
 // ── WATCH ──
 const watchList=[
-  {emoji:'🎬',title:'Call the Midwife',type:'TV Series — English',why:'A warm, heartfelt British series about midwives. Uplifting and informative.',lang:'English'},
-  {emoji:'🎥',title:'The Business of Being Born',type:'Documentary — English',why:'Eye-opening documentary about birth choices. Informed decision-making.',lang:'English'},
-  {emoji:'🧘',title:'Yoga with Adriene — Prenatal',type:'YouTube — English',why:'Free, gentle prenatal yoga. Highly recommended for all trimesters.',lang:'English'},
-  {emoji:'🎭',title:'Mimi (2021)',type:'Film — Hindi',why:'एक प्रेरक कहानी। हल्की, भावनात्मक, और सकारात्मक।',lang:'Hindi'},
-  {emoji:'🎞️',title:'Nil Battey Sannata',type:'Film — Hindi',why:'एक माँ की दृढ़ता की कहानी। बहुत प्रेरणादायक।',lang:'Hindi'},
-  {emoji:'😂',title:'Good Newwz',type:'Film — Hindi',why:'हल्की-फुल्की कॉमेडी। गर्भावस्था पर। तनाव कम करने के लिए।',lang:'Hindi'},
-  {emoji:'🌿',title:'Satvic Movement',type:'YouTube — Hindi/English',why:'Natural pregnancy, food and lifestyle guidance in Hindi and English.',lang:'Both'},
+  {emoji:'🎬',title:'Call the Midwife',type:'TV Series - English',why:'A warm, heartfelt British series about midwives. Uplifting and informative.',lang:'English'},
+  {emoji:'🎥',title:'The Business of Being Born',type:'Documentary - English',why:'Eye-opening documentary about birth choices. Informed decision-making.',lang:'English'},
+  {emoji:'🧘',title:'Yoga with Adriene - Prenatal',type:'YouTube - English',why:'Free, gentle prenatal yoga. Highly recommended for all trimesters.',lang:'English'},
+  {emoji:'🎭',title:'Mimi (2021)',type:'Film - Hindi',why:'एक प्रेरक कहानी। हल्की, भावनात्मक, और सकारात्मक।',lang:'Hindi'},
+  {emoji:'🎞️',title:'Nil Battey Sannata',type:'Film - Hindi',why:'एक माँ की दृढ़ता की कहानी। बहुत प्रेरणादायक।',lang:'Hindi'},
+  {emoji:'😂',title:'Good Newwz',type:'Film - Hindi',why:'हल्की-फुल्की कॉमेडी। गर्भावस्था पर। तनाव कम करने के लिए।',lang:'Hindi'},
+  {emoji:'🌿',title:'Satvic Movement',type:'YouTube - Hindi/English',why:'Natural pregnancy, food and lifestyle guidance in Hindi and English.',lang:'Both'},
 ];
 const watchAvoid=[
   {what:'Horror films & psychological thrillers',why:'Cortisol (stress hormone) बढ़ता है जो शिशु तक पहुँचता है'},
@@ -859,7 +877,21 @@ const watchAvoid=[
 // ── UTILITIES ──
 function calcWeek(d){const days=Math.floor((new Date()-d)/(1000*60*60*24));return Math.max(1,Math.min(Math.floor(days/7)+1,40))}
 function calcDays(d){return Math.floor((new Date()-d)/(1000*60*60*24))}
-function formatDate(d){return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}
+function formatDate(d){
+  const dt=new Date(d);
+  if(isNaN(dt))return d||'';
+  const dd=String(dt.getDate()).padStart(2,'0');
+  const mm=String(dt.getMonth()+1).padStart(2,'0');
+  const yyyy=dt.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+function formatDateShort(d){
+  const dt=new Date(d);
+  if(isNaN(dt))return d||'';
+  const dd=String(dt.getDate()).padStart(2,'0');
+  const mm=String(dt.getMonth()+1).padStart(2,'0');
+  return `${dd}/${mm}`;
+}
 function dateKey(d){const dt=d||new Date();return dt.toISOString().split('T')[0]}
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 function openModal(id){document.getElementById(id).classList.add('open')}
@@ -906,17 +938,17 @@ async function initApp(){
 
 // ── FUN FACTS ──
 const funFacts=[
-  {icon:'🐘',text:"Elephants are pregnant for 22 months — the longest of any land animal!"},
-  {icon:'🦋',text:"A baby can taste what the mother eats — strong flavours like garlic pass through amniotic fluid."},
+  {icon:'🐘',text:"Elephants are pregnant for 22 months - the longest of any land animal!"},
+  {icon:'🦋',text:"A baby can taste what the mother eats - strong flavours like garlic pass through amniotic fluid."},
   {icon:'🎵',text:"Babies can hear and recognise their mother's voice from inside the womb from week 18."},
-  {icon:'👣',text:"A baby's fingerprints form by week 10 — they are already uniquely theirs."},
-  {icon:'💤',text:"Babies dream in the womb — REM sleep patterns appear as early as week 23."},
+  {icon:'👣',text:"A baby's fingerprints form by week 10 - they are already uniquely theirs."},
+  {icon:'💤',text:"Babies dream in the womb - REM sleep patterns appear as early as week 23."},
   {icon:'🦁',text:"A lion's pregnancy lasts 110 days. A blue whale's lasts nearly 12 months!"},
-  {icon:'🤸',text:"Your baby can do somersaults — and you'll start feeling them from around week 16–20."},
+  {icon:'🤸',text:"Your baby can do somersaults - and you'll start feeling them from around week 16–20."},
   {icon:'🌱',text:"Your body produces 50% more blood during pregnancy to nourish your baby."},
-  {icon:'🌙',text:"Babies are more active at night when the mother is resting — the rocking motion of walking soothes them during the day."},
+  {icon:'🌙',text:"Babies are more active at night when the mother is resting - the rocking motion of walking soothes them during the day."},
   {icon:'💪',text:"The uterus grows 500 times its original size during pregnancy. It returns to normal within 6 weeks after birth."},
-  {icon:'🌊',text:"A newborn baby has 300 bones. Adults have 206 — many fuse together as we grow."},
+  {icon:'🌊',text:"A newborn baby has 300 bones. Adults have 206 - many fuse together as we grow."},
   {icon:'⭐',text:"Opossum pregnancies last just 12 days. A human pregnancy, at 40 weeks, is one of the longest relative to body size."},
 ];
 let funFactIdx=0;
@@ -969,7 +1001,7 @@ function renderToday(){
 
   const t=week<=12?1:week<=27?2:3;
   const tLabels=['','First Trimester','Second Trimester','Third Trimester'];
-  const tTips=['','Rest, hydrate, take folic acid','The golden weeks — energy returning','Baby is almost here!'];
+  const tTips=['','Rest, hydrate, take folic acid','The golden weeks - energy returning','Baby is almost here!'];
   document.getElementById('trimLabel').textContent=tLabels[t];
   document.getElementById('trimTip').textContent=tTips[t];
 
@@ -988,7 +1020,7 @@ function renderToday(){
   // Garbh Sanskar
   const gs=getGSForWeek(week);
   document.getElementById('gsCard').innerHTML=`
-    <div class="gs-label">🕉️ GARBH SANSKAR — सप्ताह ${week}</div>
+    <div class="gs-label">🕉️ GARBH SANSKAR - सप्ताह ${week}</div>
     <div class="gs-shloka">${gs.shloka}</div>
     <div class="gs-transliteration">${gs.trans}</div>
     <div class="gs-meaning">${gs.meaning}</div>
@@ -1086,18 +1118,25 @@ function toggleOutsideFood(){
   document.getElementById('outsideFoodDetail').style.display=t.classList.contains('on')?'block':'none';
 }
 function handlePhotoUpload(input){
-  if(currentPhotos.length>=2){showToast('Max 2 photos per day');return}
-  const files=Array.from(input.files).slice(0,2-currentPhotos.length);
+  const files=Array.from(input.files);
+  if(!files.length)return;
+  let loaded=0;
   files.forEach(file=>{
     const reader=new FileReader();
     reader.onload=e=>{
       currentPhotos.push(e.target.result);
-      const row=document.getElementById('photoPreviewRow');
-      row.innerHTML='';
-      currentPhotos.forEach((s,i)=>row.appendChild(makeThumb(s,i)));
+      loaded++;
+      if(loaded===files.length){
+        const row=document.getElementById('photoPreviewRow');
+        row.innerHTML='';
+        currentPhotos.forEach((s,i)=>row.appendChild(makeThumb(s,i)));
+        showToast(files.length>1?`${files.length} photos added`:'Photo added');
+      }
     };
     reader.readAsDataURL(file);
   });
+  // reset input so same file can be re-selected
+  input.value='';
 }
 async function saveLog(){
   const key=dateKey(logDate);
@@ -1149,7 +1188,7 @@ function setWellnessTab(tab,btn){
 function makeYogaSVG(anim){
   const skin='#F4C5A0',hair='#5C3317',rose='#E8748A',belly='#F8D5B8',sage='#7BAF8E';
   const svgs={
-    // Mountain Pose — standing upright, arms at sides, breathing animation
+    // Mountain Pose - standing upright, arms at sides, breathing animation
     standing:`<svg width="80" height="80" viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-breathe" style="transform-origin:40px 55px">
         <ellipse cx="40" cy="105" rx="18" ry="5" fill="${rose}" opacity=".15"/>
@@ -1176,7 +1215,7 @@ function makeYogaSVG(anim){
         <ellipse cx="49" cy="91" rx="5" ry="3" fill="${skin}"/>
       </g>
     </svg>`,
-    // Butterfly pose — seated, soles together, knees out
+    // Butterfly pose - seated, soles together, knees out
     butterfly:`<svg width="80" height="80" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-sway" style="transform-origin:45px 45px">
         <ellipse cx="45" cy="85" rx="30" ry="6" fill="${rose}" opacity=".15"/>
@@ -1201,7 +1240,7 @@ function makeYogaSVG(anim){
         <ellipse cx="45" cy="73" rx="10" ry="4" fill="${skin}"/>
       </g>
     </svg>`,
-    // Cat-Cow — on all fours, back arching
+    // Cat-Cow - on all fours, back arching
     catcow:`<svg width="80" height="80" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-tilt" style="transform-origin:50px 40px">
         <ellipse cx="50" cy="75" rx="35" ry="5" fill="${rose}" opacity=".15"/>
@@ -1230,7 +1269,7 @@ function makeYogaSVG(anim){
         <ellipse cx="64" cy="60" rx="5" ry="3" fill="${skin}"/>
       </g>
     </svg>`,
-    // Warrior I — lunge with arms up
+    // Warrior I - lunge with arms up
     warrior:`<svg width="80" height="80" viewBox="0 0 100 110" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-stretch" style="transform-origin:50px 55px">
         <ellipse cx="50" cy="106" rx="28" ry="4" fill="${rose}" opacity=".15"/>
@@ -1257,7 +1296,7 @@ function makeYogaSVG(anim){
         <ellipse cx="71" cy="93" rx="8" ry="3" fill="${skin}"/>
       </g>
     </svg>`,
-    // Chair pose — sitting back, arms forward
+    // Chair pose - sitting back, arms forward
     chair:`<svg width="80" height="80" viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-squat" style="transform-origin:40px 60px">
         <ellipse cx="40" cy="97" rx="22" ry="4" fill="${rose}" opacity=".15"/>
@@ -1339,7 +1378,7 @@ function makeYogaSVG(anim){
         <ellipse cx="90" cy="22" rx="4" ry="7" fill="${skin}" transform="rotate(-15,90,22)"/>
       </g>
     </svg>`,
-    // Seated — for kegel
+    // Seated - for kegel
     seated:`<svg width="80" height="80" viewBox="0 0 80 95" xmlns="http://www.w3.org/2000/svg">
       <g class="anim-kegel" style="transform-origin:40px 55px">
         <ellipse cx="40" cy="90" rx="25" ry="5" fill="${rose}" opacity=".15"/>
@@ -1563,7 +1602,7 @@ function renderWeeklyGuide(){
   const g=getWeekGuide(week);
   document.getElementById('guideWeekly').innerHTML=`
     <div class="week-guide-card">
-      <div class="week-guide-title">Week ${week} — What's happening</div>
+      <div class="week-guide-title">Week ${week} - What's happening</div>
       <div class="week-guide-section"><div class="week-guide-section-title">👶 Baby</div><div class="week-guide-text">${g.baby}</div></div>
       <div class="week-guide-section"><div class="week-guide-section-title">🌸 Mum's body</div><div class="week-guide-text">${g.mum}</div></div>
       <div class="week-guide-section"><div class="week-guide-section-title">🩺 Tests this stage</div><div class="week-guide-text">${g.test}</div></div>
@@ -1644,6 +1683,57 @@ function renderWatch(){
   </div>`).join('');
 }
 
+// ── FILE VIEWER ──
+function openFileViewer(dataUrl,name){
+  const v=document.getElementById('fileViewer');
+  const c=document.getElementById('fileViewerContent');
+  document.getElementById('fileViewerName').textContent=name||'Attachment';
+  // detect type from data URL prefix
+  if(dataUrl.startsWith('data:image')){
+    c.innerHTML=`<img src="${dataUrl}" alt="${name||''}">`;
+  } else if(dataUrl.startsWith('data:application/pdf')){
+    c.innerHTML=`<iframe src="${dataUrl}"></iframe>`;
+  } else {
+    // fallback: try as image
+    c.innerHTML=`<img src="${dataUrl}" alt="${name||''}">`;
+  }
+  v.classList.add('open');
+}
+function closeFileViewer(){
+  document.getElementById('fileViewer').classList.remove('open');
+  document.getElementById('fileViewerContent').innerHTML='';
+}
+document.getElementById('fileViewer').addEventListener('click',function(e){if(e.target===this)closeFileViewer()});
+
+function deleteRecord(type,idx){
+  if(!confirm('Remove this record?'))return;
+  if(type==='visit')db.visits.splice(idx,1);
+  else if(type==='presc')db.prescriptions.splice(idx,1);
+  else if(type==='report')db.reports.splice(idx,1);
+  cacheDB();renderMedical();showToast('Removed');
+}
+
+function replaceFile(type,idx){
+  const input=document.createElement('input');
+  input.type='file';input.accept='image/*,.pdf';
+  input.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const data=ev.target.result;
+      if(type==='visit'){db.visits[idx].file=data;db.visits[idx].fileName=file.name;}
+      else if(type==='presc'){db.prescriptions[idx].file=data;db.prescriptions[idx].fileName=file.name;}
+      else if(type==='report'){db.reports[idx].file=data;db.reports[idx].fileName=file.name;}
+      cacheDB();renderMedical();showToast('File replaced ✓');
+      // sync to supabase
+      const record=type==='visit'?db.visits[idx]:type==='presc'?db.prescriptions[idx]:db.reports[idx];
+      if(record?.id)supa.upsert('bj_visits',{id:record.id,file:data,file_name:file.name}).catch(()=>{});
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
 // ── MEDICAL ──
 let medFileData={visit:null,presc:null,report:null};
 function handleFile(input,type){
@@ -1664,25 +1754,39 @@ function setMedTab(tab,btn){
 function renderMedical(){
   renderVisits();renderPrescriptions();renderReports();
 }
+function fileActionsHTML(file,fileName,type,idx){
+  const safe=(s)=>(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  if(file){
+    return `<div class="visit-attachment">
+      📎 <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${fileName||'Attachment'}</span>
+      <button class="file-action-btn file-action-view" onclick="openFileViewer('${safe(file)}','${safe(fileName)}')">👁 View</button>
+      <button class="file-action-btn file-action-replace" onclick="replaceFile('${type}',${idx})">🔄 Replace</button>
+      <button class="file-action-btn file-action-delete" onclick="deleteRecord('${type}',${idx})">🗑</button>
+    </div>`;
+  }
+  return `<div style="margin-top:8px"><button class="file-action-btn file-action-replace" style="padding:5px 12px" onclick="replaceFile('${type}',${idx})">📎 Attach file</button></div>`;
+}
 function renderVisits(){
-  const el=document.getElementById('medVisits');
-  if(!el)return;
+  const el=document.getElementById('medVisits');if(!el)return;
+  const sorted=(db.visits||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
   el.innerHTML=`<button class="add-btn" onclick="openVisitModal()">+ Add Visit or Scan</button>`+
-  ((db.visits||[]).length?db.visits.sort((a,b)=>b.date.localeCompare(a.date)).map(v=>{
+  (sorted.length?sorted.map((v,i)=>{
     const wk=Math.floor((new Date(v.date)-START_DATE)/(1000*60*60*24*7))+1;
     const wkL=wk>=1&&wk<=40?'Week '+wk:'';
-    return`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">${v.type}</div><div class="visit-date">${formatDate(v.date)}${v.doctor?' · Dr. '+v.doctor:''}</div></div>${wkL?`<span class="visit-week-badge">${wkL}</span>`:''}</div>${v.notes?`<div class="visit-notes">${v.notes}</div>`:''}</div>`;
+    return`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">${v.type}</div><div class="visit-date">${formatDate(v.date)}${v.doctor?' · Dr. '+v.doctor:''}</div></div>${wkL?`<span class="visit-week-badge">${wkL}</span>`:''}</div>${v.notes?`<div class="visit-notes">${v.notes}</div>`:''}${fileActionsHTML(v.file,v.fileName,'visit',i)}</div>`;
   }).join(''):'<p class="no-data">No visits logged yet</p>');
 }
 function renderPrescriptions(){
   const el=document.getElementById('medPrescriptions');if(!el)return;
+  const sorted=(db.prescriptions||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
   el.innerHTML=`<button class="add-btn" onclick="openModal('prescModal')">+ Add Prescription</button>`+
-  ((db.prescriptions||[]).length?db.prescriptions.sort((a,b)=>b.date.localeCompare(a.date)).map(p=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">💊 Prescription</div><div class="visit-date">${formatDate(p.date)}${p.doctor?' · Dr. '+p.doctor:''}</div></div></div>${p.notes?`<div class="visit-notes">${p.notes}</div>`:''}${p.file?`<div class="visit-attachment">📎 ${p.fileName||'Attached'}</div>`:''}</div>`).join(''):'<p class="no-data">No prescriptions yet</p>');
+  (sorted.length?sorted.map((p,i)=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">💊 Prescription</div><div class="visit-date">${formatDate(p.date)}${p.doctor?' · Dr. '+p.doctor:''}</div></div></div>${p.notes?`<div class="visit-notes">${p.notes}</div>`:''}${fileActionsHTML(p.file,p.fileName,'presc',i)}</div>`).join(''):'<p class="no-data">No prescriptions yet</p>');
 }
 function renderReports(){
   const el=document.getElementById('medReports');if(!el)return;
+  const sorted=(db.reports||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
   el.innerHTML=`<button class="add-btn" onclick="openModal('reportModal')">+ Add Report / Scan</button>`+
-  ((db.reports||[]).length?db.reports.sort((a,b)=>b.date.localeCompare(a.date)).map(r=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">🗂 ${r.name||'Report'}</div><div class="visit-date">${formatDate(r.date)}</div></div></div>${r.notes?`<div class="visit-notes">${r.notes}</div>`:''}${r.file?`<div class="visit-attachment">📎 ${r.fileName||'Attached'}</div>`:''}</div>`).join(''):'<p class="no-data">No reports yet</p>');
+  (sorted.length?sorted.map((r,i)=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">🗂 ${r.name||'Report'}</div><div class="visit-date">${formatDate(r.date)}</div></div></div>${r.notes?`<div class="visit-notes">${r.notes}</div>`:''}${fileActionsHTML(r.file,r.fileName,'report',i)}</div>`).join(''):'<p class="no-data">No reports yet</p>');
 }
 function openVisitModal(){document.getElementById('vDate').value=dateKey(new Date());openModal('visitModal')}
 async function saveVisit(){
@@ -1796,7 +1900,7 @@ function renderGallery(){
   el.innerHTML=Object.entries(byMonth).map(([month,dates])=>{
     const label=new Date(month+'-01').toLocaleDateString('en-IN',{month:'long',year:'numeric'});
     const items=dates.flatMap(date=>(gallery[date]||[]).map(src=>({src,date})));
-    return`<div class="gallery-month"><div class="gallery-month-label">${label}</div><div class="gallery-grid">${items.map(item=>`<div class="gallery-item" onclick="openLightbox('${item.src}','${item.date}')"><img src="${item.src}" loading="lazy"><span class="gallery-date">${item.date.slice(5)}</span></div>`).join('')}</div></div>`;
+    return`<div class="gallery-month"><div class="gallery-month-label">${label}</div><div class="gallery-grid">${items.map(item=>`<div class="gallery-item" onclick="openLightbox('${item.src}','${item.date}')"><img src="${item.src}" loading="lazy"><span class="gallery-date">${formatDateShort(item.date)}</span></div>`).join('')}</div></div>`;
   }).join('');
 }
 function openLightbox(src,date){
