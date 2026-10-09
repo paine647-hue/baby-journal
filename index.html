@@ -165,26 +165,46 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .log-date-display{text-align:center}
 .log-date-day{font-family:'Playfair Display',serif;font-size:20px}
 .log-date-full{font-size:11px;color:var(--ink-light)}
-.mood-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
-.mood-btn{flex:1;min-width:56px;background:var(--white);border:2px solid transparent;border-radius:var(--radius-sm);padding:9px 4px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
-.mood-btn span:first-child{font-size:20px}
-.mood-btn span:last-child{font-size:8px;color:var(--ink-light)}
-.mood-btn.selected{border-color:var(--rose);background:var(--rose-pale)}
-.mood-btn.selected span:last-child{color:var(--rose)}
+.mood-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:6px}
+.mood-btn{height:56px;background:var(--white);border:1.5px solid var(--rose-mid);border-radius:var(--radius-sm);padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:all .2s ease-out}
+.mood-btn span:first-child{font-size:28px;transition:transform .2s ease-out}
+.mood-btn span:last-child{font-size:11px;color:var(--ink-light);transition:color .2s}
+.mood-btn.selected{border:2px solid var(--rose);background:var(--rose-pale)}
+.mood-btn.selected span:first-child{transform:scale(1.15)}
+.mood-btn.selected span:last-child{color:var(--rose);font-weight:500}
+.mood-btn:active{transform:scale(.95)}
+.mood-hint{font-size:12px;color:var(--ink-light);margin-bottom:14px}
 .counter-row{display:flex;gap:10px;margin-bottom:13px}
 .counter-card{flex:1;background:var(--white);border-radius:var(--radius-sm);padding:13px;box-shadow:var(--shadow);text-align:center}
 .counter-label{font-size:10px;color:var(--ink-light);margin-bottom:7px}
 .counter-controls{display:flex;align-items:center;justify-content:center;gap:10px}
-.counter-btn{width:28px;height:28px;border-radius:50%;border:none;background:var(--rose-pale);color:var(--rose);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.counter-btn{width:36px;height:36px;border-radius:50%;border:none;background:var(--rose-pale);color:var(--rose);font-size:18px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.counter-btn:active{animation:counterBounce .25s ease-out}
+@keyframes counterBounce{0%{transform:scale(1)}30%{transform:scale(.9)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
 .counter-num{font-size:20px;font-weight:600;color:var(--ink);min-width:26px}
+.counter-indicator{font-size:14px;margin-top:4px}
 .kicks-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);margin-bottom:13px;text-align:center}
-.kicks-circle{width:72px;height:72px;border-radius:50%;background:var(--rose-pale);border:3px solid var(--rose-light);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .1s,background .15s}
+.kicks-circle{position:relative;width:88px;height:88px;border-radius:50%;background:var(--rose-pale);border:3px solid var(--rose-light);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .1s,background .15s;overflow:visible}
 .kicks-circle:active{transform:scale(.93);background:var(--rose-mid)}
-.kicks-circle span{font-size:28px}
+.kicks-circle span{font-size:32px}
+.kicks-ripple{position:absolute;width:100%;height:100%;border-radius:50%;border:2px solid var(--rose-light);opacity:0;pointer-events:none;animation:kickRipple .4s ease-out forwards}
+@keyframes kickRipple{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.5);opacity:0}}
 .kicks-count{font-size:20px;font-weight:600;color:var(--rose)}
 .kicks-sub{font-size:10px;color:var(--ink-light)}
+.kicks-best{font-size:11px;color:var(--ink-mid);margin-top:4px}
 .kicks-reset{margin-top:6px;font-size:11px;color:var(--ink-light);background:none;border:none;cursor:pointer;text-decoration:underline}
-.photo-upload-area{border:2px dashed var(--rose-light);border-radius:var(--radius-sm);padding:18px;text-align:center;cursor:pointer;background:var(--rose-pale);margin-bottom:12px}
+.photo-upload-area{border:1.5px solid var(--rose-light);border-radius:var(--radius-sm);padding:18px;text-align:center;cursor:pointer;background:var(--rose-pale);margin-bottom:12px;position:relative}
+.photo-upload-area svg{display:block;margin:0 auto 6px}
+.photo-badge{position:absolute;top:-8px;right:-8px;background:var(--rose);color:var(--white);width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.journal-wrap{position:relative}
+.journal-charcount{position:absolute;bottom:8px;right:10px;font-size:11px;color:var(--ink-light);pointer-events:none}
+.lifestyle-card{background:var(--sage-pale);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+.lifestyle-label{font-size:12px;font-weight:600;color:var(--sage);margin-bottom:10px}
+.save-btn-log{width:100%;padding:15px;border:none;border-radius:var(--radius-sm);background:var(--rose);color:var(--white);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .3s ease;margin-bottom:12px;position:relative;overflow:hidden}
+.save-btn-log:active{opacity:.85;transform:scale(.98)}
+.save-btn-log.saved{background:var(--sage)}
+.save-btn-log .check-draw{display:inline-block;opacity:0;transform:scale(0);transition:all .3s ease}
+.save-btn-log.saved .check-draw{opacity:1;transform:scale(1)}
 .photo-preview-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .photo-thumb-wrap{position:relative;display:inline-block}
 .photo-thumb{width:68px;height:68px;border-radius:10px;object-fit:cover;border:2px solid var(--white);box-shadow:var(--shadow)}
@@ -366,7 +386,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 /* ANIMATIONS */
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@media (prefers-reduced-motion:reduce){.lock-emoji,.hero-fruit,.anim-breathe,.anim-sway,.anim-squat,.anim-stretch,.anim-kegel,.anim-tilt,.anim-float{animation:none}.page.active{animation:none}}
+@media (prefers-reduced-motion:reduce){.lock-emoji,.hero-fruit,.anim-breathe,.anim-sway,.anim-squat,.anim-stretch,.anim-kegel,.anim-tilt,.anim-float{animation:none}.page.active{animation:none}.counter-btn:active{animation:none}.kicks-ripple{animation:none;display:none}.mood-btn.selected span:first-child{transform:none}}
 </style>
 </head>
 <body>
@@ -555,7 +575,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
       <div class="log-date-display"><div class="log-date-day" id="logDateDay">Today</div><div class="log-date-full" id="logDateFull">--</div></div>
       <button class="log-date-nav" onclick="changeLogDate(1)">›</button>
     </div>
-    <div class="section-title">How are you feeling? <span style="font-size:10px;font-weight:400;color:var(--ink-light)">(pick up to 2)</span></div>
+    <div class="section-title">How are you feeling?</div>
     <div class="mood-row">
       <button class="mood-btn" onclick="selectMood('amazing')" id="mood-amazing"><span>🤩</span><span>Amazing</span></button>
       <button class="mood-btn" onclick="selectMood('happy')" id="mood-happy"><span>😊</span><span>Happy</span></button>
@@ -563,62 +583,70 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
       <button class="mood-btn" onclick="selectMood('rough')" id="mood-rough"><span>🤢</span><span>Rough</span></button>
       <button class="mood-btn" onclick="selectMood('sad')" id="mood-sad"><span>😢</span><span>Sad</span></button>
       <button class="mood-btn" onclick="selectMood('anxious')" id="mood-anxious"><span>😰</span><span>Anxious</span></button>
+      <button class="mood-btn" onclick="selectMood('calm')" id="mood-calm"><span>😌</span><span>Calm</span></button>
+      <button class="mood-btn" onclick="selectMood('emotional')" id="mood-emotional"><span>🥺</span><span>Emotional</span></button>
+      <button class="mood-btn" onclick="selectMood('energetic')" id="mood-energetic"><span>💪</span><span>Energetic</span></button>
+      <button class="mood-btn" onclick="selectMood('grateful')" id="mood-grateful"><span>🥰</span><span>Grateful</span></button>
     </div>
+    <div class="mood-hint">Pick up to 2</div>
     <div class="counter-row">
       <div class="counter-card">
-        <div class="counter-label">🤢 Vomits</div>
+        <div class="counter-label">Vomits</div>
         <div class="counter-controls">
           <button class="counter-btn" onclick="changeCounter('vomit',-1)">−</button>
           <div class="counter-num" id="vomitCount">0</div>
           <button class="counter-btn" onclick="changeCounter('vomit',1)">+</button>
         </div>
+        <div class="counter-indicator" id="vomitIndicator">😊</div>
       </div>
       <div class="counter-card">
-        <div class="counter-label">😴 Sleep hrs</div>
+        <div class="counter-label">Sleep hrs</div>
         <div class="counter-controls">
           <button class="counter-btn" onclick="changeCounter('sleep',-1)">−</button>
           <div class="counter-num" id="sleepCount">7</div>
           <button class="counter-btn" onclick="changeCounter('sleep',1)">+</button>
         </div>
+        <div class="counter-indicator" id="sleepIndicator">😊</div>
       </div>
     </div>
     <div id="kicksSection">
       <div class="kicks-card">
-        <div style="font-size:12px;font-weight:600;color:var(--ink-mid);margin-bottom:10px">👟 Baby kicks today</div>
-        <div class="kicks-circle" onclick="addKick()"><span>👣</span></div>
+        <div style="font-size:12px;font-weight:600;color:var(--ink-mid);margin-bottom:10px">Baby kicks today</div>
+        <div class="kicks-circle" onclick="addKick()" id="kicksCircle"><span>👣</span></div>
         <div class="kicks-count" id="kicksCount">0 kicks</div>
         <div class="kicks-sub">Tap each time you feel a kick</div>
+        <div class="kicks-best" id="kicksBest"></div>
         <button class="kicks-reset" onclick="resetKicks()">Reset</button>
       </div>
     </div>
-    <div class="input-group"><label class="input-label">🍫 Cravings today</label><input class="input-field" id="cravingsInput" placeholder="What are you craving?"></div>
-    <div class="input-group"><label class="input-label">📝 Journal</label><textarea class="input-field" id="journalInput" rows="4" placeholder="How was your day?"></textarea></div>
+    <div class="input-group"><label class="input-label">Cravings today</label><input class="input-field" id="cravingsInput" placeholder="What are you craving?"></div>
+    <div class="input-group"><label class="input-label">Journal</label><div class="journal-wrap"><textarea class="input-field" id="journalInput" rows="5" placeholder="What was today like? Any cravings, feelings, or moments to remember..." oninput="updateJournalCount()"></textarea><span class="journal-charcount" id="journalCharCount">0</span></div></div>
     <div class="input-group">
-      <label class="input-label">📸 Bump photos <span style="font-weight:400;color:var(--ink-light)">(select multiple)</span></label>
-      <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()">
-        <div style="font-size:26px">📷</div>
-        <div style="font-size:12px;color:var(--ink-light);margin-top:5px">Tap to add photos - select multiple at once</div>
+      <label class="input-label">Bump photos <span style="font-weight:400;color:var(--ink-light)">(select multiple)</span></label>
+      <div class="photo-upload-area" onclick="document.getElementById('photoInput').click()" id="photoUploadArea">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="7" width="24" height="18" rx="3" stroke="var(--rose-light)" stroke-width="1.5" fill="none"/><circle cx="16" cy="14" r="4" stroke="var(--rose-light)" stroke-width="1.5" fill="none"/><path d="M12 6h8l2 3H10l2-3z" stroke="var(--rose-light)" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+        <div style="font-size:12px;color:var(--ink-light)">Tap to add photos</div>
         <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this)">
       </div>
       <div class="photo-preview-row" id="photoPreviewRow"></div>
     </div>
-    <div class="input-group"><label class="input-label">⚖️ Weight today (kg)</label><input class="input-field" type="number" id="logWeight" step="0.1" placeholder="e.g. 62.5"></div>
-    <div class="card">
-      <div class="section-title" style="margin-bottom:10px">Lifestyle Trackers</div>
+    <div class="input-group"><label class="input-label">Weight today (kg)</label><input class="input-field" type="number" id="logWeight" step="0.1" placeholder="e.g. 62.5"></div>
+    <div class="lifestyle-card">
+      <div class="lifestyle-label">Lifestyle</div>
       <div class="toggle-row">
-        <span class="toggle-label-text">🍕 Outside food today?</span>
+        <span class="toggle-label-text">Outside food today?</span>
         <div class="toggle-switch" id="outsideFoodToggle" onclick="toggleOutsideFood()"><div class="toggle-knob"></div></div>
       </div>
       <div id="outsideFoodDetail" style="display:none;margin-top:8px">
-        <input class="input-field" id="outsideFoodText" placeholder="What did you eat outside?">
+        <input class="input-field" id="outsideFoodText" placeholder="What did you eat outside?" style="background:var(--white)">
       </div>
-      <div class="input-group" style="margin-top:12px;margin-bottom:6px"><label class="input-label">📱 Screen time today (mins)</label><input class="input-field" type="number" id="screentimeInput" placeholder="Total mins including Instagram"></div>
+      <div class="input-group" style="margin-top:12px;margin-bottom:6px"><label class="input-label">Screen time today (mins)</label><input class="input-field" type="number" id="screentimeInput" placeholder="Total mins including Instagram" style="background:var(--white)"></div>
       <div style="display:flex;gap:10px">
-        <div class="input-group" style="flex:1;margin-bottom:0"><label class="input-label">🌅 Wake time</label><input class="input-field" type="time" id="wakeTime"></div>
-        <div class="input-group" style="flex:1;margin-bottom:0"><label class="input-label">🌙 Sleep time</label><input class="input-field" type="time" id="sleepTime"></div>
+        <div class="input-group" style="flex:1;margin-bottom:0"><label class="input-label">Wake time</label><input class="input-field" type="time" id="wakeTime" style="background:var(--white)"></div>
+        <div class="input-group" style="flex:1;margin-bottom:0"><label class="input-label">Sleep time</label><input class="input-field" type="time" id="sleepTime" style="background:var(--white)"></div>
       </div>
     </div>
-    <button class="save-btn" onclick="saveLog()">Save log</button>
+    <button class="save-btn-log" id="saveLogBtn" onclick="saveLog()">Save log</button>
   </div>
 
   <!-- WELLNESS -->
@@ -1182,12 +1210,19 @@ function loadLogForDate(){
   row.innerHTML='';
   currentPhotos=log.photos?[...log.photos]:[];
   currentPhotos.forEach((src,i)=>row.appendChild(makeThumb(src,i)));
+  updateCounterIndicator('vomit',log.vomit||0);
+  updateCounterIndicator('sleep',log.sleep!==undefined?log.sleep:7);
+  updateJournalCount();
+  updatePhotoBadge();
+  kicksSessionBest=Math.max(kicksSessionBest,currentKicks);
+  const bestEl=document.getElementById('kicksBest');
+  if(bestEl)bestEl.textContent=kicksSessionBest?'Best today: '+kicksSessionBest:'';
 }
 function makeThumb(src,i){
   const wrap=document.createElement('div');wrap.className='photo-thumb-wrap';
   const img=document.createElement('img');img.className='photo-thumb';img.src=src;
   const del=document.createElement('button');del.className='photo-del';del.textContent='✕';
-  del.onclick=()=>{currentPhotos.splice(i,1);document.getElementById('photoPreviewRow').innerHTML='';currentPhotos.forEach((s,j)=>document.getElementById('photoPreviewRow').appendChild(makeThumb(s,j)))};
+  del.onclick=()=>{currentPhotos.splice(i,1);document.getElementById('photoPreviewRow').innerHTML='';currentPhotos.forEach((s,j)=>document.getElementById('photoPreviewRow').appendChild(makeThumb(s,j)));updatePhotoBadge()};
   wrap.appendChild(img);wrap.appendChild(del);
   return wrap;
 }
@@ -1200,12 +1235,46 @@ function selectMood(m){
 function changeCounter(type,delta){
   const el=document.getElementById(type+'Count');
   let v=parseInt(el.textContent)+delta;v=Math.max(0,v);el.textContent=v;
+  updateCounterIndicator(type,v);
 }
-function addKick(){currentKicks++;document.getElementById('kicksCount').textContent=currentKicks+' kicks'}
-function resetKicks(){currentKicks=0;document.getElementById('kicksCount').textContent='0 kicks'}
+function updateCounterIndicator(type,v){
+  if(type==='vomit'){
+    const ind=document.getElementById('vomitIndicator');
+    if(ind)ind.textContent=v===0?'😊':v<=2?'😕':'😟';
+  }
+  if(type==='sleep'){
+    const ind=document.getElementById('sleepIndicator');
+    if(ind)ind.textContent=v<6?'😴':v<=8?'😊':'⭐';
+  }
+}
+let kicksSessionBest=0;
+function addKick(){
+  currentKicks++;
+  document.getElementById('kicksCount').textContent=currentKicks+' kicks';
+  if(currentKicks>kicksSessionBest)kicksSessionBest=currentKicks;
+  document.getElementById('kicksBest').textContent='Best today: '+kicksSessionBest;
+  const circle=document.getElementById('kicksCircle');
+  const ripple=document.createElement('div');
+  ripple.className='kicks-ripple';
+  circle.appendChild(ripple);
+  setTimeout(()=>ripple.remove(),420);
+}
+function resetKicks(){currentKicks=0;document.getElementById('kicksCount').textContent='0 kicks';document.getElementById('kicksBest').textContent=kicksSessionBest?'Best today: '+kicksSessionBest:''}
 function toggleOutsideFood(){
   const t=document.getElementById('outsideFoodToggle');t.classList.toggle('on');
   document.getElementById('outsideFoodDetail').style.display=t.classList.contains('on')?'block':'none';
+}
+function updateJournalCount(){
+  const ta=document.getElementById('journalInput');
+  document.getElementById('journalCharCount').textContent=ta.value.length;
+}
+function updatePhotoBadge(){
+  const area=document.getElementById('photoUploadArea');
+  let badge=area.querySelector('.photo-badge');
+  if(currentPhotos.length>0){
+    if(!badge){badge=document.createElement('div');badge.className='photo-badge';area.appendChild(badge)}
+    badge.textContent=currentPhotos.length;
+  }else if(badge){badge.remove()}
 }
 function handlePhotoUpload(input){
   const files=Array.from(input.files);
@@ -1220,12 +1289,12 @@ function handlePhotoUpload(input){
         const row=document.getElementById('photoPreviewRow');
         row.innerHTML='';
         currentPhotos.forEach((s,i)=>row.appendChild(makeThumb(s,i)));
+        updatePhotoBadge();
         showToast(files.length>1?`${files.length} photos added`:'Photo added');
       }
     };
     reader.readAsDataURL(file);
   });
-  // reset input so same file can be re-selected
   input.value='';
 }
 async function saveLog(){
@@ -1256,13 +1325,19 @@ async function saveLog(){
     if(ei>=0)db.weights[ei].val=row.weight;else db.weights.push({date:key,val:row.weight});
     db.weights.sort((a,b)=>a.date.localeCompare(b.date));
   }
-  cacheDB();showToast('Saving...');
+  cacheDB();
+  const btn=document.getElementById('saveLogBtn');
+  btn.textContent='Saving...';
   try{
     const saved=await supa.upsert('bj_logs',row);
     if(saved&&saved[0])db.logs[key].id=saved[0].id;
     if(row.weight)await supa.upsert('bj_weights',{date:key,val:row.weight});
-    cacheDB();showToast('Log saved ✓');
-  }catch(e){showToast('Saved locally');console.warn(e)}
+    cacheDB();
+    btn.classList.add('saved');
+    btn.innerHTML='<span class="check-draw">✓</span> Saved';
+    showToast('Log saved');
+    setTimeout(()=>{btn.classList.remove('saved');btn.textContent='Save log'},2000);
+  }catch(e){showToast('Saved locally');btn.textContent='Save log';console.warn(e)}
 }
 
 // ── WELLNESS ──
