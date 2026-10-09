@@ -702,7 +702,8 @@ const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 // ── SUPABASE ──
 const BUCKET='baby-journal';
 const supa={
-  async get(t){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=*&order=created_at.asc`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)throw new Error(await r.text());return r.json()},
+  async get(t,cols='*'){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=${cols}&order=created_at.asc`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)throw new Error(await r.text());return r.json()},
+  async getById(t,id,cols='*'){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=${cols}&id=eq.${id}`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)return[];return r.json()},
   async upsert(t,row){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{method:'POST',headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return r.json()},
   async uploadFile(path,dataUrl,mimeType){
     // Convert base64 dataUrl to binary blob
@@ -765,21 +766,27 @@ async function migrateBase64FilesToStorage(visits){
 async function loadDB(){
   loadCached();
   try{
-    const[logs,visits,weights]=await Promise.all([supa.get('bj_logs'),supa.get('bj_visits'),supa.get('bj_weights')]);
+    // Fetch visits WITHOUT file column — avoids row-too-large failure
+    const VISIT_COLS='id,type,doctor,date,notes,reminder,file_name,record_type,created_at';
+    const[logs,visits,weights]=await Promise.all([
+      supa.get('bj_logs'),
+      supa.get('bj_visits',VISIT_COLS),
+      supa.get('bj_weights')
+    ]);
     db.logs={};
     logs.forEach(r=>{
       db.logs[r.date_key]={mood:r.mood,vomit:r.vomit,sleep:r.sleep,kicks:r.kicks,cravings:r.cravings,journal:r.journal,weight:r.weight,photos:r.photos||[],date:r.date_key,id:r.id,outside_food:r.outside_food,outside_food_text:r.outside_food_text,screentime:r.screentime,wake_time:r.wake_time,sleep_time:r.sleep_time,yoga_done:r.yoga_done,exercise_done:r.exercise_done,exercise_type:r.exercise_type,exercise_mins:r.exercise_mins,yoga_mins:r.yoga_mins};
       if(r.photos&&r.photos.length)db.gallery[r.date_key]=r.photos;
     });
-    db.visits=visits.filter(v=>v.record_type==='visit'||!v.record_type).map(v=>({id:v.id,type:v.type,doctor:v.doctor,date:v.date,notes:v.notes,reminder:v.reminder,file:v.file,fileName:v.file_name}));
-    db.prescriptions=visits.filter(v=>v.record_type==='presc').map(v=>({id:v.id,date:v.date,doctor:v.doctor,notes:v.notes,file:v.file,fileName:v.file_name}));
-    db.reports=visits.filter(v=>v.record_type==='report').map(v=>({id:v.id,name:v.type,date:v.date,notes:v.notes,file:v.file,fileName:v.file_name}));
-    // Migrate any base64 files to Storage in background
-    migrateBase64FilesToStorage(visits);
+    // file is null here — will be lazy loaded when user opens Medical tab
+    db.visits=visits.filter(v=>v.record_type==='visit'||!v.record_type).map(v=>({id:v.id,type:v.type,doctor:v.doctor,date:v.date,notes:v.notes,reminder:v.reminder,file:null,fileName:v.file_name,fileLoaded:false}));
+    db.prescriptions=visits.filter(v=>v.record_type==='presc').map(v=>({id:v.id,date:v.date,doctor:v.doctor,notes:v.notes,file:null,fileName:v.file_name,fileLoaded:false}));
+    db.reports=visits.filter(v=>v.record_type==='report').map(v=>({id:v.id,name:v.type,date:v.date,notes:v.notes,file:null,fileName:v.file_name,fileLoaded:false}));
     db.weights=weights.map(r=>({id:r.id,date:r.date,val:r.val}));
     cacheDB();
-    if(document.getElementById('app').classList.contains('visible')){renderToday();renderMedical();renderWeight();}
-  }catch(e){console.warn('Supabase load failed:',e)}
+    window._medFilesLoaded=false;
+    if(document.getElementById('app').classList.contains('visible')){renderToday();renderWeight();}
+  }catch(e){console.warn('Supabase load failed, using cache:',e)}
 }
 
 // ── WEEK DATA ──
@@ -1802,12 +1809,48 @@ function handleFile(input,type){
   };
   reader.readAsDataURL(file);
 }
+async function lazyLoadMedicalFiles(){
+  const allRecs=[...db.visits,...db.prescriptions,...db.reports].filter(r=>r.id&&!r.fileLoaded&&r.fileName);
+  if(!allRecs.length)return;
+  for(const rec of allRecs){
+    try{
+      const rows=await supa.getById('bj_visits',rec.id,'id,file,file_name');
+      if(rows&&rows[0]){
+        rec.file=rows[0].file||null;
+        rec.fileName=rows[0].file_name||rec.fileName;
+      }
+    }catch(e){console.warn('File load failed for',rec.id,e);}
+    rec.fileLoaded=true;
+  }
+  cacheDB();
+  renderMedical();
+  // Now run migration on anything still base64
+  const base64Recs=[...db.visits,...db.prescriptions,...db.reports].filter(r=>isBase64DataUrl(r.file)&&r.id);
+  if(base64Recs.length){
+    showToast(`Migrating ${base64Recs.length} file${base64Recs.length>1?'s':''} to storage...`);
+    for(const rec of base64Recs){
+      try{
+        const mime=mimeFromDataUrl(rec.file);
+        const ext=extFromMime(mime);
+        const path=`medical/${rec.id}.${ext}`;
+        const url=await supa.uploadFile(path,rec.file,mime);
+        await supa.upsert('bj_visits',{id:rec.id,file:url,file_name:rec.fileName||`attachment.${ext}`});
+        rec.file=url;
+      }catch(e){console.warn('Migration failed',rec.id,e);}
+    }
+    cacheDB();renderMedical();
+    showToast('Files migrated to storage ✓');
+  }
+}
+
 function setMedTab(tab,btn){
   ['medVisits','medPrescriptions','medReports'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('med'+tab.charAt(0).toUpperCase()+tab.slice(1)).style.display='block';
   document.querySelectorAll('.med-tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   renderMedical();
+  // Lazy load files the first time Medical tab is opened
+  if(!window._medFilesLoaded){window._medFilesLoaded=true;lazyLoadMedicalFiles();}
 }
 function renderMedical(){
   renderVisits();renderPrescriptions();renderReports();
@@ -1856,14 +1899,10 @@ function openVisitModal(){document.getElementById('vDate').value=dateKey(new Dat
 async function uploadMedFile(fd){
   if(!fd?.data)return{fileUrl:null,fileName:null};
   try{
-    const tmp=await supa.upsert('bj_visits',{type:'_tmp',date:dateKey(new Date()),record_type:'_tmp'});
-    const tmpId=tmp?.[0]?.id||('tmp_'+Date.now());
     const mime=fd.mime||mimeFromDataUrl(fd.data);
     const ext=extFromMime(mime);
-    const path=`medical/${tmpId}.${ext}`;
+    const path=`medical/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
     const url=await supa.uploadFile(path,fd.data,mime);
-    // delete the temp row if we created one
-    if(tmp?.[0]?.id)await fetch(`${SUPABASE_URL}/rest/v1/bj_visits?id=eq.${tmp[0].id}`,{method:'DELETE',headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});
     return{fileUrl:url,fileName:fd.name};
   }catch(e){
     console.warn('Storage upload failed, falling back to base64:',e);
