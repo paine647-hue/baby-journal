@@ -586,9 +586,9 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     <div class="input-group"><label class="input-label">Notes</label><textarea class="input-field" id="vNotes" rows="3" placeholder="What was discussed..."></textarea></div>
     <div class="input-group">
       <label class="input-label">Attach report (optional)</label>
-      <input type="file" id="vFile" accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'visit')">
-      <button class="save-btn secondary" onclick="document.getElementById('vFile').click()">📎 Attach Report</button>
-      <span id="vFileName" style="font-size:11px;color:var(--ink-light)"></span>
+      <input type="file" id="vFile" multiple accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'visit')">
+      <button class="save-btn secondary" onclick="document.getElementById('vFile').click()">📎 Attach Files (multiple)</button>
+      <div id="vFileName" style="font-size:11px;color:var(--ink-light)"></div>
     </div>
     <div class="reminder-toggle">
       <div class="toggle-switch" id="visitReminderToggle" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
@@ -606,9 +606,9 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     <div class="input-group"><label class="input-label">Doctor</label><input class="input-field" id="pDoctor" placeholder="Dr. Name"></div>
     <div class="input-group"><label class="input-label">Notes</label><textarea class="input-field" id="pNotes" rows="2" placeholder="Medications prescribed..."></textarea></div>
     <div class="input-group">
-      <input type="file" id="pFile" accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'presc')">
-      <button class="save-btn secondary" onclick="document.getElementById('pFile').click()">📎 Upload Prescription</button>
-      <span id="pFileName" style="font-size:11px;color:var(--ink-light)"></span>
+      <input type="file" id="pFile" multiple accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'presc')">
+      <button class="save-btn secondary" onclick="document.getElementById('pFile').click()">📎 Attach Files (multiple)</button>
+      <div id="pFileName" style="font-size:11px;color:var(--ink-light)"></div>
     </div>
     <button class="save-btn" onclick="savePresc()">Save</button>
   </div>
@@ -622,9 +622,9 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     <div class="input-group"><label class="input-label">Date</label><input class="input-field" type="date" id="rDate"></div>
     <div class="input-group"><label class="input-label">Notes</label><textarea class="input-field" id="rNotes" rows="2"></textarea></div>
     <div class="input-group">
-      <input type="file" id="rFile" accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'report')">
-      <button class="save-btn secondary" onclick="document.getElementById('rFile').click()">📎 Upload Report</button>
-      <span id="rFileName" style="font-size:11px;color:var(--ink-light)"></span>
+      <input type="file" id="rFile" multiple accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'report')">
+      <button class="save-btn secondary" onclick="document.getElementById('rFile').click()">📎 Attach Files (multiple)</button>
+      <div id="rFileName" style="font-size:11px;color:var(--ink-light)"></div>
     </div>
     <button class="save-btn" onclick="saveReport()">Save</button>
   </div>
@@ -2171,38 +2171,60 @@ function deleteRecord(type,id){
 
 function replaceFile(type,id){
   const input=document.createElement('input');
-  input.type='file';input.accept='image/*,.pdf';
+  input.type='file';input.accept='image/*,.pdf';input.multiple=true;
   input.onchange=async e=>{
-    const file=e.target.files[0];if(!file)return;
+    const files=Array.from(e.target.files||[]);if(!files.length)return;
     showToast('Uploading...');
-    const reader=new FileReader();
-    reader.onload=async ev=>{
-      const fd={data:ev.target.result,name:file.name,mime:file.type};
-      const{fileUrl,fileName}=await uploadMedFile(fd);
-      const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
-      const record=arr.find(x=>x.id===id);
-      if(record){record.file=fileUrl;record.fileName=fileName;}
-      cacheDB();renderMedical();showToast('File replaced ✓');
-      if(record?.id)supa.upsert('bj_visits',{id:record.id,file:fileUrl,file_name:fileName}).catch(()=>{});
-    };
-    reader.readAsDataURL(file);
+    const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
+    const record=arr.find(x=>x.id===id);
+    if(!record)return;
+    const fds=await Promise.all(files.map(file=>new Promise(res=>{
+      const reader=new FileReader();
+      reader.onload=ev=>res({data:ev.target.result,name:file.name,mime:file.type});
+      reader.readAsDataURL(file);
+    })));
+    const uploaded=await uploadMedFile(fds);
+    const existing=parseMedFiles(record.file,record.fileName);
+    const merged=[...existing,...uploaded];
+    record.file=JSON.stringify(merged);
+    record.fileName=merged[0]?.name||null;
+    cacheDB();renderMedical();showToast('Files added ✓');
+    supa.upsert('bj_visits',{id:record.id,file:record.file,file_name:record.fileName}).catch(()=>{});
   };
   input.click();
 }
 
 // ── MEDICAL ──
-let medFileData={visit:null,presc:null,report:null};
+let medFileData={visit:[],presc:[],report:[]};
+const _medFileNameEl={visit:'vFileName',presc:'pFileName',report:'rFileName'};
+function renderFileList(type){
+  const el=document.getElementById(_medFileNameEl[type]);
+  const files=medFileData[type]||[];
+  if(!files.length){el.innerHTML='';return;}
+  el.innerHTML=`<div>${files.length} file${files.length>1?'s':''} selected</div>`+
+    files.map((f,i)=>`<div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${f.name}</span>
+      <span style="cursor:pointer" onclick="removeMedFile('${type}',${i})">✕</span>
+    </div>`).join('');
+}
+function removeMedFile(type,idx){
+  medFileData[type].splice(idx,1);
+  renderFileList(type);
+}
 function handleFile(input,type){
-  const file=input.files[0];if(!file)return;
-  const idMap={visit:'vFileName',presc:'pFileName',report:'rFileName'};
-  document.getElementById(idMap[type]).textContent=`${file.name} (uploading...)`;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    // Store as base64 locally first so save works even if Storage upload fails
-    medFileData[type]={data:e.target.result,name:file.name,mime:file.type,pendingFile:file};
-    document.getElementById(idMap[type]).textContent=file.name;
-  };
-  reader.readAsDataURL(file);
+  const files=Array.from(input.files||[]);if(!files.length)return;
+  if(!medFileData[type])medFileData[type]=[];
+  let remaining=files.length;
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      // Store as base64 locally first so save works even if Storage upload fails
+      medFileData[type].push({data:e.target.result,name:file.name,mime:file.type});
+      remaining--;
+      if(remaining===0){renderFileList(type);input.value='';}
+    };
+    reader.readAsDataURL(file);
+  });
 }
 async function lazyLoadMedicalFiles(){
   const allRecs=[...db.visits,...db.prescriptions,...db.reports].filter(r=>r.id&&!r.fileLoaded&&r.fileName);
@@ -2294,17 +2316,39 @@ async function saveRemarks(type,id){
 }
 function isImageFile(name){return/\.(jpg|jpeg|png|gif|webp)$/i.test(name||'')}
 function isImageUrl(url){return isImageFile(url)||/\.(jpg|jpeg|png|gif|webp)/i.test(url||'')}
+function parseMedFiles(file,fileName){
+  if(!file)return[];
+  try{
+    const parsed=JSON.parse(file);
+    if(Array.isArray(parsed))return parsed;
+  }catch(e){}
+  return[{url:file,name:fileName||'Attachment'}];
+}
+function deleteMedFile(type,id,idx){
+  if(!confirm('Remove this file?'))return;
+  const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
+  const record=arr.find(x=>x.id===id);if(!record)return;
+  const files=parseMedFiles(record.file,record.fileName);
+  files.splice(idx,1);
+  record.file=files.length?JSON.stringify(files):null;
+  record.fileName=files[0]?.name||null;
+  cacheDB();renderMedical();showToast('File removed');
+  supa.upsert('bj_visits',{id:record.id,file:record.file,file_name:record.fileName}).catch(()=>{});
+}
 function fileActionsHTML(file,fileName,type,id){
   const eyeSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-  const refreshSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>';
+  const attachSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>';
   const trashSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
-  if(file){
-    const k=storeFileRef(file,fileName||'Attachment');
-    const isPdf=/\.pdf$/i.test(fileName||'')||/\.pdf/i.test(file||'');
-    const isImg=isImageFile(fileName)||isImageUrl(file);
+  const files=parseMedFiles(file,fileName);
+  const addDeleteRow=`<div style="margin-top:8px;display:flex;gap:8px"><button class="file-icon-btn replace" onclick="replaceFile('${type}','${id}')" style="width:auto;border-radius:20px;padding:5px 12px;gap:4px;font-size:11px;font-family:'DM Sans',sans-serif;font-weight:500">${attachSvg}</button><button class="file-icon-btn delete" onclick="deleteRecord('${type}','${id}')">${trashSvg}</button></div>`;
+  if(!files.length)return addDeleteRow;
+  const rows=files.map((f,i)=>{
+    const k=storeFileRef(f.url,f.name||'Attachment');
+    const isPdf=/\.pdf$/i.test(f.name||'')||/\.pdf/i.test(f.url||'');
+    const isImg=isImageFile(f.name)||isImageUrl(f.url);
     let preview='';
     if(isImg){
-      preview=`<img class="file-thumb" src="${file}" alt="${fileName||'photo'}" onclick="viewFileRef('${k}')">`;
+      preview=`<img class="file-thumb" src="${f.url}" alt="${f.name||'photo'}" onclick="viewFileRef('${k}')">`;
     }else if(isPdf){
       preview=`<div class="file-pdf-card" onclick="viewFileRef('${k}')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--plum)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>`;
     }
@@ -2312,12 +2356,11 @@ function fileActionsHTML(file,fileName,type,id){
       ${preview}
       <div class="file-icon-btns">
         <button class="file-icon-btn view" onclick="viewFileRef('${k}')">${eyeSvg}</button>
-        <button class="file-icon-btn replace" onclick="replaceFile('${type}','${id}')">${refreshSvg}</button>
-        <button class="file-icon-btn delete" onclick="deleteRecord('${type}','${id}')">${trashSvg}</button>
+        <button class="file-icon-btn delete" onclick="deleteMedFile('${type}','${id}',${i})">${trashSvg}</button>
       </div>
     </div>`;
-  }
-  return `<div style="margin-top:8px;display:flex;gap:8px"><button class="file-icon-btn replace" onclick="replaceFile('${type}','${id}')" style="width:auto;border-radius:20px;padding:5px 12px;gap:4px;font-size:11px;font-family:'DM Sans',sans-serif;font-weight:500"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button><button class="file-icon-btn delete" onclick="deleteRecord('${type}','${id}')">${trashSvg}</button></div>`;
+  }).join('');
+  return rows+addDeleteRow;
 }
 function renderVisits(){
   const el=document.getElementById('medVisits');if(!el)return;
@@ -2342,18 +2385,23 @@ function renderReports(){
   (sorted.length?`<div class="med-timeline">${sorted.map((r,i)=>`<div class="med-timeline-item" style="animation-delay:${i*50}ms"><div class="med-timeline-dot report"></div><div class="visit-card"><div class="visit-header"><div><div class="visit-name">${r.name||'Report'}</div><div class="visit-date">${formatDate(r.date)}</div></div></div>${r.notes?`<div class="visit-notes">${r.notes}</div>`:''}${remarksHTML(r,'report')}${fileActionsHTML(r.file,r.fileName,'report',r.id)}</div></div>`).join('')}</div>`:'<p class="no-data">No reports yet</p>');
 }
 function openVisitModal(){document.getElementById('vDate').value=dateKey(new Date());openModal('visitModal')}
-async function uploadMedFile(fd){
-  if(!fd?.data)return{fileUrl:null,fileName:null};
-  try{
-    const mime=fd.mime||mimeFromDataUrl(fd.data);
-    const ext=extFromMime(mime);
-    const path=`medical/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-    const url=await supa.uploadFile(path,fd.data,mime);
-    return{fileUrl:url,fileName:fd.name};
-  }catch(e){
-    console.warn('Storage upload failed, falling back to base64:',e);
-    return{fileUrl:fd.data,fileName:fd.name};
+async function uploadMedFile(fds){
+  const list=Array.isArray(fds)?fds:(fds?[fds]:[]);
+  const results=[];
+  for(const fd of list){
+    if(!fd?.data)continue;
+    try{
+      const mime=fd.mime||mimeFromDataUrl(fd.data);
+      const ext=extFromMime(mime);
+      const path=`medical/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+      const url=await supa.uploadFile(path,fd.data,mime);
+      results.push({url,name:fd.name});
+    }catch(e){
+      console.warn('Storage upload failed, falling back to base64:',e);
+      results.push({url:fd.data,name:fd.name});
+    }
   }
+  return results;
 }
 
 async function saveVisit(){
@@ -2361,35 +2409,43 @@ async function saveVisit(){
   const date=document.getElementById('vDate').value;
   if(!type||!date){showToast('Fill type and date');return}
   closeModal('visitModal');showToast('Uploading...');
-  const{fileUrl,fileName}=await uploadMedFile(medFileData.visit);
-  const row={type,doctor:document.getElementById('vDoctor').value,date,notes:document.getElementById('vNotes').value,reminder:document.getElementById('visitReminderToggle').classList.contains('on'),file:fileUrl,file_name:fileName,record_type:'visit'};
+  const uploaded=await uploadMedFile(medFileData.visit);
+  const fileJson=uploaded.length?JSON.stringify(uploaded):null;
+  const fileName=uploaded.length?uploaded[0].name:null;
+  const row={type,doctor:document.getElementById('vDoctor').value,date,notes:document.getElementById('vNotes').value,reminder:document.getElementById('visitReminderToggle').classList.contains('on'),file:fileJson,file_name:fileName,record_type:'visit'};
   if(!db.visits)db.visits=[];
   db.visits.push({...row,fileName});
   cacheDB();renderVisits();renderToday();
   ['vType','vDoctor','vDate','vNotes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('vFileName').textContent='';medFileData.visit=null;
+  document.getElementById('vFileName').innerHTML='';medFileData.visit=[];
   try{await supa.upsert('bj_visits',row);showToast('Visit saved ✓')}catch(e){showToast('Saved locally')}
 }
 async function savePresc(){
   const date=document.getElementById('pDate').value;if(!date){showToast('Add date');return}
   closeModal('prescModal');showToast('Uploading...');
-  const{fileUrl,fileName}=await uploadMedFile(medFileData.presc);
-  const row={type:'Prescription',doctor:document.getElementById('pDoctor').value,date,notes:document.getElementById('pNotes').value,file:fileUrl,file_name:fileName,record_type:'presc'};
+  const uploaded=await uploadMedFile(medFileData.presc);
+  const fileJson=uploaded.length?JSON.stringify(uploaded):null;
+  const fileName=uploaded.length?uploaded[0].name:null;
+  const row={type:'Prescription',doctor:document.getElementById('pDoctor').value,date,notes:document.getElementById('pNotes').value,file:fileJson,file_name:fileName,record_type:'presc'};
   if(!db.prescriptions)db.prescriptions=[];
   db.prescriptions.push({...row,fileName});
   cacheDB();renderPrescriptions();
-  ['pDate','pDoctor','pNotes'].forEach(id=>document.getElementById(id).value='');medFileData.presc=null;
+  ['pDate','pDoctor','pNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('pFileName').innerHTML='';medFileData.presc=[];
   try{await supa.upsert('bj_visits',row);showToast('Prescription saved ✓')}catch(e){showToast('Saved locally')}
 }
 async function saveReport(){
   const date=document.getElementById('rDate').value;if(!date){showToast('Add date');return}
   closeModal('reportModal');showToast('Uploading...');
-  const{fileUrl,fileName}=await uploadMedFile(medFileData.report);
-  const row={type:document.getElementById('rName').value||'Report',doctor:'',date,notes:document.getElementById('rNotes').value,file:fileUrl,file_name:fileName,record_type:'report'};
+  const uploaded=await uploadMedFile(medFileData.report);
+  const fileJson=uploaded.length?JSON.stringify(uploaded):null;
+  const fileName=uploaded.length?uploaded[0].name:null;
+  const row={type:document.getElementById('rName').value||'Report',doctor:'',date,notes:document.getElementById('rNotes').value,file:fileJson,file_name:fileName,record_type:'report'};
   if(!db.reports)db.reports=[];
   db.reports.push({...row,name:row.type,fileName});
   cacheDB();renderReports();
-  ['rName','rDate','rNotes'].forEach(id=>document.getElementById(id).value='');medFileData.report=null;
+  ['rName','rDate','rNotes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('rFileName').innerHTML='';medFileData.report=[];
   try{await supa.upsert('bj_visits',row);showToast('Report saved ✓')}catch(e){showToast('Saved locally')}
 }
 
@@ -2636,6 +2692,7 @@ ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS exercise_type text;
 ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS exercise_mins int;
 ALTER TABLE bj_visits ADD COLUMN IF NOT EXISTS record_type text DEFAULT 'visit';
 ALTER TABLE bj_visits ADD COLUMN IF NOT EXISTS remarks text;
+-- No schema change needed, file column stores JSON array now
 */
 </script>
 </body>
