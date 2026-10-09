@@ -59,7 +59,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 @keyframes syncPulse{0%,100%{opacity:.35}50%{opacity:1}}
 .page-eyebrow{font-size:12px;color:var(--ink-light);margin-bottom:2px}
 .page-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:600}
-.section-title{font-size:17px;font-weight:600;color:var(--ink-mid);margin-bottom:10px}
+.section-title{font-size:15px;font-weight:600;color:var(--ink-mid);margin-bottom:10px}
 .card{background:var(--white);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
 .save-btn{width:100%;padding:15px;border:none;border-radius:var(--radius-sm);background:var(--rose);color:var(--white);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .1s;margin-bottom:12px}
 .save-btn:active{opacity:.85;transform:scale(.98)}
@@ -84,63 +84,65 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-light);margin-top:-4px}
 
 /* ── TODAY PAGE / HERO ── */
-.hero-card{position:relative;background:linear-gradient(135deg,#FDF0F3 0%,#F5EDF8 50%,#EDF5F0 100%);border-radius:var(--radius);padding:20px;margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden}
-.hero-bg-art{position:absolute;top:0;right:0;opacity:.12;pointer-events:none}
-.hero-week{font-family:'Playfair Display',serif;font-size:56px;line-height:1;color:var(--rose)}
-.hero-week-label{font-size:12px;color:var(--ink-light);margin-bottom:2px}
-.hero-days{font-size:12px;color:var(--ink-mid);margin:4px 0 14px}
+.hero-card{background:var(--white);border-radius:var(--radius);padding:20px;margin-bottom:20px;box-shadow:var(--shadow)}
+.hero-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.hero-week{font-family:'Playfair Display',serif;font-size:64px;line-height:1;color:var(--rose)}
+.hero-week-sub{font-size:13px;color:var(--ink-light);margin-top:2px}
+.hero-fruit{font-size:56px;line-height:1;animation:fruitBob 3s ease-in-out infinite}
+.hero-size-line{font-size:14px;color:var(--ink-mid);margin-bottom:10px}
+.hero-stats-row{display:flex;gap:16px}
+.hero-stat{font-size:12px;color:var(--ink-mid)}
+.hero-stat strong{color:var(--ink);font-weight:600}
 
-/* Fun fact ticker */
-.fun-fact-strip{background:linear-gradient(90deg,var(--plum),var(--rose));border-radius:20px;padding:8px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;cursor:pointer}
+/* Fun fact */
+.fun-fact-strip{background:var(--white);border-left:3px solid var(--rose);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 14px;margin-top:14px;display:flex;align-items:center;gap:8px;cursor:pointer}
 .fun-fact-icon{font-size:18px;flex-shrink:0}
-.fun-fact-text{font-size:12px;color:var(--white);line-height:1.4;font-weight:400}
-.fun-fact-next{font-size:10px;color:rgba(255,255,255,.7);flex-shrink:0;margin-left:auto}
-
-/* Fruit card animated */
-.fruit-row{display:flex;align-items:center;gap:14px;background:var(--white);border-radius:var(--radius-sm);padding:14px;position:relative;overflow:hidden}
-.fruit-row::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(232,116,138,.06),rgba(123,175,142,.06));pointer-events:none}
-.fruit-emoji{font-size:52px;line-height:1;animation:fruitBob 3s ease-in-out infinite}
-.fruit-name{font-family:'Playfair Display',serif;font-size:18px;color:var(--ink)}
-.fruit-size-label{font-size:11px;color:var(--ink-light)}
-.fruit-stats{display:flex;gap:10px;margin-top:8px}
-.fruit-stat{font-size:10px;color:var(--ink-mid)}
-.fruit-stat strong{display:block;font-size:13px;color:var(--ink);font-weight:600}
-
-/* Sparkle dots */
-.sparkle{position:absolute;border-radius:50%;animation:sparkleAnim 2.5s ease-in-out infinite}
+.fun-fact-text{font-size:12px;color:var(--ink-mid);line-height:1.4;font-weight:400}
+.fun-fact-next{font-size:10px;color:var(--ink-light);flex-shrink:0;margin-left:auto}
 
 @keyframes fruitBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
-@keyframes sparkleAnim{0%,100%{transform:scale(0);opacity:0}50%{transform:scale(1);opacity:1}}
 @keyframes factFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.progress-row{display:flex;gap:10px;margin-bottom:14px}
-.prog-card{flex:1;background:var(--white);border-radius:var(--radius-sm);padding:13px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px}
-.ring-wrap{position:relative;width:42px;height:42px;flex-shrink:0}
+
+/* PROGRESS CARD */
+.progress-card{background:var(--white);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow);margin-bottom:20px}
+.progress-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.ring-wrap{position:relative;width:48px;height:48px;flex-shrink:0}
 .ring-wrap svg{transform:rotate(-90deg)}
-.ring-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--rose)}
-.prog-label{font-size:10px;color:var(--ink-light)}
-.prog-val{font-size:14px;font-weight:600;color:var(--ink);margin-top:1px}
-.trimester-band{background:var(--sage-pale);border:1px solid var(--sage-light);border-radius:var(--radius-sm);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.trimester-label{font-size:12px;color:var(--sage);font-weight:600}
-.trimester-tip{font-size:11px;color:var(--ink-mid);max-width:180px;text-align:right;line-height:1.4}
+.ring-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--rose)}
+.prog-label{font-size:11px;color:var(--ink-light)}
+.prog-val{font-size:15px;font-weight:600;color:var(--ink);margin-top:1px}
+.progress-due{margin-left:auto;text-align:right}
+.progress-due .prog-label{display:block}
+.progress-due .prog-val{display:block}
+.progress-bar-wrap{position:relative;height:6px;background:var(--rose-pale);border-radius:3px;margin-bottom:8px}
+.progress-bar-fill{height:100%;background:var(--rose);border-radius:3px;transition:width .4s ease}
+.progress-bar-marker{position:absolute;top:-3px;width:2px;height:12px;background:var(--ink-light);border-radius:1px;opacity:.5}
+.progress-trimester-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--ink-light)}
+.progress-trimester-labels span.active-tri{color:var(--sage);font-weight:600}
 
 /* DO's DON'Ts */
-.dos-donts-row{display:flex;gap:10px;margin-bottom:14px}
-.dos-card,.donts-card{flex:1;border-radius:var(--radius-sm);padding:13px}
-.dos-card{background:var(--sage-pale);border:1px solid var(--sage-light)}
-.donts-card{background:var(--rose-pale);border:1px solid var(--rose-mid)}
+.dos-donts-row{display:flex;gap:10px;margin-bottom:20px}
+.dos-card,.donts-card{flex:1;background:var(--white);border-radius:var(--radius-sm);padding:13px;box-shadow:var(--shadow)}
+.dos-card{border-left:3px solid var(--sage)}
+.donts-card{border-left:3px solid var(--rose)}
 .dos-donts-title{font-size:13px;font-weight:600;margin-bottom:10px}
 .dos-donts-title.do{color:var(--sage)}
 .dos-donts-title.dont{color:var(--rose)}
-.dos-donts-item{font-size:13px;color:var(--ink-mid);line-height:1.6;margin-bottom:6px;display:flex;gap:5px}
+.dos-donts-item{font-size:13px;color:var(--ink-mid);line-height:1.6;margin-bottom:6px}
+.dos-donts-more{font-size:12px;font-weight:500;cursor:pointer;margin-top:4px;border:none;background:none;padding:0;font-family:'DM Sans',sans-serif}
+.dos-donts-more.do{color:var(--sage)}
+.dos-donts-more.dont{color:var(--rose)}
+.dos-donts-hidden{display:none}
+.dos-donts-hidden.show{display:block}
 
 /* GARBH SANSKAR */
-.gs-card{background:linear-gradient(135deg,#FDF6EC,#F5EDF8);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;border:1px solid #F0DEFF}
+.gs-card{background:var(--white);border-left:4px solid var(--plum);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:16px;margin-bottom:20px;box-shadow:var(--shadow)}
 .gs-label{font-size:12px;font-weight:600;color:var(--plum);margin-bottom:10px}
-.gs-shloka{font-family:'Playfair Display',serif;font-size:16px;color:var(--ink);line-height:1.8;margin-bottom:10px;font-style:italic}
-.gs-transliteration{font-size:13px;color:var(--plum);margin-bottom:10px;line-height:1.6}
-.gs-meaning{font-size:14px;color:var(--ink-mid);line-height:1.7;margin-bottom:10px}
-.gs-practice{font-size:13px;color:var(--sage);background:var(--sage-pale);border-radius:8px;padding:10px 12px;line-height:1.6}
-.gs-music{font-size:13px;color:var(--plum);margin-top:10px}
+.gs-shloka{font-family:'Playfair Display',serif;font-size:15px;color:var(--plum);line-height:1.8;margin-bottom:10px;font-style:italic}
+.gs-transliteration{font-size:13px;color:var(--plum);margin-bottom:10px;line-height:1.6;opacity:.7}
+.gs-meaning{font-size:13px;color:var(--ink-mid);line-height:1.7;margin-bottom:10px}
+.gs-practice{font-size:13px;color:var(--sage);line-height:1.6}
+.gs-music{font-size:13px;color:var(--sage);margin-top:8px}
 
 /* SCAN UPCOMING */
 .scan-card{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;margin-bottom:8px}
@@ -364,7 +366,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 /* ANIMATIONS */
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@media (prefers-reduced-motion:reduce){.lock-emoji,.anim-breathe,.anim-sway,.anim-squat,.anim-stretch,.anim-kegel,.anim-tilt,.anim-float{animation:none}.page.active{animation:none}}
+@media (prefers-reduced-motion:reduce){.lock-emoji,.hero-fruit,.anim-breathe,.anim-sway,.anim-squat,.anim-stretch,.anim-kegel,.anim-tilt,.anim-float{animation:none}.page.active{animation:none}}
 </style>
 </head>
 <body>
@@ -487,72 +489,50 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
       <span class="sync-dot" id="syncDot" style="display:none">Syncing...</span>
     </div>
     <div class="hero-card" id="heroCard">
-      <!-- Background art -->
-      <svg class="hero-bg-art" width="140" height="140" viewBox="0 0 140 140">
-        <circle cx="100" cy="30" r="50" fill="#E8748A"/>
-        <circle cx="30" cy="110" r="35" fill="#7BAF8E"/>
-        <circle cx="120" cy="110" r="25" fill="#9B6B8A"/>
-      </svg>
-      <!-- Sparkles -->
-      <div class="sparkle" style="width:6px;height:6px;background:#E8748A;top:18px;right:50px;animation-delay:0s"></div>
-      <div class="sparkle" style="width:4px;height:4px;background:#7BAF8E;top:40px;right:30px;animation-delay:.8s"></div>
-      <div class="sparkle" style="width:5px;height:5px;background:#9B6B8A;top:60px;right:60px;animation-delay:1.4s"></div>
-
-      <div class="hero-week-label">You are in</div>
-      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:2px">
-        <span class="hero-week" id="heroWeek">--</span>
-        <span style="font-size:18px;color:var(--ink-mid);font-family:'Playfair Display',serif">weeks</span>
+      <div class="hero-top">
+        <div>
+          <span class="hero-week" id="heroWeek">--</span>
+          <div class="hero-week-sub" id="heroDays">weeks</div>
+        </div>
+        <div class="hero-fruit" id="fruitEmoji">🫐</div>
       </div>
-      <div class="hero-days" id="heroDays"></div>
-
-      <!-- Fun fact strip -->
+      <div class="hero-size-line" id="heroSizeLine">Baby is the size of a blueberry</div>
+      <div class="hero-stats-row">
+        <span class="hero-stat"><strong id="babyH">--</strong> height</span>
+        <span class="hero-stat"><strong id="babyW">--</strong> weight</span>
+        <span class="hero-stat"><strong id="babyHR">--</strong> heart</span>
+      </div>
       <div class="fun-fact-strip" onclick="nextFunFact()" id="funFactStrip">
         <span class="fun-fact-icon">🐘</span>
         <span class="fun-fact-text" id="funFactText">Elephants are pregnant for 22 months - the longest of any land animal!</span>
-        <span class="fun-fact-next">tap for more ›</span>
-      </div>
-
-      <!-- Fruit card -->
-      <div class="fruit-row">
-        <div class="fruit-emoji" id="fruitEmoji">🫐</div>
-        <div style="flex:1">
-          <div class="fruit-size-label">Baby is the size of</div>
-          <div class="fruit-name" id="fruitName">a blueberry</div>
-          <div class="fruit-stats">
-            <div class="fruit-stat"><strong id="babyH">--</strong>Height</div>
-            <div class="fruit-stat"><strong id="babyW">--</strong>Weight</div>
-            <div class="fruit-stat"><strong id="babyHR">--</strong>Heart</div>
-          </div>
-        </div>
-        <!-- Mini SVG week arc -->
-        <svg width="52" height="52" viewBox="0 0 52 52" style="flex-shrink:0">
-          <circle cx="26" cy="26" r="22" fill="none" stroke="#FBDDE4" stroke-width="4"/>
-          <circle cx="26" cy="26" r="22" fill="none" stroke="#E8748A" stroke-width="4"
-            stroke-dasharray="138" id="heroArc" stroke-dashoffset="138"
-            stroke-linecap="round" transform="rotate(-90 26 26)"/>
-          <text x="26" y="30" text-anchor="middle" font-size="10" font-weight="600" fill="#E8748A" font-family="DM Sans,sans-serif" id="heroArcPct">0%</text>
-        </svg>
+        <span class="fun-fact-next">tap ›</span>
       </div>
     </div>
-    <div class="progress-row">
-      <div class="prog-card">
+    <div class="progress-card">
+      <div class="progress-top">
         <div class="ring-wrap">
-          <svg width="42" height="42" viewBox="0 0 42 42">
-            <circle cx="21" cy="21" r="17" fill="none" stroke="var(--rose-mid)" stroke-width="4"/>
-            <circle cx="21" cy="21" r="17" fill="none" stroke="var(--rose)" stroke-width="4" stroke-dasharray="107" id="progressRing" stroke-dashoffset="107" stroke-linecap="round"/>
+          <svg width="48" height="48" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="20" fill="none" stroke="var(--rose-pale)" stroke-width="4"/>
+            <circle cx="24" cy="24" r="20" fill="none" stroke="var(--rose)" stroke-width="4" stroke-dasharray="125.66" id="progressRing" stroke-dashoffset="125.66" stroke-linecap="round"/>
           </svg>
           <div class="ring-center" id="progressPct">0%</div>
         </div>
         <div><div class="prog-label">Journey</div><div class="prog-val" id="progressLabel">-- done</div></div>
+        <div class="progress-due">
+          <span class="prog-label">Due date</span>
+          <span class="prog-val" id="dueDate">--</span>
+        </div>
       </div>
-      <div class="prog-card">
-        <div style="font-size:26px">📅</div>
-        <div><div class="prog-label">Due date</div><div class="prog-val" id="dueDate">--</div></div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+        <div class="progress-bar-marker" style="left:30%" title="Week 12"></div>
+        <div class="progress-bar-marker" style="left:67.5%" title="Week 27"></div>
       </div>
-    </div>
-    <div class="trimester-band">
-      <div class="trimester-label" id="trimLabel">Trimester</div>
-      <div class="trimester-tip" id="trimTip">--</div>
+      <div class="progress-trimester-labels">
+        <span id="triLabel1">T1</span>
+        <span id="triLabel2">T2</span>
+        <span id="triLabel3">T3</span>
+      </div>
     </div>
     <div id="notifCard" class="notif-card" style="display:none">
       <div style="font-size:24px">🔔</div>
@@ -561,9 +541,9 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     </div>
     <div class="section-title">Today's Do's & Don'ts</div>
     <div class="dos-donts-row" id="dosDontsRow"></div>
-    <div class="section-title" style="margin-top:4px">Garbh Sanskar 🕉️</div>
+    <div class="section-title">Garbh Sanskar</div>
     <div class="gs-card" id="gsCard"></div>
-    <div class="section-title" style="margin-top:4px">Upcoming visits</div>
+    <div class="section-title">Upcoming visits</div>
     <div id="upcomingVisits"></div>
   </div>
 
@@ -1065,6 +1045,15 @@ function nextFunFact(){
 }
 
 // ── TODAY ──
+function toggleDosDonts(type){
+  const el=document.getElementById(type+'Extra');
+  const btn=document.getElementById(type+'MoreBtn');
+  if(!el||!btn)return;
+  const show=!el.classList.contains('show');
+  el.classList.toggle('show',show);
+  btn.textContent=show?'show less':'see more';
+}
+
 function renderToday(){
   const week=calcWeek(START_DATE);
   const days=calcDays(START_DATE);
@@ -1077,54 +1066,54 @@ function renderToday(){
   document.getElementById('todayGreeting').textContent=greet;
   document.getElementById('todayTitle').textContent='Week '+week;
   document.getElementById('heroWeek').textContent=week;
-  document.getElementById('heroDays').textContent=days+' days since confirmation';
+  document.getElementById('heroDays').textContent='Week '+week+' of 40';
   document.getElementById('fruitEmoji').textContent=info.fruit;
-  document.getElementById('fruitName').textContent=info.name;
+  document.getElementById('heroSizeLine').textContent='Baby is the size of '+info.name;
   document.getElementById('babyH').textContent=info.h;
   document.getElementById('babyW').textContent=info.wt;
   document.getElementById('babyHR').textContent=info.hr==='--'?'--':info.hr+' bpm';
   document.getElementById('progressPct').textContent=pct+'%';
-  document.getElementById('progressLabel').textContent=week+' done';
+  document.getElementById('progressLabel').textContent='Week '+week+' of 40';
   document.getElementById('dueDate').textContent=formatDate(due);
 
-  const circ=2*Math.PI*17;
+  const circ=2*Math.PI*20;
   document.getElementById('progressRing').style.strokeDashoffset=circ-(pct/100)*circ;
-  // Mini arc inside fruit card
-  const arcCirc=2*Math.PI*22;
-  const arcEl=document.getElementById('heroArc');
-  const arcPct=document.getElementById('heroArcPct');
-  if(arcEl){arcEl.style.strokeDashoffset=arcCirc-(pct/100)*arcCirc}
-  if(arcPct){arcPct.textContent=pct+'%'}
+  document.getElementById('progressBar').style.width=pct+'%';
 
   const t=week<=12?1:week<=27?2:3;
-  const tLabels=['','First Trimester','Second Trimester','Third Trimester'];
-  const tTips=['','Rest, hydrate, take folic acid','The golden weeks - energy returning','Baby is almost here!'];
-  document.getElementById('trimLabel').textContent=tLabels[t];
-  document.getElementById('trimTip').textContent=tTips[t];
+  document.getElementById('triLabel1').className=t===1?'active-tri':'';
+  document.getElementById('triLabel2').className=t===2?'active-tri':'';
+  document.getElementById('triLabel3').className=t===3?'active-tri':'';
 
   // Dos Donts
   const dd=getDosForWeek(week);
+  const mkItems=(arr,cls)=>{
+    const visible=arr.slice(0,3).map(d=>`<div class="dos-donts-item">${d}</div>`).join('');
+    const extra=arr.slice(3);
+    const hidden=extra.length?`<div class="dos-donts-hidden" id="${cls}Extra">${extra.map(d=>`<div class="dos-donts-item">${d}</div>`).join('')}</div><button class="dos-donts-more ${cls}" id="${cls}MoreBtn" onclick="toggleDosDonts('${cls}')">see more</button>`:'';
+    return visible+hidden;
+  };
   document.getElementById('dosDontsRow').innerHTML=`
     <div class="dos-card">
-      <div class="dos-donts-title do">✅ करें</div>
-      ${dd.dos.slice(0,4).map(d=>`<div class="dos-donts-item"><span>•</span><span>${d}</span></div>`).join('')}
+      <div class="dos-donts-title do">✅ Do</div>
+      ${mkItems(dd.dos,'do')}
     </div>
     <div class="donts-card">
-      <div class="dos-donts-title dont">❌ न करें</div>
-      ${dd.donts.slice(0,4).map(d=>`<div class="dos-donts-item"><span>•</span><span>${d}</span></div>`).join('')}
+      <div class="dos-donts-title dont">❌ Don't</div>
+      ${mkItems(dd.donts,'dont')}
     </div>`;
 
   // Garbh Sanskar
   const gs=getGSForWeek(week);
   document.getElementById('gsCard').innerHTML=`
-    <div class="gs-label">🕉️ GARBH SANSKAR - सप्ताह ${week}</div>
+    <div class="gs-label">🕉️ सप्ताह ${week}</div>
     <div class="gs-shloka">${gs.shloka}</div>
     <div class="gs-transliteration">${gs.trans}</div>
     <div class="gs-meaning">${gs.meaning}</div>
-    <div class="gs-practice">🙏 आज का अभ्यास: ${gs.practice}</div>
+    <div class="gs-practice">🙏 ${gs.practice}</div>
     <div class="gs-music">🎵 ${gs.music}</div>`;
 
-  // Upcoming
+  // Upcoming visits (now at bottom)
   const up=(db.visits||[]).filter(v=>new Date(v.date)>=new Date()).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,2);
   document.getElementById('upcomingVisits').innerHTML=up.length?up.map(v=>{
     const du=Math.ceil((new Date(v.date)-new Date())/(1000*60*60*24));
