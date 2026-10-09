@@ -292,6 +292,12 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .visit-date{font-size:11px;color:var(--ink-light);margin-top:1px}
 .visit-week-badge{font-size:10px;padding:2px 9px;border-radius:20px;background:var(--rose-pale);color:var(--rose)}
 .visit-notes{font-size:12px;color:var(--ink-mid);line-height:1.5;margin-top:6px}
+.visit-remarks{margin-top:8px;padding:8px 10px;background:var(--cream);border-radius:8px;border:1px solid var(--rose-light)}
+.remarks-label{display:block;font-size:10px;font-weight:600;color:var(--plum);letter-spacing:.04em;margin-bottom:3px}
+.remarks-text{display:block;font-size:12px;color:var(--ink-mid);line-height:1.5;cursor:pointer;min-height:18px}
+.remarks-text.empty{color:var(--ink-light);font-style:italic}
+.remarks-textarea{width:100%;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink);line-height:1.5;border:none;background:transparent;resize:none;outline:none;padding:0;min-height:52px;box-sizing:border-box}
+.remarks-save-btn{margin-top:5px;padding:4px 14px;border-radius:20px;border:none;background:var(--sage);color:#fff;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer}
 .visit-attachment{margin-top:8px;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--plum);font-weight:500;flex-wrap:wrap}
 .file-action-btn{font-size:10px;padding:3px 9px;border-radius:20px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
 .file-action-view{background:var(--plum);color:#fff}
@@ -1013,7 +1019,7 @@ const funFacts=[
   {icon:'🌊',text:"A newborn baby has 300 bones. Adults have 206 - many fuse together as we grow."},
   {icon:'⭐',text:"Opossum pregnancies last just 12 days. A human pregnancy, at 40 weeks, is one of the longest relative to body size."},
 ];
-let funFactIdx=0;
+let funFactIdx=Math.floor(Math.random()*funFacts.length);
 function nextFunFact(){
   funFactIdx=(funFactIdx+1)%funFacts.length;
   const f=funFacts[funFactIdx];
@@ -1766,15 +1772,15 @@ function closeFileViewer(){
 }
 document.getElementById('fileViewer').addEventListener('click',function(e){if(e.target===this)closeFileViewer()});
 
-function deleteRecord(type,idx){
+function deleteRecord(type,id){
   if(!confirm('Remove this record?'))return;
-  if(type==='visit')db.visits.splice(idx,1);
-  else if(type==='presc')db.prescriptions.splice(idx,1);
-  else if(type==='report')db.reports.splice(idx,1);
+  const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
+  const i=arr.findIndex(x=>x.id===id);
+  if(i>=0)arr.splice(i,1);
   cacheDB();renderMedical();showToast('Removed');
 }
 
-function replaceFile(type,idx){
+function replaceFile(type,id){
   const input=document.createElement('input');
   input.type='file';input.accept='image/*,.pdf';
   input.onchange=async e=>{
@@ -1785,9 +1791,9 @@ function replaceFile(type,idx){
       const fd={data:ev.target.result,name:file.name,mime:file.type};
       const{fileUrl,fileName}=await uploadMedFile(fd);
       const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
-      if(arr[idx]){arr[idx].file=fileUrl;arr[idx].fileName=fileName;}
+      const record=arr.find(x=>x.id===id);
+      if(record){record.file=fileUrl;record.fileName=fileName;}
       cacheDB();renderMedical();showToast('File replaced ✓');
-      const record=arr[idx];
       if(record?.id)supa.upsert('bj_visits',{id:record.id,file:fileUrl,file_name:fileName}).catch(()=>{});
     };
     reader.readAsDataURL(file);
@@ -1862,39 +1868,66 @@ let _fileRefIdx=0;
 function storeFileRef(src,name){const k='fr'+(++_fileRefIdx);_fileRefs[k]={src,name};return k;}
 function viewFileRef(k){const r=_fileRefs[k];if(r)openFileViewer(r.src,r.name);}
 
-function fileActionsHTML(file,fileName,type,idx){
+function remarksHTML(rec,type){
+  if(!rec.id)return'';
+  const r=rec.remarks||'';
+  const empty=!r;
+  return`<div class="visit-remarks" id="remarks-${type}-${rec.id}"><span class="remarks-label">Doctor's remarks</span><span class="remarks-text${empty?' empty':''}" onclick="editRemarks('${type}','${rec.id}')">${empty?'Tap to add remarks...':r}</span></div>`;
+}
+function editRemarks(type,id){
+  const el=document.getElementById(`remarks-${type}-${id}`);if(!el)return;
+  const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
+  const rec=arr.find(x=>x.id===id);
+  const cur=rec?.remarks||'';
+  el.innerHTML=`<span class="remarks-label">Doctor's remarks</span><textarea class="remarks-textarea" id="ri-${type}-${id}">${cur}</textarea><button class="remarks-save-btn" onclick="saveRemarks('${type}','${id}')">Save</button>`;
+  const ta=document.getElementById(`ri-${type}-${id}`);
+  ta.focus();ta.selectionStart=ta.selectionEnd=ta.value.length;
+}
+async function saveRemarks(type,id){
+  const ta=document.getElementById(`ri-${type}-${id}`);if(!ta)return;
+  const val=ta.value.trim();
+  const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
+  const rec=arr.find(x=>x.id===id);
+  if(rec)rec.remarks=val;
+  cacheDB();
+  const el=document.getElementById(`remarks-${type}-${id}`);
+  if(el){const empty=!val;el.innerHTML=`<span class="remarks-label">Doctor's remarks</span><span class="remarks-text${empty?' empty':''}" onclick="editRemarks('${type}','${id}')">${empty?'Tap to add remarks...':val}</span>`;}
+  try{await supa.upsert('bj_visits',{id,remarks:val});}catch(e){}
+  showToast('Remarks saved');
+}
+function fileActionsHTML(file,fileName,type,id){
   if(file){
     const k=storeFileRef(file,fileName||'Attachment');
     return `<div class="visit-attachment">
       📎 <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${fileName||'Attachment'}</span>
       <button class="file-action-btn file-action-view" onclick="viewFileRef('${k}')">👁 View</button>
-      <button class="file-action-btn file-action-replace" onclick="replaceFile('${type}',${idx})">🔄 Replace</button>
-      <button class="file-action-btn file-action-delete" onclick="deleteRecord('${type}',${idx})">🗑</button>
+      <button class="file-action-btn file-action-replace" onclick="replaceFile('${type}','${id}')">🔄 Replace</button>
+      <button class="file-action-btn file-action-delete" onclick="deleteRecord('${type}','${id}')">🗑</button>
     </div>`;
   }
-  return `<div style="margin-top:8px"><button class="file-action-btn file-action-replace" style="padding:5px 12px" onclick="replaceFile('${type}',${idx})">📎 Attach file</button><button class="file-action-btn file-action-delete" onclick="deleteRecord('${type}',${idx})">🗑</button></div>`;
+  return `<div style="margin-top:8px"><button class="file-action-btn file-action-replace" style="padding:5px 12px" onclick="replaceFile('${type}','${id}')">📎 Attach file</button><button class="file-action-btn file-action-delete" onclick="deleteRecord('${type}','${id}')">🗑</button></div>`;
 }
 function renderVisits(){
   const el=document.getElementById('medVisits');if(!el)return;
   const sorted=(db.visits||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
   el.innerHTML=`<button class="add-btn" onclick="openVisitModal()">+ Add Visit or Scan</button>`+
-  (sorted.length?sorted.map((v,i)=>{
+  (sorted.length?sorted.map((v)=>{
     const wk=Math.floor((new Date(v.date)-START_DATE)/(1000*60*60*24*7))+1;
     const wkL=wk>=1&&wk<=40?'Week '+wk:'';
-    return`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">${v.type}</div><div class="visit-date">${formatDate(v.date)}${v.doctor?' · Dr. '+v.doctor:''}</div></div>${wkL?`<span class="visit-week-badge">${wkL}</span>`:''}</div>${v.notes?`<div class="visit-notes">${v.notes}</div>`:''}${fileActionsHTML(v.file,v.fileName,'visit',i)}</div>`;
+    return`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">${v.type}</div><div class="visit-date">${formatDate(v.date)}${v.doctor?' · Dr. '+v.doctor:''}</div></div>${wkL?`<span class="visit-week-badge">${wkL}</span>`:''}</div>${v.notes?`<div class="visit-notes">${v.notes}</div>`:''}${remarksHTML(v,'visit')}${fileActionsHTML(v.file,v.fileName,'visit',v.id)}</div>`;
   }).join(''):'<p class="no-data">No visits logged yet</p>');
 }
 function renderPrescriptions(){
   const el=document.getElementById('medPrescriptions');if(!el)return;
   const sorted=(db.prescriptions||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
   el.innerHTML=`<button class="add-btn" onclick="openModal('prescModal')">+ Add Prescription</button>`+
-  (sorted.length?sorted.map((p,i)=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">💊 Prescription</div><div class="visit-date">${formatDate(p.date)}${p.doctor?' · Dr. '+p.doctor:''}</div></div></div>${p.notes?`<div class="visit-notes">${p.notes}</div>`:''}${fileActionsHTML(p.file,p.fileName,'presc',i)}</div>`).join(''):'<p class="no-data">No prescriptions yet</p>');
+  (sorted.length?sorted.map((p)=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">💊 Prescription</div><div class="visit-date">${formatDate(p.date)}${p.doctor?' · Dr. '+p.doctor:''}</div></div></div>${p.notes?`<div class="visit-notes">${p.notes}</div>`:''}${remarksHTML(p,'presc')}${fileActionsHTML(p.file,p.fileName,'presc',p.id)}</div>`).join(''):'<p class="no-data">No prescriptions yet</p>');
 }
 function renderReports(){
   const el=document.getElementById('medReports');if(!el)return;
   const sorted=(db.reports||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
   el.innerHTML=`<button class="add-btn" onclick="openModal('reportModal')">+ Add Report / Scan</button>`+
-  (sorted.length?sorted.map((r,i)=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">🗂 ${r.name||'Report'}</div><div class="visit-date">${formatDate(r.date)}</div></div></div>${r.notes?`<div class="visit-notes">${r.notes}</div>`:''}${fileActionsHTML(r.file,r.fileName,'report',i)}</div>`).join(''):'<p class="no-data">No reports yet</p>');
+  (sorted.length?sorted.map((r)=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">🗂 ${r.name||'Report'}</div><div class="visit-date">${formatDate(r.date)}</div></div></div>${r.notes?`<div class="visit-notes">${r.notes}</div>`:''}${remarksHTML(r,'report')}${fileActionsHTML(r.file,r.fileName,'report',r.id)}</div>`).join(''):'<p class="no-data">No reports yet</p>');
 }
 function openVisitModal(){document.getElementById('vDate').value=dateKey(new Date());openModal('visitModal')}
 async function uploadMedFile(fd){
@@ -2106,6 +2139,7 @@ ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS exercise_done boolean;
 ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS exercise_type text;
 ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS exercise_mins int;
 ALTER TABLE bj_visits ADD COLUMN IF NOT EXISTS record_type text DEFAULT 'visit';
+ALTER TABLE bj_visits ADD COLUMN IF NOT EXISTS remarks text;
 */
 </script>
 </body>
