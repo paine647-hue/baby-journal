@@ -303,24 +303,81 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .guide-tabs::-webkit-scrollbar{display:none}
 .gtab-btn{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid var(--rose-mid);background:var(--white);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--ink-mid);cursor:pointer;transition:all .2s}
 .gtab-btn.active{background:var(--rose);border-color:var(--rose);color:var(--white)}
-.week-guide-card{background:var(--white);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
-.week-guide-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--ink);margin-bottom:10px}
-.week-guide-section{margin-bottom:12px}
-.week-guide-section-title{font-size:13px;font-weight:600;color:var(--rose);margin-bottom:6px}
+
+/* Week progress pill */
+.week-progress-pill{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.week-progress-label{font-size:12px;font-weight:600;color:var(--rose);white-space:nowrap}
+.week-progress-bar{flex:1;height:4px;background:var(--rose-pale);border-radius:2px;overflow:hidden}
+.week-progress-fill{height:100%;background:var(--rose);border-radius:2px;transition:width .4s ease}
+
+/* Week guide mini cards */
+.week-guide-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);margin-bottom:10px;border-left:3px solid var(--rose)}
+.week-guide-card.border-plum{border-left-color:var(--plum)}
+.week-guide-card.border-amber{border-left-color:var(--amber)}
+.week-guide-card.border-sage{border-left-color:var(--sage)}
+.week-guide-card.border-warn{border-left-color:#E05555}
+.week-guide-card.warn-bg{background:var(--rose-pale)}
+.week-guide-label{font-size:13px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.week-guide-label.rose{color:var(--rose)}
+.week-guide-label.plum{color:var(--plum)}
+.week-guide-label.amber{color:var(--amber)}
+.week-guide-label.sage{color:var(--sage)}
+.week-guide-label.warn{color:#E05555}
 .week-guide-text{font-size:14px;color:var(--ink-mid);line-height:1.75}
+
+/* Food tab */
 .food-section{margin-bottom:16px}
 .food-section-head{display:flex;align-items:center;gap:7px;margin-bottom:8px}
-.food-section-head .label{font-size:12px;font-weight:600}
+.food-section-head .label{font-size:13px;font-weight:600}
 .food-section-head .label.eat{color:var(--sage)}
 .food-section-head .label.avoid{color:var(--rose)}
 .food-pills{display:flex;flex-wrap:wrap;gap:7px}
-.food-pill{padding:5px 11px;border-radius:20px;font-size:11px;display:flex;align-items:center;gap:4px}
+.food-pill{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;display:flex;align-items:center;gap:4px}
 .food-pill.eat{background:var(--sage-pale);color:var(--sage);border:1px solid var(--sage-light)}
 .food-pill.avoid{background:var(--rose-pale);color:var(--rose);border:1px solid var(--rose-light)}
-.nutrient-card{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;box-shadow:var(--shadow);margin-bottom:9px;display:flex;gap:11px;align-items:flex-start}
-.nutrient-icon{font-size:22px;flex-shrink:0}
-.nutrient-name{font-size:13px;font-weight:500;margin-bottom:2px}
-.nutrient-why{font-size:11px;color:var(--ink-mid);line-height:1.5}
+.nutrient-card{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;box-shadow:var(--shadow);margin-bottom:9px;display:flex;gap:12px;align-items:flex-start}
+.nutrient-icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.nutrient-icon-circle.sage-bg{background:var(--sage-pale)}
+.nutrient-icon-circle.rose-bg{background:var(--rose-pale)}
+.nutrient-icon-circle.amber-bg{background:var(--amber-pale)}
+.nutrient-icon-circle.plum-bg{background:var(--plum-pale)}
+.nutrient-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.nutrient-why{font-size:13px;color:var(--ink-mid);line-height:1.5}
+
+/* Baby's Journey timeline */
+.journey-timeline{padding:0 0 20px}
+.timeline-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;cursor:pointer;transition:opacity .2s}
+.timeline-row.future{opacity:.5}
+.timeline-row.current{opacity:1}
+.timeline-week-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;transition:all .2s}
+.timeline-week-circle.past{background:var(--rose);color:var(--white)}
+.timeline-week-circle.current{background:var(--rose);color:var(--white);width:42px;height:42px;font-size:14px;box-shadow:0 0 0 4px var(--rose-pale)}
+.timeline-week-circle.future{background:transparent;border:2px dashed var(--rose-light);color:var(--ink-light)}
+.timeline-connector{width:2px;background:var(--rose-light);margin-left:17px;min-height:6px}
+.timeline-connector.future{background:transparent;border-left:2px dashed var(--rose-pale);margin-left:17px}
+.timeline-content{flex:1;min-width:0}
+.timeline-current-pill{display:inline-flex;align-items:center;gap:6px;background:var(--rose-pale);border-radius:20px;padding:8px 14px;margin-bottom:4px}
+.timeline-current-pill .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--rose);animation:timelinePulse 1.5s ease-in-out infinite}
+@keyframes timelinePulse{0%,100%{opacity:.4;transform:scale(.9)}50%{opacity:1;transform:scale(1.1)}}
+.timeline-main{display:flex;align-items:center;gap:8px}
+.timeline-fruit{font-size:22px;flex-shrink:0}
+.timeline-info{flex:1;min-width:0}
+.timeline-fruit-name{font-size:13px;font-weight:600;color:var(--ink)}
+.timeline-milestone{font-size:12px;color:var(--ink-mid);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.timeline-size{font-size:12px;color:var(--ink-light);flex-shrink:0;text-align:right;white-space:nowrap}
+.timeline-expand{overflow:hidden;max-height:0;transition:max-height .2s ease;margin-top:0}
+.timeline-expand.open{max-height:600px;margin-top:10px}
+.timeline-expand-inner{padding-top:4px;display:flex;flex-direction:column;gap:8px}
+.timeline-expand-card{background:var(--white);border-radius:var(--radius-sm);padding:12px;box-shadow:var(--shadow);border-left:3px solid var(--rose)}
+.timeline-expand-card.border-plum{border-left-color:var(--plum)}
+.timeline-expand-card.border-amber{border-left-color:var(--amber)}
+.timeline-expand-card.border-sage{border-left-color:var(--sage)}
+.timeline-expand-card.border-warn{border-left-color:#E05555}
+.timeline-expand-card.warn-bg{background:var(--rose-pale)}
+.timeline-expand-label{font-size:12px;font-weight:600;margin-bottom:4px}
+.timeline-expand-text{font-size:12px;color:var(--ink-mid);line-height:1.6}
+
+/* Books */
 .book-card{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;box-shadow:var(--shadow);margin-bottom:9px;display:flex;align-items:center;gap:12px}
 .book-cover{font-size:28px;flex-shrink:0}
 .book-info{flex:1}
@@ -330,6 +387,8 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .book-status-btns{display:flex;gap:5px;margin-top:6px}
 .book-status-btn{font-size:10px;padding:3px 9px;border-radius:20px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;background:var(--rose-pale);color:var(--rose);transition:all .15s}
 .book-status-btn.active{background:var(--sage);color:var(--white)}
+
+/* Watch */
 .watch-card{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;box-shadow:var(--shadow);margin-bottom:9px}
 .watch-title{font-size:13px;font-weight:500}
 .watch-type{font-size:10px;color:var(--ink-light);margin-bottom:3px}
@@ -415,7 +474,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 /* ANIMATIONS */
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@media (prefers-reduced-motion:reduce){.lock-emoji,.hero-fruit,.anim-breathe,.anim-sway,.anim-squat,.anim-stretch,.anim-kegel,.anim-tilt,.anim-float{animation:none}.page.active{animation:none}.counter-btn:active{animation:none}.kicks-ripple{animation:none;display:none}.mood-btn.selected span:first-child{transform:none}}
+@media (prefers-reduced-motion:reduce){.lock-emoji,.hero-fruit,.anim-breathe,.anim-sway,.anim-squat,.anim-stretch,.anim-kegel,.anim-tilt,.anim-float,.pulse-dot{animation:none}.page.active{animation:none}.counter-btn:active{animation:none}.kicks-ripple{animation:none;display:none}.mood-btn.selected span:first-child{transform:none}.timeline-expand{transition:none}}
 </style>
 </head>
 <body>
@@ -696,11 +755,13 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     <div class="guide-tabs">
       <button class="gtab-btn active" onclick="setGuideTab('weekly',this)">📅 This Week</button>
       <button class="gtab-btn" onclick="setGuideTab('food',this)">🥗 Food</button>
+      <button class="gtab-btn" onclick="setGuideTab('babyjourney',this)">👶 Baby's Journey</button>
       <button class="gtab-btn" onclick="setGuideTab('books',this)">📚 Books</button>
       <button class="gtab-btn" onclick="setGuideTab('watch',this)">🎬 Watch</button>
     </div>
     <div id="guideWeekly"></div>
     <div id="guideFood" style="display:none"></div>
+    <div id="guideBabyjourney" style="display:none"></div>
     <div id="guideBooks" style="display:none"></div>
     <div id="guideWatch" style="display:none"></div>
   </div>
@@ -1819,11 +1880,16 @@ async function saveExerciseLog(){
 
 // ── GUIDE ──
 function setGuideTab(tab,btn){
-  ['weekly','food','books','watch'].forEach(t=>{document.getElementById('guide'+t.charAt(0).toUpperCase()+t.slice(1)).style.display=t===tab?'block':'none'});
-  document.querySelectorAll('.gtab-btn').forEach(b=>b.classList.remove('active'));
+  ['weekly','food','babyjourney','books','watch'].forEach(t=>{
+    const id='guide'+t.charAt(0).toUpperCase()+t.slice(1);
+    const el=document.getElementById(id);
+    if(el)el.style.display=t===tab?'block':'none';
+  });
+  document.querySelectorAll('#pageGuide .gtab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if(tab==='weekly')renderWeeklyGuide();
   if(tab==='food')renderFood();
+  if(tab==='babyjourney')renderBabyJourney();
   if(tab==='books')renderBooks();
   if(tab==='watch')renderWatch();
 }
@@ -1831,15 +1897,103 @@ function setGuideTab(tab,btn){
 function renderWeeklyGuide(){
   const week=calcWeek(START_DATE);
   const g=getWeekGuide(week);
+  const pct=Math.round((week/40)*100);
   document.getElementById('guideWeekly').innerHTML=`
+    <div class="week-progress-pill">
+      <span class="week-progress-label">Week ${week} of 40</span>
+      <div class="week-progress-bar"><div class="week-progress-fill" style="width:${pct}%"></div></div>
+    </div>
     <div class="week-guide-card">
-      <div class="week-guide-title">Week ${week} - What's happening</div>
-      <div class="week-guide-section"><div class="week-guide-section-title">👶 Baby</div><div class="week-guide-text">${g.baby}</div></div>
-      <div class="week-guide-section"><div class="week-guide-section-title">🌸 Mum's body</div><div class="week-guide-text">${g.mum}</div></div>
-      <div class="week-guide-section"><div class="week-guide-section-title">🩺 Tests this stage</div><div class="week-guide-text">${g.test}</div></div>
-      <div class="week-guide-section"><div class="week-guide-section-title">🥗 Food focus</div><div class="week-guide-text">${g.food}</div></div>
-      <div class="week-guide-section" style="background:var(--amber-pale);border-radius:8px;padding:10px"><div class="week-guide-section-title" style="color:var(--amber)">⚠️ When to call doctor</div><div class="week-guide-text">${g.warning}</div></div>
+      <div class="week-guide-label rose">👶 Baby</div>
+      <div class="week-guide-text">${g.baby}</div>
+    </div>
+    <div class="week-guide-card border-plum">
+      <div class="week-guide-label plum">🌸 Mum's body</div>
+      <div class="week-guide-text">${g.mum}</div>
+    </div>
+    <div class="week-guide-card border-amber">
+      <div class="week-guide-label amber">🩺 Tests this stage</div>
+      <div class="week-guide-text">${g.test}</div>
+    </div>
+    <div class="week-guide-card border-sage">
+      <div class="week-guide-label sage">🥗 Food focus</div>
+      <div class="week-guide-text">${g.food}</div>
+    </div>
+    <div class="week-guide-card border-warn warn-bg">
+      <div class="week-guide-label warn">⚠️ Warning</div>
+      <div class="week-guide-text">${g.warning}</div>
     </div>`;
+}
+
+const weekMilestones=[
+  {w:1,m:'Conception begins'},{w:2,m:'Cells divide rapidly'},{w:3,m:'Embryo implants in uterus'},{w:4,m:'Heart begins to beat'},
+  {w:5,m:'Brain and spinal cord forming'},{w:6,m:'Arm and leg buds appear'},{w:7,m:'Eyes and ears start forming'},{w:8,m:'All major organs forming'},
+  {w:9,m:'Fingers and toes develop'},{w:10,m:'Bones begin to harden'},{w:11,m:'Baby can open and close fists'},{w:12,m:'Reflexes developing, can yawn'},
+  {w:13,m:'Vocal cords forming'},{w:14,m:'Can make facial expressions'},{w:15,m:'Can sense light through eyelids'},{w:16,m:'Skeletal system hardening'},
+  {w:17,m:'Fat stores begin building'},{w:18,m:'Can hear sounds now'},{w:19,m:'Senses developing rapidly'},{w:20,m:'Halfway there! Can swallow'},
+  {w:21,m:'Eyebrows and eyelids formed'},{w:22,m:'Grip is getting stronger'},{w:23,m:'Skin becomes less transparent'},{w:24,m:'Lungs produce surfactant'},
+  {w:25,m:'Responds to your voice'},{w:26,m:'Eyes can open and close'},{w:27,m:'Can hiccup regularly'},{w:28,m:'Can dream during sleep'},
+  {w:29,m:'Muscles and lungs maturing'},{w:30,m:'Brain growing rapidly'},{w:31,m:'All five senses active'},{w:32,m:'Practicing breathing movements'},
+  {w:33,m:'Bones hardening, skull flexible'},{w:34,m:'Immune system strengthening'},{w:35,m:'Kidneys fully developed'},{w:36,m:'Getting into birth position'},
+  {w:37,m:'Considered early term'},{w:38,m:'Organs fully mature'},{w:39,m:'Full term, ready any day'},{w:40,m:'Due date! Ready to meet you'}
+];
+
+function renderBabyJourney(){
+  const week=calcWeek(START_DATE);
+  const el=document.getElementById('guideBabyjourney');
+  let html='<div class="journey-timeline">';
+  for(let i=0;i<40;i++){
+    const w=i+1;
+    const wd=weekData[i];
+    const ml=weekMilestones[i];
+    const isPast=w<week;
+    const isCurrent=w===week;
+    const isFuture=w>week;
+    const state=isCurrent?'current':isPast?'past':'future';
+    const g=getWeekGuide(w);
+    html+=`<div class="timeline-row ${state}" onclick="toggleTimelineRow(this)">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="timeline-week-circle ${state}">${w}</div>
+        ${w<40?`<div class="timeline-connector ${isFuture?'future':''}"></div>`:''}
+      </div>
+      <div class="timeline-content">
+        ${isCurrent?`<div class="timeline-current-pill"><span class="pulse-dot"></span><span style="font-size:12px;font-weight:600;color:var(--rose)">You are here</span></div>`:''}
+        <div class="timeline-main">
+          <span class="timeline-fruit">${wd.fruit}</span>
+          <div class="timeline-info">
+            <div class="timeline-fruit-name">${wd.name}</div>
+            <div class="timeline-milestone">${ml.m}</div>
+          </div>
+          <span class="timeline-size">${wd.h}</span>
+        </div>
+        <div class="timeline-expand">
+          <div class="timeline-expand-inner">
+            <div class="timeline-expand-card"><div class="timeline-expand-label rose">👶 Baby</div><div class="timeline-expand-text">${g.baby}</div></div>
+            <div class="timeline-expand-card border-plum"><div class="timeline-expand-label plum">🌸 Mum</div><div class="timeline-expand-text">${g.mum}</div></div>
+            <div class="timeline-expand-card border-amber"><div class="timeline-expand-label amber">🩺 Tests</div><div class="timeline-expand-text">${g.test}</div></div>
+            <div class="timeline-expand-card border-sage"><div class="timeline-expand-label sage">🥗 Food</div><div class="timeline-expand-text">${g.food}</div></div>
+            <div class="timeline-expand-card border-warn warn-bg"><div class="timeline-expand-label warn">⚠️ Warning</div><div class="timeline-expand-text">${g.warning}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+  html+='</div>';
+  el.innerHTML=html;
+  setTimeout(()=>{
+    const current=el.querySelector('.timeline-row.current');
+    if(current)current.scrollIntoView({behavior:'smooth',block:'center'});
+  },100);
+}
+
+function toggleTimelineRow(row){
+  const expand=row.querySelector('.timeline-expand');
+  if(expand.classList.contains('open')){
+    expand.classList.remove('open');
+  } else {
+    document.querySelectorAll('.timeline-expand.open').forEach(e=>e.classList.remove('open'));
+    expand.classList.add('open');
+  }
 }
 
 function renderFood(){
@@ -1858,11 +2012,12 @@ function renderFoodTab(t,btn){
   renderFoodContent(foodData[t]);
 }
 function renderFoodContent(f){
+  const iconBgs=['sage-bg','rose-bg','amber-bg','plum-bg'];
   document.getElementById('foodTabContent').innerHTML=`
     <div class="food-section"><div class="food-section-head"><span>✅</span><span class="label eat">Eat plenty of</span></div><div class="food-pills">${f.eat.map(i=>`<span class="food-pill eat">${i}</span>`).join('')}</div></div>
     <div class="food-section"><div class="food-section-head"><span>⛔</span><span class="label avoid">Avoid or limit</span></div><div class="food-pills">${f.avoid.map(i=>`<span class="food-pill avoid">${i}</span>`).join('')}</div></div>
     <div class="section-title">Key nutrients</div>
-    ${f.nutrients.map(n=>`<div class="nutrient-card"><span class="nutrient-icon">${n.icon}</span><div><div class="nutrient-name">${n.name}</div><div class="nutrient-why">${n.why}</div></div></div>`).join('')}`;
+    ${f.nutrients.map((n,i)=>`<div class="nutrient-card"><div class="nutrient-icon-circle ${iconBgs[i%iconBgs.length]}">${n.icon}</div><div><div class="nutrient-name">${n.name}</div><div class="nutrient-why">${n.why}</div></div></div>`).join('')}`;
 }
 
 function renderBooks(){
