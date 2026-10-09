@@ -700,15 +700,68 @@ const SUPABASE_URL='https://dwvtyctgawlshbjqyeqq.supabase.co';
 const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR3dnR5Y3RnYXdsc2hianF5ZXFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyNjYzOTgsImV4cCI6MjEwNjg0MjM5OH0.AguAs9-2Ftj3iFJa67T01QBreJBllazCvbkUi9lP8rc';
 
 // ── SUPABASE ──
+const BUCKET='baby-journal';
 const supa={
   async get(t){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=*&order=created_at.asc`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)throw new Error(await r.text());return r.json()},
-  async upsert(t,row){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{method:'POST',headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return r.json()}
+  async upsert(t,row){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{method:'POST',headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return r.json()},
+  async uploadFile(path,dataUrl,mimeType){
+    // Convert base64 dataUrl to binary blob
+    const base64=dataUrl.split(',')[1];
+    const binary=atob(base64);
+    const arr=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++)arr[i]=binary.charCodeAt(i);
+    const blob=new Blob([arr],{type:mimeType});
+    const r=await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`,{
+      method:'POST',
+      headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`,'Content-Type':mimeType,'x-upsert':'true'},
+      body:blob
+    });
+    if(!r.ok)throw new Error(await r.text());
+    return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`;
+  },
+  async deleteFile(path){
+    await fetch(`${SUPABASE_URL}/storage/v1/object/${BUCKET}/${path}`,{
+      method:'DELETE',
+      headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}
+    });
+  },
+  publicUrl(path){return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`}
 };
 
 // ── DB ──
 let db={logs:{},visits:[],prescriptions:[],reports:[],weights:[],gallery:{},wellness:{}};
 function cacheDB(){try{localStorage.setItem('bj2',JSON.stringify(db))}catch(e){}}
 function loadCached(){try{const s=localStorage.getItem('bj2');if(s)db=JSON.parse(s)}catch(e){}}
+function isBase64DataUrl(s){return typeof s==='string'&&s.startsWith('data:');}
+function mimeFromDataUrl(s){const m=s.match(/^data:([^;]+);/);return m?m[1]:'application/octet-stream';}
+function extFromMime(m){const map={'image/jpeg':'jpg','image/png':'png','image/gif':'gif','image/webp':'webp','application/pdf':'pdf'};return map[m]||'bin';}
+
+async function migrateBase64FilesToStorage(visits){
+  const toMigrate=visits.filter(v=>isBase64DataUrl(v.file)&&v.id);
+  if(!toMigrate.length)return;
+  showToast(`Migrating ${toMigrate.length} file${toMigrate.length>1?'s':''} to storage...`);
+  let done=0;
+  for(const v of toMigrate){
+    try{
+      const mime=mimeFromDataUrl(v.file);
+      const ext=extFromMime(mime);
+      const path=`medical/${v.id}.${ext}`;
+      const url=await supa.uploadFile(path,v.file,mime);
+      // Update DB row - store URL instead of base64
+      await supa.upsert('bj_visits',{id:v.id,file:url,file_name:v.file_name||`attachment.${ext}`});
+      // Update local db
+      const updateInArray=(arr)=>{const i=arr.findIndex(x=>x.id===v.id);if(i>=0){arr[i].file=url;}};
+      updateInArray(db.visits);updateInArray(db.prescriptions);updateInArray(db.reports);
+      done++;
+    }catch(e){console.warn('Migration failed for',v.id,e);}
+  }
+  cacheDB();
+  if(done>0){
+    showToast(`${done} file${done>1?'s':''} migrated ✓`);
+    renderMedical();
+  }
+}
+
 async function loadDB(){
   loadCached();
   try{
@@ -721,6 +774,8 @@ async function loadDB(){
     db.visits=visits.filter(v=>v.record_type==='visit'||!v.record_type).map(v=>({id:v.id,type:v.type,doctor:v.doctor,date:v.date,notes:v.notes,reminder:v.reminder,file:v.file,fileName:v.file_name}));
     db.prescriptions=visits.filter(v=>v.record_type==='presc').map(v=>({id:v.id,date:v.date,doctor:v.doctor,notes:v.notes,file:v.file,fileName:v.file_name}));
     db.reports=visits.filter(v=>v.record_type==='report').map(v=>({id:v.id,name:v.type,date:v.date,notes:v.notes,file:v.file,fileName:v.file_name}));
+    // Migrate any base64 files to Storage in background
+    migrateBase64FilesToStorage(visits);
     db.weights=weights.map(r=>({id:r.id,date:r.date,val:r.val}));
     cacheDB();
     if(document.getElementById('app').classList.contains('visible')){renderToday();renderMedical();renderWeight();}
@@ -1684,18 +1739,17 @@ function renderWatch(){
 }
 
 // ── FILE VIEWER ──
-function openFileViewer(dataUrl,name){
+function openFileViewer(src,name){
   const v=document.getElementById('fileViewer');
   const c=document.getElementById('fileViewerContent');
   document.getElementById('fileViewerName').textContent=name||'Attachment';
-  // detect type from data URL prefix
-  if(dataUrl.startsWith('data:image')){
-    c.innerHTML=`<img src="${dataUrl}" alt="${name||''}">`;
-  } else if(dataUrl.startsWith('data:application/pdf')){
-    c.innerHTML=`<iframe src="${dataUrl}"></iframe>`;
+  const isPDF=(name||'').toLowerCase().endsWith('.pdf')||src.includes('.pdf')||(src.startsWith('data:application/pdf'));
+  const isImage=!isPDF&&(src.startsWith('data:image')||src.match(/\.(jpg|jpeg|png|gif|webp)(\?|$)/i)||(!src.startsWith('data:')));
+  if(isPDF){
+    // PDFs: open in iframe for Storage URLs, embed for base64
+    c.innerHTML=`<iframe src="${src}" style="width:95vw;height:80vh;border:none;border-radius:8px;background:#fff"></iframe>`;
   } else {
-    // fallback: try as image
-    c.innerHTML=`<img src="${dataUrl}" alt="${name||''}">`;
+    c.innerHTML=`<img src="${src}" alt="${name||''}" style="max-width:95vw;max-height:80vh;border-radius:8px;object-fit:contain">`;
   }
   v.classList.add('open');
 }
@@ -1716,18 +1770,18 @@ function deleteRecord(type,idx){
 function replaceFile(type,idx){
   const input=document.createElement('input');
   input.type='file';input.accept='image/*,.pdf';
-  input.onchange=e=>{
+  input.onchange=async e=>{
     const file=e.target.files[0];if(!file)return;
+    showToast('Uploading...');
     const reader=new FileReader();
-    reader.onload=ev=>{
-      const data=ev.target.result;
-      if(type==='visit'){db.visits[idx].file=data;db.visits[idx].fileName=file.name;}
-      else if(type==='presc'){db.prescriptions[idx].file=data;db.prescriptions[idx].fileName=file.name;}
-      else if(type==='report'){db.reports[idx].file=data;db.reports[idx].fileName=file.name;}
+    reader.onload=async ev=>{
+      const fd={data:ev.target.result,name:file.name,mime:file.type};
+      const{fileUrl,fileName}=await uploadMedFile(fd);
+      const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
+      if(arr[idx]){arr[idx].file=fileUrl;arr[idx].fileName=fileName;}
       cacheDB();renderMedical();showToast('File replaced ✓');
-      // sync to supabase
-      const record=type==='visit'?db.visits[idx]:type==='presc'?db.prescriptions[idx]:db.reports[idx];
-      if(record?.id)supa.upsert('bj_visits',{id:record.id,file:data,file_name:file.name}).catch(()=>{});
+      const record=arr[idx];
+      if(record?.id)supa.upsert('bj_visits',{id:record.id,file:fileUrl,file_name:fileName}).catch(()=>{});
     };
     reader.readAsDataURL(file);
   };
@@ -1739,9 +1793,13 @@ let medFileData={visit:null,presc:null,report:null};
 function handleFile(input,type){
   const file=input.files[0];if(!file)return;
   const idMap={visit:'vFileName',presc:'pFileName',report:'rFileName'};
-  document.getElementById(idMap[type]).textContent=file.name;
+  document.getElementById(idMap[type]).textContent=`${file.name} (uploading...)`;
   const reader=new FileReader();
-  reader.onload=e=>{medFileData[type]={data:e.target.result,name:file.name}};
+  reader.onload=e=>{
+    // Store as base64 locally first so save works even if Storage upload fails
+    medFileData[type]={data:e.target.result,name:file.name,mime:file.type,pendingFile:file};
+    document.getElementById(idMap[type]).textContent=file.name;
+  };
   reader.readAsDataURL(file);
 }
 function setMedTab(tab,btn){
@@ -1754,12 +1812,18 @@ function setMedTab(tab,btn){
 function renderMedical(){
   renderVisits();renderPrescriptions();renderReports();
 }
+// Store file refs in a map to avoid URL encoding issues in onclick attributes
+const _fileRefs={};
+let _fileRefIdx=0;
+function storeFileRef(src,name){const k='fr'+(++_fileRefIdx);_fileRefs[k]={src,name};return k;}
+function viewFileRef(k){const r=_fileRefs[k];if(r)openFileViewer(r.src,r.name);}
+
 function fileActionsHTML(file,fileName,type,idx){
-  const safe=(s)=>(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
   if(file){
+    const k=storeFileRef(file,fileName||'Attachment');
     return `<div class="visit-attachment">
       📎 <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${fileName||'Attachment'}</span>
-      <button class="file-action-btn file-action-view" onclick="openFileViewer('${safe(file)}','${safe(fileName)}')">👁 View</button>
+      <button class="file-action-btn file-action-view" onclick="viewFileRef('${k}')">👁 View</button>
       <button class="file-action-btn file-action-replace" onclick="replaceFile('${type}',${idx})">🔄 Replace</button>
       <button class="file-action-btn file-action-delete" onclick="deleteRecord('${type}',${idx})">🗑</button>
     </div>`;
@@ -1789,33 +1853,57 @@ function renderReports(){
   (sorted.length?sorted.map((r,i)=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">🗂 ${r.name||'Report'}</div><div class="visit-date">${formatDate(r.date)}</div></div></div>${r.notes?`<div class="visit-notes">${r.notes}</div>`:''}${fileActionsHTML(r.file,r.fileName,'report',i)}</div>`).join(''):'<p class="no-data">No reports yet</p>');
 }
 function openVisitModal(){document.getElementById('vDate').value=dateKey(new Date());openModal('visitModal')}
+async function uploadMedFile(fd){
+  if(!fd?.data)return{fileUrl:null,fileName:null};
+  try{
+    const tmp=await supa.upsert('bj_visits',{type:'_tmp',date:dateKey(new Date()),record_type:'_tmp'});
+    const tmpId=tmp?.[0]?.id||('tmp_'+Date.now());
+    const mime=fd.mime||mimeFromDataUrl(fd.data);
+    const ext=extFromMime(mime);
+    const path=`medical/${tmpId}.${ext}`;
+    const url=await supa.uploadFile(path,fd.data,mime);
+    // delete the temp row if we created one
+    if(tmp?.[0]?.id)await fetch(`${SUPABASE_URL}/rest/v1/bj_visits?id=eq.${tmp[0].id}`,{method:'DELETE',headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});
+    return{fileUrl:url,fileName:fd.name};
+  }catch(e){
+    console.warn('Storage upload failed, falling back to base64:',e);
+    return{fileUrl:fd.data,fileName:fd.name};
+  }
+}
+
 async function saveVisit(){
   const type=document.getElementById('vType').value.trim();
   const date=document.getElementById('vDate').value;
   if(!type||!date){showToast('Fill type and date');return}
-  const row={type,doctor:document.getElementById('vDoctor').value,date,notes:document.getElementById('vNotes').value,reminder:document.getElementById('visitReminderToggle').classList.contains('on'),file:medFileData.visit?.data||null,file_name:medFileData.visit?.name||null,record_type:'visit'};
+  closeModal('visitModal');showToast('Uploading...');
+  const{fileUrl,fileName}=await uploadMedFile(medFileData.visit);
+  const row={type,doctor:document.getElementById('vDoctor').value,date,notes:document.getElementById('vNotes').value,reminder:document.getElementById('visitReminderToggle').classList.contains('on'),file:fileUrl,file_name:fileName,record_type:'visit'};
   if(!db.visits)db.visits=[];
-  db.visits.push({...row,fileName:row.file_name});
-  cacheDB();closeModal('visitModal');renderVisits();renderToday();showToast('Saving...');
+  db.visits.push({...row,fileName});
+  cacheDB();renderVisits();renderToday();
   ['vType','vDoctor','vDate','vNotes'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('vFileName').textContent='';medFileData.visit=null;
   try{await supa.upsert('bj_visits',row);showToast('Visit saved ✓')}catch(e){showToast('Saved locally')}
 }
 async function savePresc(){
   const date=document.getElementById('pDate').value;if(!date){showToast('Add date');return}
-  const row={type:'Prescription',doctor:document.getElementById('pDoctor').value,date,notes:document.getElementById('pNotes').value,file:medFileData.presc?.data||null,file_name:medFileData.presc?.name||null,record_type:'presc'};
+  closeModal('prescModal');showToast('Uploading...');
+  const{fileUrl,fileName}=await uploadMedFile(medFileData.presc);
+  const row={type:'Prescription',doctor:document.getElementById('pDoctor').value,date,notes:document.getElementById('pNotes').value,file:fileUrl,file_name:fileName,record_type:'presc'};
   if(!db.prescriptions)db.prescriptions=[];
-  db.prescriptions.push({...row,fileName:row.file_name});
-  cacheDB();closeModal('prescModal');renderPrescriptions();showToast('Saving...');
+  db.prescriptions.push({...row,fileName});
+  cacheDB();renderPrescriptions();
   ['pDate','pDoctor','pNotes'].forEach(id=>document.getElementById(id).value='');medFileData.presc=null;
   try{await supa.upsert('bj_visits',row);showToast('Prescription saved ✓')}catch(e){showToast('Saved locally')}
 }
 async function saveReport(){
   const date=document.getElementById('rDate').value;if(!date){showToast('Add date');return}
-  const row={type:document.getElementById('rName').value||'Report',doctor:'',date,notes:document.getElementById('rNotes').value,file:medFileData.report?.data||null,file_name:medFileData.report?.name||null,record_type:'report'};
+  closeModal('reportModal');showToast('Uploading...');
+  const{fileUrl,fileName}=await uploadMedFile(medFileData.report);
+  const row={type:document.getElementById('rName').value||'Report',doctor:'',date,notes:document.getElementById('rNotes').value,file:fileUrl,file_name:fileName,record_type:'report'};
   if(!db.reports)db.reports=[];
-  db.reports.push({...row,name:row.type,fileName:row.file_name});
-  cacheDB();closeModal('reportModal');renderReports();showToast('Saving...');
+  db.reports.push({...row,name:row.type,fileName});
+  cacheDB();renderReports();
   ['rName','rDate','rNotes'].forEach(id=>document.getElementById(id).value='');medFileData.report=null;
   try{await supa.upsert('bj_visits',row);showToast('Report saved ✓')}catch(e){showToast('Saved locally')}
 }
