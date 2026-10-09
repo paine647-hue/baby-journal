@@ -51,7 +51,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 
 /* PAGES */
 .page{display:none;padding:20px 20px 0}
-.page.active{display:block;animation:fadeIn .25s ease}
+.page.active{display:block;animation:pageEnter .2s ease-out both}
 
 /* COMMON COMPONENTS */
 .page-header{margin-bottom:20px;position:relative}
@@ -95,9 +95,9 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .hero-stat strong{color:var(--ink);font-weight:600}
 
 /* Fun fact */
-.fun-fact-strip{background:var(--white);border-left:3px solid var(--rose);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 14px;margin-top:14px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.fun-fact-strip{background:var(--white);border-left:3px solid var(--rose);border-radius:0 var(--radius-sm) var(--radius-sm) 0;padding:10px 14px;margin-top:14px;display:flex;align-items:center;gap:8px;cursor:pointer;overflow:hidden}
 .fun-fact-icon{font-size:18px;flex-shrink:0}
-.fun-fact-text{font-size:12px;color:var(--ink-mid);line-height:1.4;font-weight:400}
+.fun-fact-text{font-size:12px;color:var(--ink-mid);line-height:1.4;font-weight:400;display:inline-block}
 .fun-fact-next{font-size:10px;color:var(--ink-light);flex-shrink:0;margin-left:auto}
 
 @keyframes fruitBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
@@ -161,7 +161,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 
 /* ── LOG PAGE ── */
 .log-date-header{background:var(--white);border-radius:var(--radius-sm);padding:13px 14px;margin-bottom:14px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between}
-.log-date-nav{border:none;background:var(--rose-pale);color:var(--rose);width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer}
+.log-date-nav{border:none;background:var(--rose-pale);color:var(--rose);width:44px;height:44px;border-radius:50%;font-size:16px;cursor:pointer}
 .log-date-display{text-align:center}
 .log-date-day{font-family:'Playfair Display',serif;font-size:20px}
 .log-date-full{font-size:11px;color:var(--ink-light)}
@@ -170,7 +170,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .mood-btn span:first-child{font-size:28px;transition:transform .2s ease-out}
 .mood-btn span:last-child{font-size:11px;color:var(--ink-light);transition:color .2s}
 .mood-btn.selected{border:2px solid var(--rose);background:var(--rose-pale)}
-.mood-btn.selected span:first-child{transform:scale(1.15)}
+.mood-btn.selected span:first-child{transform:scale(1.2)}
 .mood-btn.selected span:last-child{color:var(--rose);font-weight:500}
 .mood-btn:active{transform:scale(.95)}
 .mood-hint{font-size:12px;color:var(--ink-light);margin-bottom:14px}
@@ -178,7 +178,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .counter-card{flex:1;background:var(--white);border-radius:var(--radius-sm);padding:13px;box-shadow:var(--shadow);text-align:center}
 .counter-label{font-size:10px;color:var(--ink-light);margin-bottom:7px}
 .counter-controls{display:flex;align-items:center;justify-content:center;gap:10px}
-.counter-btn{width:36px;height:36px;border-radius:50%;border:none;background:var(--rose-pale);color:var(--rose);font-size:18px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.counter-btn{width:44px;height:44px;border-radius:50%;border:none;background:var(--rose-pale);color:var(--rose);font-size:18px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
 .counter-btn:active{animation:counterBounce .25s ease-out}
 @keyframes counterBounce{0%{transform:scale(1)}30%{transform:scale(.9)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
 .counter-num{font-size:20px;font-weight:600;color:var(--ink);min-width:26px}
@@ -250,7 +250,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .yoga-pose-name{font-size:15px;font-weight:600;color:var(--ink)}
 .yoga-pose-benefit{font-size:13px;color:var(--ink-mid);margin-top:2px}
 .yoga-trimester-pills{display:flex;gap:5px;margin-top:5px}
-.yoga-tri-pill{font-size:9px;padding:2px 7px;border-radius:20px;background:var(--sage-pale);color:var(--sage);border:1px solid var(--sage-light)}
+.yoga-tri-pill{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--sage-pale);color:var(--sage);border:1px solid var(--sage-light)}
 .yoga-expand-btn{width:100%;border:none;background:transparent;color:var(--rose);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:10px;cursor:pointer;margin-top:8px;transition:opacity .15s}
 .yoga-expand-btn:active{opacity:.7}
 .yoga-details{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--sage-pale)}
@@ -383,7 +383,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .book-info{flex:1}
 .book-title{font-size:13px;font-weight:500;margin-bottom:2px}
 .book-author{font-size:11px;color:var(--ink-light);margin-bottom:4px}
-.book-lang{font-size:9px;padding:2px 7px;border-radius:20px;background:var(--amber-pale);color:var(--amber);display:inline-block}
+.book-lang{font-size:10px;padding:2px 7px;border-radius:20px;background:var(--amber-pale);color:var(--amber);display:inline-block}
 .book-status-btns{display:flex;gap:5px;margin-top:6px}
 .book-status-btn{font-size:10px;padding:3px 9px;border-radius:20px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;background:var(--rose-pale);color:var(--rose);transition:all .15s}
 .book-status-btn.active{background:var(--sage);color:var(--white)}
@@ -430,7 +430,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .file-pdf-card{width:48px;height:48px;border-radius:8px;background:var(--plum-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--plum-light)}
 .file-pdf-card svg{width:24px;height:24px}
 .file-icon-btns{display:flex;gap:8px}
-.file-icon-btn{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .1s}
+.file-icon-btn{width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .1s}
 .file-icon-btn:active{transform:scale(.9)}
 .file-icon-btn.view{background:var(--plum-pale);color:var(--plum)}
 .file-icon-btn.replace{background:var(--amber-pale);color:var(--amber)}
@@ -475,7 +475,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .gallery-item{aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--rose-pale);cursor:pointer;position:relative}
 .gallery-item img{width:100%;height:100%;object-fit:cover}
-.gallery-item .gallery-date{position:absolute;bottom:3px;left:3px;background:rgba(44,26,36,.5);color:var(--white);font-size:8px;padding:2px 5px;border-radius:4px}
+.gallery-item .gallery-date{position:absolute;bottom:3px;left:3px;background:rgba(44,26,36,.5);color:var(--white);font-size:10px;padding:2px 5px;border-radius:4px}
 
 /* LIGHTBOX */
 .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;touch-action:pan-y}
@@ -483,7 +483,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .lightbox-img{max-width:95vw;max-height:80vh;border-radius:12px;object-fit:contain;transition:opacity .15s}
 .lightbox-close{position:absolute;top:20px;right:20px;background:none;border:none;color:var(--white);font-size:28px;cursor:pointer}
 .lightbox-date{color:rgba(255,255,255,.7);font-size:13px;margin-top:10px}
-.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:var(--white);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:var(--white);width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
 .lightbox-nav:active{background:rgba(255,255,255,.3)}
 .lightbox-nav.prev{left:12px}
 .lightbox-nav.next{right:12px}
@@ -515,8 +515,17 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 
 /* ANIMATIONS */
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@media (prefers-reduced-motion:reduce){.lock-emoji,.hero-fruit,.anim-breathe,.anim-sway,.anim-squat,.anim-stretch,.anim-kegel,.anim-tilt,.anim-float,.pulse-dot{animation:none}.page.active{animation:none}.counter-btn:active{animation:none}.kicks-ripple{animation:none;display:none}.mood-btn.selected span:first-child{transform:none}.timeline-expand{transition:none}.med-timeline-item{animation:none}}
+@keyframes pageEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes cardStagger{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes factSlideOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-100%)}}
+@keyframes factSlideIn{from{opacity:0;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}
+@keyframes ringFill{from{stroke-dashoffset:var(--ring-circ)}to{stroke-dashoffset:var(--ring-target)}}
+.card-stagger{animation:cardStagger .25s ease-out both}
+.mood-btn.selected span:first-child{transform:scale(1.2);transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.mood-btn span:first-child{transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.save-btn-confirm{transition:background .15s ease,color .15s ease}
+.nav-btn:active{opacity:.7}.add-btn:active{opacity:.85;transform:scale(.98)}.notif-btn:active{opacity:.85;transform:scale(.97)}.log-date-nav:active{opacity:.7;transform:scale(.9)}.wtab-btn:active,.gtab-btn:active,.med-tab-btn:active,.swk-pill:active{opacity:.7}.toggle-switch:active{opacity:.85}.yn-btn:active{opacity:.7;transform:scale(.95)}.book-status-btn:active{opacity:.7;transform:scale(.95)}.export-btn:active{opacity:.85;transform:scale(.98)}.kicks-reset:active{opacity:.6}.photo-upload-area:active{opacity:.85;transform:scale(.98)}.dos-donts-more:active{opacity:.6}.gallery-item:active{opacity:.8;transform:scale(.97)}.modal-close:active,.file-viewer-close:active,.lightbox-close:active{opacity:.5;transform:scale(.9)}.fun-fact-strip:active{opacity:.85}.timeline-row:active{opacity:.7}.file-action-btn:active{opacity:.7;transform:scale(.95)}.photo-del:active{opacity:.7;transform:scale(.9)}.remarks-text:active{opacity:.7}
+@media (prefers-reduced-motion:reduce){.lock-emoji,.hero-fruit,.anim-breathe,.anim-sway,.anim-squat,.anim-stretch,.anim-kegel,.anim-tilt,.anim-float,.pulse-dot{animation:none!important}.page.active{animation:none!important}.counter-btn:active{animation:none!important}.kicks-ripple{animation:none!important;display:none}.mood-btn.selected span:first-child,.mood-btn span:first-child{transform:none!important;transition:none!important}.timeline-expand{transition:none!important}.med-timeline-item{animation:none!important}.card-stagger{animation:none!important}.save-btn-confirm{transition:none!important}*{animation-duration:0s!important;transition-duration:0s!important}}
 </style>
 </head>
 <body>
@@ -1152,11 +1161,19 @@ function pinInput(d){
 }
 function pinDelete(){if(!pinEntry.length)return;document.getElementById('d'+(pinEntry.length-1)).classList.remove('filled');pinEntry=pinEntry.slice(0,-1);document.getElementById('pinError').textContent=''}
 
+// ── SAVE FLASH ──
+function flashSaveBtn(btn,label,resetText){
+  const reset=resetText||btn.dataset.originalText||btn.textContent;
+  btn.style.background='var(--sage)';btn.style.color='var(--white)';btn.textContent='✓ '+label;
+  setTimeout(()=>{btn.style.background='';btn.style.color='';btn.textContent=reset},1500);
+}
+
 // ── NAVIGATION ──
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page'+name).classList.add('active');
+  const page=document.getElementById('page'+name);
+  page.classList.add('active');
   const names=['Today','Log','Wellness','Guide','Medical','Journey'];
   document.querySelectorAll('.nav-btn')[names.indexOf(name)].classList.add('active');
   if(name==='Today')renderToday();
@@ -1165,6 +1182,12 @@ function showPage(name){
   if(name==='Guide'){setGuideTab('weekly',document.querySelector('.gtab-btn'))}
   if(name==='Medical'){setMedTab('visits',document.querySelector('.med-tab-btn'))}
   if(name==='Journey'){setJourneyTab('weight',document.querySelector('.gtab-btn'))}
+  staggerCards(page);
+}
+function staggerCards(container){
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const cards=container.querySelectorAll('.card,.hero-card,.progress-card,.dos-card,.donts-card,.gs-card,.scan-card,.kicks-card,.counter-card,.lifestyle-card,.yoga-pose-card,.exercise-block,.week-guide-card,.nutrient-card,.food-section,.book-card,.watch-card,.visit-card,.summary-metric,.report-card,.chart-wrap,.journey-stat-card,.notif-card');
+  cards.forEach((c,i)=>{c.classList.remove('card-stagger');c.style.animationDelay='';void c.offsetWidth;c.style.animationDelay=i*50+'ms';c.classList.add('card-stagger')});
 }
 
 // ── INIT ──
@@ -1175,6 +1198,7 @@ function initApp(){
   initLog();
   checkNotifPrompt();
   loadDB();
+  staggerCards(document.getElementById('pageToday'));
 }
 
 // ── FUN FACTS ──
@@ -1196,16 +1220,17 @@ let funFactIdx=0;
 function nextFunFact(){
   funFactIdx=(funFactIdx+1)%funFacts.length;
   const f=funFacts[funFactIdx];
-  const strip=document.getElementById('funFactStrip');
-  const icon=strip.querySelector('.fun-fact-icon');
+  const icon=document.querySelector('#funFactStrip .fun-fact-icon');
   const text=document.getElementById('funFactText');
-  strip.style.animation='none';
+  const reduced=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(reduced){icon.textContent=f.icon;text.textContent=f.text;return}
+  text.style.animation='factSlideOut .2s ease-in-out forwards';
   setTimeout(()=>{
     icon.textContent=f.icon;
     text.textContent=f.text;
-    text.style.animation='factFade .4s ease forwards';
-    setTimeout(()=>text.style.animation='',500);
-  },50);
+    text.style.animation='factSlideIn .2s ease-in-out forwards';
+    setTimeout(()=>text.style.animation='',250);
+  },200);
 }
 
 // ── TODAY ──
@@ -1241,7 +1266,10 @@ function renderToday(){
   document.getElementById('dueDate').textContent=formatDate(due);
 
   const circ=2*Math.PI*20;
-  document.getElementById('progressRing').style.strokeDashoffset=circ-(pct/100)*circ;
+  const ring=document.getElementById('progressRing');
+  const target=circ-(pct/100)*circ;
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){ring.style.strokeDashoffset=target}
+  else{ring.style.setProperty('--ring-circ',circ);ring.style.setProperty('--ring-target',target);ring.style.strokeDashoffset=circ;ring.style.animation='none';void ring.offsetWidth;ring.style.animation='ringFill .6s ease-out forwards'}
   document.getElementById('progressBar').style.width=pct+'%';
 
   const t=week<=12?1:week<=27?2:3;
@@ -1469,10 +1497,8 @@ async function saveLog(){
     if(saved&&saved[0])db.logs[key].id=saved[0].id;
     if(row.weight)await supa.upsert('bj_weights',{date:key,val:row.weight});
     cacheDB();
-    btn.classList.add('saved');
-    btn.innerHTML='<span class="check-draw">✓</span> Saved';
+    flashSaveBtn(btn,'Saved','Save log');
     showToast('Log saved');
-    setTimeout(()=>{btn.classList.remove('saved');btn.textContent='Save log'},2000);
   }catch(e){showToast('Saved locally');btn.textContent='Save log';console.warn(e)}
 }
 
