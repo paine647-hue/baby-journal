@@ -1005,6 +1005,7 @@ function showPage(name){
 // ── INIT ──
 function initApp(){
   loadCached();
+  funFactIdx=Math.floor(Math.random()*funFacts.length);
   renderToday();
   initLog();
   checkNotifPrompt();
@@ -1026,7 +1027,7 @@ const funFacts=[
   {icon:'🌊',text:"A newborn baby has 300 bones. Adults have 206 - many fuse together as we grow."},
   {icon:'⭐',text:"Opossum pregnancies last just 12 days. A human pregnancy, at 40 weeks, is one of the longest relative to body size."},
 ];
-let funFactIdx=Math.floor(Math.random()*funFacts.length);
+let funFactIdx=0;
 function nextFunFact(){
   funFactIdx=(funFactIdx+1)%funFacts.length;
   const f=funFacts[funFactIdx];
@@ -1108,6 +1109,10 @@ function renderToday(){
     const du=Math.ceil((new Date(v.date)-new Date())/(1000*60*60*24));
     return`<div class="scan-card"><span class="scan-icon">🩺</span><div class="scan-info"><div class="scan-name">${v.type}</div><div class="scan-date">Dr. ${v.doctor||'--'}</div></div><span class="scan-badge ${du<=7?'soon':'upcoming'}">${du<=7?'In '+du+' days':formatDate(v.date)}</span></div>`;
   }).join(''):'<p class="no-data">No upcoming visits</p>';
+
+  const ff=funFacts[funFactIdx];
+  document.querySelector('#funFactStrip .fun-fact-icon').textContent=ff.icon;
+  document.getElementById('funFactText').textContent=ff.text;
 }
 
 // ── NOTIFICATIONS ──
