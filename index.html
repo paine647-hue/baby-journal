@@ -1812,16 +1812,17 @@ function handleFile(input,type){
 async function lazyLoadMedicalFiles(){
   const allRecs=[...db.visits,...db.prescriptions,...db.reports].filter(r=>r.id&&!r.fileLoaded&&r.fileName);
   if(!allRecs.length)return;
-  for(const rec of allRecs){
-    try{
-      const rows=await supa.getById('bj_visits',rec.id,'id,file,file_name');
-      if(rows&&rows[0]){
-        rec.file=rows[0].file||null;
-        rec.fileName=rows[0].file_name||rec.fileName;
-      }
-    }catch(e){console.warn('File load failed for',rec.id,e);}
-    rec.fileLoaded=true;
-  }
+  try{
+    const ids=allRecs.map(r=>r.id).join(',');
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/bj_visits?id=in.(${ids})&select=id,file,file_name`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});
+    const rows=r.ok?await r.json():[];
+    const rowMap=Object.fromEntries(rows.map(row=>[row.id,row]));
+    for(const rec of allRecs){
+      const row=rowMap[rec.id];
+      if(row){rec.file=row.file||null;rec.fileName=row.file_name||rec.fileName;}
+      rec.fileLoaded=true;
+    }
+  }catch(e){console.warn('File load failed',e);allRecs.forEach(rec=>{rec.fileLoaded=true;});}
   cacheDB();
   renderMedical();
   // Now run migration on anything still base64
@@ -1871,7 +1872,7 @@ function fileActionsHTML(file,fileName,type,idx){
       <button class="file-action-btn file-action-delete" onclick="deleteRecord('${type}',${idx})">🗑</button>
     </div>`;
   }
-  return `<div style="margin-top:8px"><button class="file-action-btn file-action-replace" style="padding:5px 12px" onclick="replaceFile('${type}',${idx})">📎 Attach file</button></div>`;
+  return `<div style="margin-top:8px"><button class="file-action-btn file-action-replace" style="padding:5px 12px" onclick="replaceFile('${type}',${idx})">📎 Attach file</button><button class="file-action-btn file-action-delete" onclick="deleteRecord('${type}',${idx})">🗑</button></div>`;
 }
 function renderVisits(){
   const el=document.getElementById('medVisits');if(!el)return;
