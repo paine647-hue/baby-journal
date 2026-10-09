@@ -9,7 +9,7 @@
 :root {
   --rose:#E8748A;--rose-light:#F5A8B8;--rose-pale:#FDF0F3;--rose-mid:#FBDDE4;
   --sage:#7BAF8E;--sage-light:#C4DFD0;--sage-pale:#F0F8F3;
-  --plum:#9B6B8A;--amber:#E8A44A;--amber-pale:#FDF6EC;
+  --plum:#9B6B8A;--plum-light:#C9A8BD;--plum-pale:#F5EDF2;--amber:#E8A44A;--amber-pale:#FDF6EC;
   --cream:#FFF8F5;--ink:#2C1A24;--ink-mid:#6B4C5E;--ink-light:#A8889A;
   --white:#FFFFFF;
   --shadow:0 2px 8px rgba(44,26,36,0.07);
@@ -221,37 +221,66 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .wellness-tabs{display:flex;gap:8px;margin-bottom:16px}
 .wtab-btn{flex:1;padding:8px 4px;border-radius:20px;border:1.5px solid var(--rose-mid);background:var(--white);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--ink-mid);cursor:pointer;transition:all .2s}
 .wtab-btn.active{background:var(--rose);border-color:var(--rose);color:var(--white)}
-.yoga-pose-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);margin-bottom:10px}
+.today-practice-card{background:var(--sage);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;color:var(--white)}
+.today-practice-title{font-size:13px;font-weight:600;margin-bottom:10px;opacity:.95}
+.today-practice-chips{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.today-practice-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500;backdrop-filter:blur(4px)}
+.today-practice-chip .chip-num{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.today-practice-divider{height:1px;background:rgba(255,255,255,.2);margin-bottom:12px}
+.today-practice-q{display:flex;align-items:center;justify-content:space-between}
+.today-practice-q span{font-size:12px;opacity:.9}
+.yn-btns{display:flex;gap:6px}
+.yn-btn{padding:5px 14px;border-radius:20px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.yn-btn.yes{background:rgba(255,255,255,.2);color:var(--white);border:1px solid rgba(255,255,255,.35)}
+.yn-btn.no{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);border:1px solid rgba(255,255,255,.2)}
+.yn-btn.active-yes{background:var(--white);color:var(--sage)}
+.yn-btn.active-no{background:var(--rose);color:var(--white);border-color:var(--rose)}
+.yoga-pose-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);margin-bottom:10px;border-left:3px solid var(--sage)}
+.yoga-pose-card.accent-rose{border-left-color:var(--rose)}
+.yoga-pose-card.accent-plum{border-left-color:var(--plum)}
 .yoga-pose-header{display:flex;align-items:center;gap:12px;margin-bottom:0}
 .yoga-anim{width:80px;height:80px;flex-shrink:0;display:block}
 .yoga-anim svg{width:80px;height:80px;display:block}
-.yt-btn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 14px;background:#FF0000;border:none;border-radius:20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;text-decoration:none}
-.yt-btn:hover{opacity:.88}
-.yoga-pose-name{font-size:14px;font-weight:600;color:var(--ink)}
-.yoga-pose-benefit{font-size:11px;color:var(--ink-light);margin-top:2px}
+.yoga-svg-area{flex-shrink:0;width:96px;height:96px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.yoga-svg-area.tint-sage{background:var(--sage-pale)}
+.yoga-svg-area.tint-rose{background:var(--rose-pale)}
+.yoga-svg-area.tint-plum{background:var(--plum-pale)}
+.yt-btn{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:7px 14px;background:var(--rose-pale);border:none;border-radius:20px;color:var(--rose);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;text-decoration:none}
+.yt-btn:active{opacity:.85;transform:scale(.97)}
+.yoga-pose-name{font-size:15px;font-weight:600;color:var(--ink)}
+.yoga-pose-benefit{font-size:13px;color:var(--ink-mid);margin-top:2px}
 .yoga-trimester-pills{display:flex;gap:5px;margin-top:5px}
 .yoga-tri-pill{font-size:9px;padding:2px 7px;border-radius:20px;background:var(--sage-pale);color:var(--sage);border:1px solid var(--sage-light)}
-.yoga-recommended{background:var(--sage-pale);border:1px solid var(--sage-light);font-size:9px;padding:2px 8px;border-radius:20px;color:var(--sage);margin-left:auto}
-.yoga-expand-btn{width:100%;border:none;background:var(--sage-pale);color:var(--sage);font-family:'DM Sans',sans-serif;font-size:12px;padding:8px;border-radius:8px;cursor:pointer;margin-top:10px}
+.yoga-expand-btn{width:100%;border:none;background:transparent;color:var(--rose);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:10px;cursor:pointer;margin-top:8px;transition:opacity .15s}
+.yoga-expand-btn:active{opacity:.7}
 .yoga-details{display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--sage-pale)}
 .yoga-details.open{display:block}
 .yoga-how-title{font-size:11px;font-weight:600;color:var(--ink-mid);margin-bottom:6px}
-.yoga-step{font-size:11px;color:var(--ink-mid);line-height:1.6;margin-bottom:3px;display:flex;gap:6px}
+.yoga-step{font-size:12px;color:var(--ink-mid);line-height:1.6;margin-bottom:3px;display:flex;gap:6px}
 .yoga-step-num{color:var(--sage);font-weight:600;flex-shrink:0}
-.yoga-tracker-bar{display:flex;align-items:center;justify-content:space-between;background:var(--sage-pale);border-radius:var(--radius-sm);padding:10px 13px;margin-bottom:10px}
-.yoga-tracker-q{font-size:13px;color:var(--ink-mid)}
-.yn-btns{display:flex;gap:6px}
-.yn-btn{padding:5px 14px;border-radius:20px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
-.yn-btn.yes{background:var(--sage-pale);color:var(--sage);border:1px solid var(--sage-light)}
-.yn-btn.no{background:var(--rose-pale);color:var(--rose);border:1px solid var(--rose-light)}
-.yn-btn.active-yes{background:var(--sage);color:var(--white)}
-.yn-btn.active-no{background:var(--rose);color:var(--white)}
-.exercise-block{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);margin-bottom:10px}
+.exercise-tracker-bar{display:flex;align-items:center;justify-content:space-between;background:var(--sage);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:12px;color:var(--white)}
+.exercise-tracker-bar span{font-size:12px;opacity:.9}
+.exercise-input-row{display:flex;gap:8px;margin-bottom:13px}
+.exercise-input-row .input-group{margin-bottom:0}
+.exercise-input-row .input-group:first-child{flex:3}
+.exercise-input-row .input-group:last-child{flex:2}
+.exercise-block{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);margin-bottom:10px;border-left:3px solid var(--sage)}
 .exercise-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:3px}
 .exercise-desc{font-size:12px;color:var(--ink-mid);line-height:1.6;margin-bottom:6px}
 .exercise-tags{display:flex;flex-wrap:wrap;gap:5px}
 .exercise-tag{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--sage-pale);color:var(--sage)}
 .exercise-tag.avoid{background:var(--rose-pale);color:var(--rose)}
+.avoid-block{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);margin-bottom:10px;border-left:3px solid var(--rose);background:var(--rose-pale)}
+.avoid-block .exercise-name{color:var(--rose)}
+.wellness-summary{background:var(--white);border-radius:var(--radius-sm);padding:16px;box-shadow:var(--shadow);margin-top:16px;margin-bottom:16px}
+.wellness-summary-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px}
+.wellness-summary-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-mid);margin-bottom:8px}
+.wellness-summary-row:last-child{margin-bottom:0}
+.wellness-check{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.wellness-check.done{background:var(--sage-pale);color:var(--sage)}
+.wellness-check.not-done{background:var(--rose-pale);color:var(--rose)}
+.wellness-progress{flex:1;height:4px;border-radius:2px;background:var(--sage-pale);overflow:hidden;margin-left:auto}
+.wellness-progress-fill{height:100%;border-radius:2px;background:var(--sage);transition:width .3s ease}
 
 /* YOGA SVG ANIMATIONS */
 @keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.04)}}
@@ -658,6 +687,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     </div>
     <div id="wellnessYoga"></div>
     <div id="wellnessExercise" style="display:none"></div>
+    <div id="wellnessSummary"></div>
   </div>
 
   <!-- GUIDE -->
@@ -1660,30 +1690,39 @@ function renderYoga(){
   const today=dateKey(new Date());
   const log=db.logs[today]||{};
   const el=document.getElementById('wellnessYoga');
-  let html=`<div class="yoga-tracker-bar">
-    <span class="yoga-tracker-q">🧘 Did yoga today?</span>
-    <div class="yn-btns">
-      <button class="yn-btn yes ${log.yoga_done===true?'active-yes':''}" onclick="logYesNo('yoga',true,this)">Yes</button>
-      <button class="yn-btn no ${log.yoga_done===false?'active-no':''}" onclick="logYesNo('yoga',false,this)">No</button>
-    </div>
-  </div>
-  <div class="section-title">This week's top 3</div>`;
   const allPoses=getYogaForTrimester(week);
   const topPoses=allPoses.filter(p=>recommended.includes(p.id));
   const otherPoses=allPoses.filter(p=>!recommended.includes(p.id));
-  topPoses.forEach(p=>{html+=renderPoseCard(p,true)});
+  const chipNames=topPoses.map(p=>p.name.split('(')[0].trim());
+  let html=`<div class="today-practice-card">
+    <div class="today-practice-title">Today's Practice</div>
+    <div class="today-practice-chips">
+      ${chipNames.map((n,i)=>`<span class="today-practice-chip"><span class="chip-num">${i+1}</span>${n}</span>`).join('')}
+    </div>
+    <div class="today-practice-divider"></div>
+    <div class="today-practice-q">
+      <span>Did you complete today's practice?</span>
+      <div class="yn-btns">
+        <button class="yn-btn yes ${log.yoga_done===true?'active-yes':''}" onclick="logYesNo('yoga',true,this)">Yes</button>
+        <button class="yn-btn no ${log.yoga_done===false?'active-no':''}" onclick="logYesNo('yoga',false,this)">No</button>
+      </div>
+    </div>
+  </div>`;
+  const accentCycle=['','accent-rose','accent-plum'];
+  const tintCycle=['tint-sage','tint-rose','tint-plum'];
+  topPoses.forEach((p,i)=>{html+=renderPoseCard(p,true,accentCycle[i%3],tintCycle[i%3])});
   if(otherPoses.length){
     html+=`<div class="section-title" style="margin-top:10px">Full library</div>`;
-    otherPoses.forEach(p=>{html+=renderPoseCard(p,false)});
+    otherPoses.forEach((p,i)=>{html+=renderPoseCard(p,false,accentCycle[(i)%3],tintCycle[(i)%3])});
   }
   el.innerHTML=html;
+  renderWellnessSummary();
 }
 
-function renderPoseCard(p,isRec){
-  return`<div class="yoga-pose-card">
-    ${isRec?'<span class="yoga-recommended" style="display:inline-block;margin-bottom:8px">⭐ Recommended this week</span>':''}
+function renderPoseCard(p,isRec,accentClass,tintClass){
+  return`<div class="yoga-pose-card ${accentClass||''}">
     <div style="display:flex;gap:14px;align-items:flex-start">
-      <div style="flex-shrink:0;background:var(--sage-pale);border-radius:12px;padding:8px;display:flex;align-items:center;justify-content:center">${makeYogaSVG(p.anim)}</div>
+      <div class="yoga-svg-area ${tintClass||'tint-sage'}">${makeYogaSVG(p.anim)}</div>
       <div style="flex:1;min-width:0">
         <div class="yoga-pose-name">${p.name}</div>
         <div class="yoga-pose-benefit">${p.benefit}</div>
@@ -1693,7 +1732,7 @@ function renderPoseCard(p,isRec){
     <button class="yoga-expand-btn" onclick="toggleYogaDetails(this)">How to do it ▾</button>
     <div class="yoga-details">
       ${p.steps.map((s,i)=>`<div class="yoga-step"><span class="yoga-step-num">${i+1}.</span><span>${s}</span></div>`).join('')}
-      <a class="yt-btn" href="${p.yt}" target="_blank" rel="noopener">▶ Watch on YouTube</a>
+      <a class="yt-btn" href="${p.yt}" target="_blank" rel="noopener">&#9654; Watch video</a>
     </div>
   </div>`;
 }
@@ -1709,14 +1748,17 @@ function renderExercise(){
   const t=week<=12?'t1':week<=27?'t2':'t3';
   const today=dateKey(new Date());
   const log=db.logs[today]||{};
-  let html=`<div class="yoga-tracker-bar">
-    <span class="yoga-tracker-q">🏃 Did exercise today?</span>
+  let html=`<div class="exercise-tracker-bar">
+    <span>Did you exercise today?</span>
     <div class="yn-btns">
       <button class="yn-btn yes ${log.exercise_done===true?'active-yes':''}" onclick="logYesNo('exercise',true,this)">Yes</button>
       <button class="yn-btn no ${log.exercise_done===false?'active-no':''}" onclick="logYesNo('exercise',false,this)">No</button>
     </div>
   </div>
-  <div class="input-group"><label class="input-label">Type & duration (e.g. Walking 30 mins)</label><input class="input-field" id="exerciseLog" value="${log.exercise_type||''}" placeholder="What did you do?"><input class="input-field" type="number" id="exerciseMins" value="${log.exercise_mins||''}" placeholder="Minutes" style="margin-top:6px"></div>
+  <div class="exercise-input-row">
+    <div class="input-group"><label class="input-label">Exercise type</label><input class="input-field" id="exerciseLog" value="${log.exercise_type||''}" placeholder="e.g. Walking"></div>
+    <div class="input-group"><label class="input-label">Minutes</label><input class="input-field" type="number" id="exerciseMins" value="${log.exercise_mins||''}" placeholder="30"></div>
+  </div>
   <button class="save-btn sage" onclick="saveExerciseLog()">Save exercise log</button>
   <div class="section-title">Recommended this trimester</div>`;
   exerciseData[t].forEach(e=>{
@@ -1726,9 +1768,32 @@ function renderExercise(){
       <div class="exercise-tags">${e.tags.map(tag=>`<span class="exercise-tag">${tag}</span>`).join('')}</div>
     </div>`;
   });
-  html+=`<div class="section-title" style="margin-top:10px;color:var(--rose)">❌ Avoid during pregnancy</div>`;
-  exerciseData.avoid.forEach(a=>{html+=`<div class="dos-donts-item" style="font-size:12px;color:var(--ink-mid);margin-bottom:5px"><span>•</span><span>${a}</span></div>`});
+  html+=`<div class="section-title" style="margin-top:10px;color:var(--rose)">Avoid during pregnancy</div>`;
+  exerciseData.avoid.forEach(a=>{html+=`<div class="avoid-block"><div class="exercise-name" style="font-size:12px;margin-bottom:0">${a}</div></div>`});
   document.getElementById('wellnessExercise').innerHTML=html;
+  renderWellnessSummary();
+}
+
+function renderWellnessSummary(){
+  const today=dateKey(new Date());
+  const log=db.logs[today]||{};
+  const yogaDone=log.yoga_done===true;
+  const exDone=log.exercise_done===true;
+  const count=(yogaDone?1:0)+(exDone?1:0);
+  const el=document.getElementById('wellnessSummary');
+  el.innerHTML=`<div class="wellness-summary">
+    <div class="wellness-summary-title">Today's wellness</div>
+    <div class="wellness-summary-row">
+      <span class="wellness-check ${yogaDone?'done':'not-done'}">${yogaDone?'&#10003;':'&#10007;'}</span>
+      <span>Yoga</span>
+      <div class="wellness-progress"><div class="wellness-progress-fill" style="width:${yogaDone?'100':'0'}%"></div></div>
+    </div>
+    <div class="wellness-summary-row">
+      <span class="wellness-check ${exDone?'done':'not-done'}">${exDone?'&#10003;':'&#10007;'}</span>
+      <span>Exercise</span>
+      <div class="wellness-progress"><div class="wellness-progress-fill" style="width:${exDone?'100':'0'}%"></div></div>
+    </div>
+  </div>`;
 }
 
 async function logYesNo(type,val,btn){
@@ -1738,6 +1803,7 @@ async function logYesNo(type,val,btn){
   cacheDB();
   btn.parentElement.querySelectorAll('.yn-btn').forEach(b=>{b.classList.remove('active-yes','active-no')});
   btn.classList.add(val?'active-yes':'active-no');
+  renderWellnessSummary();
   try{await supa.upsert('bj_logs',{date_key:today,[type+'_done']:val})}catch(e){}
 }
 
