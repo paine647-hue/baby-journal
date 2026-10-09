@@ -401,19 +401,41 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .med-tabs{display:flex;gap:8px;margin-bottom:14px}
 .med-tab-btn{flex:1;padding:8px 4px;border-radius:20px;border:1.5px solid var(--rose-mid);background:var(--white);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--ink-mid);cursor:pointer;transition:all .2s}
 .med-tab-btn.active{background:var(--rose);border-color:var(--rose);color:var(--white)}
-.visit-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);margin-bottom:9px}
+.med-timeline{position:relative;padding-left:24px}
+.med-timeline::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:1.5px;background:var(--rose)}
+.med-timeline-item{position:relative;margin-bottom:12px;animation:cardSlideIn .2s ease-out both}
+.med-timeline-dot{position:absolute;left:-24px;top:16px;width:12px;height:12px;border-radius:50%;z-index:1;box-shadow:0 0 0 3px var(--white)}
+.med-timeline-dot.visit{background:var(--rose)}
+.med-timeline-dot.presc{background:var(--sage)}
+.med-timeline-dot.report{background:var(--amber)}
+@keyframes cardSlideIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+.visit-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow)}
 .visit-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
 .visit-name{font-size:14px;font-weight:600}
 .visit-date{font-size:11px;color:var(--ink-light);margin-top:1px}
-.visit-week-badge{font-size:10px;padding:2px 9px;border-radius:20px;background:var(--rose-pale);color:var(--rose)}
+.visit-week-badge{font-size:10px;padding:2px 9px;border-radius:20px;background:var(--sage-pale);color:var(--sage);margin-top:4px;display:inline-block}
 .visit-notes{font-size:12px;color:var(--ink-mid);line-height:1.5;margin-top:6px}
-.visit-remarks{margin-top:8px;padding:8px 10px;background:var(--cream);border-radius:8px;border:1px solid var(--rose-light)}
-.remarks-label{display:block;font-size:10px;font-weight:600;color:var(--plum);margin-bottom:3px}
-.remarks-text{display:block;font-size:12px;color:var(--ink-mid);line-height:1.5;cursor:pointer;min-height:18px}
-.remarks-text.empty{color:var(--ink-light);font-style:italic}
-.remarks-textarea{width:100%;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink);line-height:1.5;border:none;background:transparent;resize:none;outline:none;padding:0;min-height:52px;box-sizing:border-box}
-.remarks-save-btn{margin-top:5px;padding:4px 14px;border-radius:20px;border:none;background:var(--sage);color:#fff;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer}
-.visit-attachment{margin-top:8px;display:flex;align-items:center;gap:7px;font-size:11px;color:var(--plum);font-weight:500;flex-wrap:wrap}
+.visit-remarks{margin-top:8px;padding:8px 10px;background:var(--sage-pale);border-radius:8px}
+.remarks-label{display:block;font-size:10px;font-weight:600;color:var(--sage);margin-bottom:3px}
+.remarks-text{display:block;font-size:12px;color:var(--ink-mid);line-height:1.5;cursor:pointer;min-height:18px;font-style:italic}
+.remarks-text.empty{color:var(--ink-light);font-size:12px}
+.remarks-textarea{width:100%;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink);line-height:1.5;border:1.5px solid var(--sage);border-radius:8px;background:var(--white);resize:none;outline:none;padding:8px;min-height:52px;box-sizing:border-box}
+.remarks-actions{display:flex;gap:8px;margin-top:6px}
+.remarks-save-btn{padding:6px 16px;border-radius:20px;border:none;background:var(--sage);color:#fff;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer}
+.remarks-save-btn:active{opacity:.85;transform:scale(.97)}
+.remarks-cancel-btn{padding:6px 16px;border-radius:20px;border:1.5px solid var(--ink-light);background:var(--white);color:var(--ink-mid);font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer}
+.remarks-cancel-btn:active{opacity:.85}
+.visit-attachment{margin-top:8px;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--plum);font-weight:500}
+.file-thumb{width:48px;height:48px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--rose-mid)}
+.file-pdf-card{width:48px;height:48px;border-radius:8px;background:var(--plum-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--plum-light)}
+.file-pdf-card svg{width:24px;height:24px}
+.file-icon-btns{display:flex;gap:8px}
+.file-icon-btn{width:32px;height:32px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .1s}
+.file-icon-btn:active{transform:scale(.9)}
+.file-icon-btn.view{background:var(--plum-pale);color:var(--plum)}
+.file-icon-btn.replace{background:var(--amber-pale);color:var(--amber)}
+.file-icon-btn.delete{background:var(--rose-pale);color:var(--rose)}
+.file-icon-btn svg{width:16px;height:16px}
 .file-action-btn{font-size:10px;padding:3px 9px;border-radius:20px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500}
 .file-action-view{background:var(--plum);color:#fff}
 .file-action-replace{background:var(--amber-pale);color:var(--amber);border:1px solid #F5D8A0}
@@ -433,10 +455,12 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .journey-stat-card{flex:1;background:var(--white);border-radius:var(--radius-sm);padding:12px;box-shadow:var(--shadow);text-align:center}
 .journey-stat-val{font-family:'Playfair Display',serif;font-size:22px;color:var(--rose)}
 .journey-stat-label{font-size:10px;color:var(--ink-light);margin-top:1px}
-.chart-wrap{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);margin-bottom:12px}
+.chart-wrap{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);margin-bottom:12px;position:relative}
 .chart-title{font-size:12px;font-weight:600;color:var(--ink-mid);margin-bottom:10px}
-.mini-chart{height:110px}
+.mini-chart{height:180px}
 .mini-chart canvas{width:100%;height:100%}
+.chart-tooltip{position:absolute;background:var(--ink);color:var(--white);padding:5px 10px;border-radius:8px;font-size:11px;pointer-events:none;opacity:0;transition:opacity .15s;white-space:nowrap;z-index:10}
+.chart-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--ink)}
 .weight-log-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--rose-pale)}
 .weight-log-item:last-child{border-bottom:none}
 .weight-log-date{font-size:12px;color:var(--ink-mid)}
@@ -447,18 +471,23 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 
 /* GALLERY */
 .gallery-month{margin-bottom:18px}
-.gallery-month-label{font-size:11px;font-weight:600;color:var(--ink-mid);margin-bottom:8px}
-.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
-.gallery-item{aspect-ratio:1;border-radius:7px;overflow:hidden;background:var(--rose-pale);cursor:pointer;position:relative}
+.gallery-month-label{font-size:12px;font-weight:600;color:var(--plum);padding:8px 14px;background:var(--cream);border-radius:8px;margin-bottom:8px}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.gallery-item{aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--rose-pale);cursor:pointer;position:relative}
 .gallery-item img{width:100%;height:100%;object-fit:cover}
 .gallery-item .gallery-date{position:absolute;bottom:3px;left:3px;background:rgba(44,26,36,.5);color:var(--white);font-size:8px;padding:2px 5px;border-radius:4px}
 
 /* LIGHTBOX */
-.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;touch-action:pan-y}
 .lightbox.open{display:flex}
-.lightbox-img{max-width:95vw;max-height:80vh;border-radius:12px;object-fit:contain}
+.lightbox-img{max-width:95vw;max-height:80vh;border-radius:12px;object-fit:contain;transition:opacity .15s}
 .lightbox-close{position:absolute;top:20px;right:20px;background:none;border:none;color:var(--white);font-size:28px;cursor:pointer}
 .lightbox-date{color:rgba(255,255,255,.7);font-size:13px;margin-top:10px}
+.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:var(--white);width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.lightbox-nav:active{background:rgba(255,255,255,.3)}
+.lightbox-nav.prev{left:12px}
+.lightbox-nav.next{right:12px}
+.lightbox-counter{color:rgba(255,255,255,.5);font-size:11px;margin-top:4px}
 
 /* WEEKLY SUMMARY */
 .summary-week-selector{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:14px}
@@ -469,12 +498,25 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .summary-metric{background:var(--white);border-radius:var(--radius-sm);padding:13px;box-shadow:var(--shadow);text-align:center}
 .summary-metric-val{font-family:'Playfair Display',serif;font-size:22px;color:var(--rose)}
 .summary-metric-label{font-size:10px;color:var(--ink-light);margin-top:2px}
+.report-card{background:var(--white);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow);margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.report-card-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.report-card-icon.sage{background:var(--sage-pale)}
+.report-card-icon.amber{background:var(--amber-pale)}
+.report-card-icon.rose{background:var(--rose-pale)}
+.report-card-body{flex:1;min-width:0}
+.report-card-top{display:flex;align-items:baseline;gap:6px;margin-bottom:2px}
+.report-card-label{font-size:13px;font-weight:600;color:var(--ink)}
+.report-card-val{font-family:'Playfair Display',serif;font-size:18px;font-weight:600}
+.report-card-val.sage{color:var(--sage)}
+.report-card-val.amber{color:var(--amber)}
+.report-card-val.rose{color:var(--rose)}
+.report-card-comment{font-size:12px;color:var(--ink-mid);line-height:1.4}
 .export-btn{width:100%;padding:14px;border:none;border-radius:var(--radius-sm);background:var(--sage);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}
 
 /* ANIMATIONS */
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@media (prefers-reduced-motion:reduce){.lock-emoji,.hero-fruit,.anim-breathe,.anim-sway,.anim-squat,.anim-stretch,.anim-kegel,.anim-tilt,.anim-float,.pulse-dot{animation:none}.page.active{animation:none}.counter-btn:active{animation:none}.kicks-ripple{animation:none;display:none}.mood-btn.selected span:first-child{transform:none}.timeline-expand{transition:none}}
+@media (prefers-reduced-motion:reduce){.lock-emoji,.hero-fruit,.anim-breathe,.anim-sway,.anim-squat,.anim-stretch,.anim-kegel,.anim-tilt,.anim-float,.pulse-dot{animation:none}.page.active{animation:none}.counter-btn:active{animation:none}.kicks-ripple{animation:none;display:none}.mood-btn.selected span:first-child{transform:none}.timeline-expand{transition:none}.med-timeline-item{animation:none}}
 </style>
 </head>
 <body>
@@ -510,8 +552,11 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-nav prev" id="lightboxPrev" onclick="lightboxNav(-1)">‹</button>
   <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <button class="lightbox-nav next" id="lightboxNext" onclick="lightboxNav(1)">›</button>
   <div class="lightbox-date" id="lightboxDate"></div>
+  <div class="lightbox-counter" id="lightboxCounter"></div>
 </div>
 
 <!-- FILE VIEWER -->
@@ -2190,16 +2235,24 @@ function remarksHTML(rec,type){
   if(!rec.id)return'';
   const r=rec.remarks||'';
   const empty=!r;
-  return`<div class="visit-remarks" id="remarks-${type}-${rec.id}"><span class="remarks-label">Doctor's remarks</span><span class="remarks-text${empty?' empty':''}" onclick="editRemarks('${type}','${rec.id}')">${empty?'Tap to add remarks...':r}</span></div>`;
+  return`<div class="visit-remarks" id="remarks-${type}-${rec.id}"><span class="remarks-label">Remarks</span><span class="remarks-text${empty?' empty':''}" onclick="editRemarks('${type}','${rec.id}')">${empty?'Tap to edit':r}</span></div>`;
 }
 function editRemarks(type,id){
   const el=document.getElementById(`remarks-${type}-${id}`);if(!el)return;
   const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
   const rec=arr.find(x=>x.id===id);
   const cur=rec?.remarks||'';
-  el.innerHTML=`<span class="remarks-label">Doctor's remarks</span><textarea class="remarks-textarea" id="ri-${type}-${id}">${cur}</textarea><button class="remarks-save-btn" onclick="saveRemarks('${type}','${id}')">Save</button>`;
+  el.innerHTML=`<span class="remarks-label">Remarks</span><textarea class="remarks-textarea" id="ri-${type}-${id}">${cur}</textarea><div class="remarks-actions"><button class="remarks-save-btn" onclick="saveRemarks('${type}','${id}')">Save</button><button class="remarks-cancel-btn" onclick="cancelRemarks('${type}','${id}')">Cancel</button></div>`;
   const ta=document.getElementById(`ri-${type}-${id}`);
   ta.focus();ta.selectionStart=ta.selectionEnd=ta.value.length;
+}
+function cancelRemarks(type,id){
+  const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
+  const rec=arr.find(x=>x.id===id);
+  const r=rec?.remarks||'';
+  const empty=!r;
+  const el=document.getElementById(`remarks-${type}-${id}`);
+  if(el)el.innerHTML=`<span class="remarks-label">Remarks</span><span class="remarks-text${empty?' empty':''}" onclick="editRemarks('${type}','${id}')">${empty?'Tap to edit':r}</span>`;
 }
 async function saveRemarks(type,id){
   const ta=document.getElementById(`ri-${type}-${id}`);if(!ta)return;
@@ -2209,43 +2262,58 @@ async function saveRemarks(type,id){
   if(rec)rec.remarks=val;
   cacheDB();
   const el=document.getElementById(`remarks-${type}-${id}`);
-  if(el){const empty=!val;el.innerHTML=`<span class="remarks-label">Doctor's remarks</span><span class="remarks-text${empty?' empty':''}" onclick="editRemarks('${type}','${id}')">${empty?'Tap to add remarks...':val}</span>`;}
+  if(el){const empty=!val;el.innerHTML=`<span class="remarks-label">Remarks</span><span class="remarks-text${empty?' empty':''}" onclick="editRemarks('${type}','${id}')">${empty?'Tap to edit':val}</span>`;}
   try{await supa.upsert('bj_visits',{id,remarks:val});}catch(e){}
   showToast('Remarks saved');
 }
+function isImageFile(name){return/\.(jpg|jpeg|png|gif|webp)$/i.test(name||'')}
+function isImageUrl(url){return isImageFile(url)||/\.(jpg|jpeg|png|gif|webp)/i.test(url||'')}
 function fileActionsHTML(file,fileName,type,id){
+  const eyeSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const refreshSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>';
+  const trashSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
   if(file){
     const k=storeFileRef(file,fileName||'Attachment');
+    const isPdf=/\.pdf$/i.test(fileName||'')||/\.pdf/i.test(file||'');
+    const isImg=isImageFile(fileName)||isImageUrl(file);
+    let preview='';
+    if(isImg){
+      preview=`<img class="file-thumb" src="${file}" alt="${fileName||'photo'}" onclick="viewFileRef('${k}')">`;
+    }else if(isPdf){
+      preview=`<div class="file-pdf-card" onclick="viewFileRef('${k}')"><svg viewBox="0 0 24 24" fill="none" stroke="var(--plum)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>`;
+    }
     return `<div class="visit-attachment">
-      📎 <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${fileName||'Attachment'}</span>
-      <button class="file-action-btn file-action-view" onclick="viewFileRef('${k}')">👁 View</button>
-      <button class="file-action-btn file-action-replace" onclick="replaceFile('${type}','${id}')">🔄 Replace</button>
-      <button class="file-action-btn file-action-delete" onclick="deleteRecord('${type}','${id}')">🗑</button>
+      ${preview}
+      <div class="file-icon-btns">
+        <button class="file-icon-btn view" onclick="viewFileRef('${k}')">${eyeSvg}</button>
+        <button class="file-icon-btn replace" onclick="replaceFile('${type}','${id}')">${refreshSvg}</button>
+        <button class="file-icon-btn delete" onclick="deleteRecord('${type}','${id}')">${trashSvg}</button>
+      </div>
     </div>`;
   }
-  return `<div style="margin-top:8px"><button class="file-action-btn file-action-replace" style="padding:5px 12px" onclick="replaceFile('${type}','${id}')">📎 Attach file</button><button class="file-action-btn file-action-delete" onclick="deleteRecord('${type}','${id}')">🗑</button></div>`;
+  return `<div style="margin-top:8px;display:flex;gap:8px"><button class="file-icon-btn replace" onclick="replaceFile('${type}','${id}')" style="width:auto;border-radius:20px;padding:5px 12px;gap:4px;font-size:11px;font-family:'DM Sans',sans-serif;font-weight:500"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></button><button class="file-icon-btn delete" onclick="deleteRecord('${type}','${id}')">${trashSvg}</button></div>`;
 }
 function renderVisits(){
   const el=document.getElementById('medVisits');if(!el)return;
   const sorted=(db.visits||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
-  el.innerHTML=`<button class="add-btn" onclick="openVisitModal()">+ Add Visit or Scan</button>`+
-  (sorted.length?sorted.map((v)=>{
+  el.innerHTML=`<button class="save-btn" onclick="openVisitModal()">+ Add Visit or Scan</button>`+
+  (sorted.length?`<div class="med-timeline">${sorted.map((v,i)=>{
     const wk=Math.floor((new Date(v.date)-START_DATE)/(1000*60*60*24*7))+1;
     const wkL=wk>=1&&wk<=40?'Week '+wk:'';
-    return`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">${v.type}</div><div class="visit-date">${formatDate(v.date)}${v.doctor?' · Dr. '+v.doctor:''}</div></div>${wkL?`<span class="visit-week-badge">${wkL}</span>`:''}</div>${v.notes?`<div class="visit-notes">${v.notes}</div>`:''}${remarksHTML(v,'visit')}${fileActionsHTML(v.file,v.fileName,'visit',v.id)}</div>`;
-  }).join(''):'<p class="no-data">No visits logged yet</p>');
+    return`<div class="med-timeline-item" style="animation-delay:${i*50}ms"><div class="med-timeline-dot visit"></div><div class="visit-card"><div class="visit-header"><div><div class="visit-name">${v.type}</div><div class="visit-date">${formatDate(v.date)}${v.doctor?' · Dr. '+v.doctor:''}</div>${wkL?`<span class="visit-week-badge">${wkL}</span>`:''}</div></div>${v.notes?`<div class="visit-notes">${v.notes}</div>`:''}${remarksHTML(v,'visit')}${fileActionsHTML(v.file,v.fileName,'visit',v.id)}</div></div>`;
+  }).join('')}</div>`:'<p class="no-data">No visits logged yet</p>');
 }
 function renderPrescriptions(){
   const el=document.getElementById('medPrescriptions');if(!el)return;
   const sorted=(db.prescriptions||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
-  el.innerHTML=`<button class="add-btn" onclick="openModal('prescModal')">+ Add Prescription</button>`+
-  (sorted.length?sorted.map((p)=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">💊 Prescription</div><div class="visit-date">${formatDate(p.date)}${p.doctor?' · Dr. '+p.doctor:''}</div></div></div>${p.notes?`<div class="visit-notes">${p.notes}</div>`:''}${remarksHTML(p,'presc')}${fileActionsHTML(p.file,p.fileName,'presc',p.id)}</div>`).join(''):'<p class="no-data">No prescriptions yet</p>');
+  el.innerHTML=`<button class="save-btn" onclick="openModal('prescModal')">+ Add Prescription</button>`+
+  (sorted.length?`<div class="med-timeline">${sorted.map((p,i)=>`<div class="med-timeline-item" style="animation-delay:${i*50}ms"><div class="med-timeline-dot presc"></div><div class="visit-card"><div class="visit-header"><div><div class="visit-name">Prescription</div><div class="visit-date">${formatDate(p.date)}${p.doctor?' · Dr. '+p.doctor:''}</div></div></div>${p.notes?`<div class="visit-notes">${p.notes}</div>`:''}${remarksHTML(p,'presc')}${fileActionsHTML(p.file,p.fileName,'presc',p.id)}</div></div>`).join('')}</div>`:'<p class="no-data">No prescriptions yet</p>');
 }
 function renderReports(){
   const el=document.getElementById('medReports');if(!el)return;
   const sorted=(db.reports||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
-  el.innerHTML=`<button class="add-btn" onclick="openModal('reportModal')">+ Add Report / Scan</button>`+
-  (sorted.length?sorted.map((r)=>`<div class="visit-card"><div class="visit-header"><div><div class="visit-name">🗂 ${r.name||'Report'}</div><div class="visit-date">${formatDate(r.date)}</div></div></div>${r.notes?`<div class="visit-notes">${r.notes}</div>`:''}${remarksHTML(r,'report')}${fileActionsHTML(r.file,r.fileName,'report',r.id)}</div>`).join(''):'<p class="no-data">No reports yet</p>');
+  el.innerHTML=`<button class="save-btn" onclick="openModal('reportModal')">+ Add Report / Scan</button>`+
+  (sorted.length?`<div class="med-timeline">${sorted.map((r,i)=>`<div class="med-timeline-item" style="animation-delay:${i*50}ms"><div class="med-timeline-dot report"></div><div class="visit-card"><div class="visit-header"><div><div class="visit-name">${r.name||'Report'}</div><div class="visit-date">${formatDate(r.date)}</div></div></div>${r.notes?`<div class="visit-notes">${r.notes}</div>`:''}${remarksHTML(r,'report')}${fileActionsHTML(r.file,r.fileName,'report',r.id)}</div></div>`).join('')}</div>`:'<p class="no-data">No reports yet</p>');
 }
 function openVisitModal(){document.getElementById('vDate').value=dateKey(new Date());openModal('visitModal')}
 async function uploadMedFile(fd){
@@ -2328,37 +2396,41 @@ function renderWeight(){
   const weights=db.weights||[];
   const first=weights[0]?.val||null,last=weights[weights.length-1]?.val||null;
   const gain=first&&last?(last-first).toFixed(1):null;
+  const gainColor=gain!==null&&gain>=0?'var(--sage)':'var(--rose)';
   el.innerHTML=`
     <div class="journey-summary">
       <div class="journey-stat-card"><div class="journey-stat-val">${first||'--'}</div><div class="journey-stat-label">Starting (kg)</div></div>
       <div class="journey-stat-card"><div class="journey-stat-val">${last||'--'}</div><div class="journey-stat-label">Current (kg)</div></div>
-      <div class="journey-stat-card"><div class="journey-stat-val">${gain!==null?(gain>0?'+':'')+gain:'--'}</div><div class="journey-stat-label">Gained (kg)</div></div>
+      <div class="journey-stat-card"><div class="journey-stat-val" style="color:${gainColor}">${gain!==null?(gain>0?'+':'')+gain:'--'}</div><div class="journey-stat-label">Gained (kg)</div></div>
     </div>
-    <div class="chart-wrap"><div class="chart-title">Weight trend</div><div class="mini-chart"><canvas id="weightCanvas"></canvas></div></div>
-    <button class="add-btn" onclick="openModal('weightModal');document.getElementById('wDate').value='${dateKey(new Date())}'">+ Log weight</button>
+    <div class="chart-wrap"><div class="chart-title">Weight trend</div><div class="mini-chart"><canvas id="weightCanvas"></canvas></div><div class="chart-tooltip" id="chartTooltip"></div></div>
+    <button class="save-btn" onclick="openModal('weightModal');document.getElementById('wDate').value='${dateKey(new Date())}'">+ Log weight</button>
     <div class="section-title">History</div>
     <div>${weights.length?[...weights].reverse().map((w,i,arr)=>{const prev=arr[i+1];const diff=prev?(w.val-prev.val).toFixed(1):null;return`<div class="weight-log-item"><span class="weight-log-date">${formatDate(w.date)}</span><div style="display:flex;align-items:center;gap:7px">${diff?`<span class="weight-log-diff ${diff>0?'up':'down'}">${diff>0?'+':''}${diff} kg</span>`:''}<span class="weight-log-val">${w.val} kg</span></div></div>`}).join(''):'<p class="no-data">No weight logged yet</p>'}</div>`;
   setTimeout(()=>drawChart(weights),50);
 }
 
+let _chartPoints=[];
 function drawChart(weights){
   const canvas=document.getElementById('weightCanvas');if(!canvas)return;
   const ctx=canvas.getContext('2d');
-  const W=canvas.offsetWidth||320,H=110;
+  const W=canvas.offsetWidth||320,H=180;
   canvas.width=W*2;canvas.height=H*2;canvas.style.width=W+'px';canvas.style.height=H+'px';
   ctx.scale(2,2);ctx.clearRect(0,0,W,H);
-  if(weights.length<2){ctx.fillStyle='#A8889A';ctx.font='11px sans-serif';ctx.textAlign='center';ctx.fillText('Log more entries to see chart',W/2,H/2);return}
-  const pad={t:8,b:18,l:28,r:8},cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  _chartPoints=[];
+  if(weights.length<2){ctx.fillStyle='#A8889A';ctx.font='12px "DM Sans",sans-serif';ctx.textAlign='center';ctx.fillText('Log more entries to see chart',W/2,H/2);return}
+  const pad={t:12,b:22,l:36,r:12},cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
   const vals=weights.map(w=>w.val);
-  const minV=Math.min(...vals)-.5,maxV=Math.max(...vals)+.5;
+  const minV=Math.min(...vals)-1,maxV=Math.max(...vals)+1;
   const xS=cW/(weights.length-1),yS=cH/(maxV-minV);
   const px=i=>pad.l+i*xS,py=v=>pad.t+cH-(v-minV)*yS;
-  ctx.strokeStyle='#FBDDE4';ctx.lineWidth=1;
-  for(let i=0;i<=3;i++){const y=pad.t+(cH/3)*i;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke()}
-  ctx.fillStyle='#A8889A';ctx.font='8px sans-serif';ctx.textAlign='right';
-  for(let i=0;i<=2;i++){const v=minV+(maxV-minV)*(1-i/2);ctx.fillText(v.toFixed(1),pad.l-3,pad.t+(cH/2)*i+3)}
+  ctx.strokeStyle='var(--rose-pale)';ctx.lineWidth=0.5;
+  const gridCount=5;
+  for(let i=0;i<=gridCount;i++){const y=pad.t+(cH/gridCount)*i;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke()}
+  ctx.fillStyle='#A8889A';ctx.font='11px "DM Sans",sans-serif';ctx.textAlign='right';
+  for(let i=0;i<=gridCount;i++){const v=maxV-(maxV-minV)*(i/gridCount);ctx.fillText(v.toFixed(1),pad.l-4,pad.t+(cH/gridCount)*i+4)}
   const g=ctx.createLinearGradient(0,pad.t,0,pad.t+cH);
-  g.addColorStop(0,'rgba(232,116,138,.25)');g.addColorStop(1,'rgba(232,116,138,.02)');
+  g.addColorStop(0,'rgba(232,116,138,.2)');g.addColorStop(1,'rgba(232,116,138,.02)');
   ctx.beginPath();ctx.moveTo(px(0),py(weights[0].val));
   weights.forEach((w,i)=>{if(i>0)ctx.lineTo(px(i),py(w.val))});
   ctx.lineTo(px(weights.length-1),pad.t+cH);ctx.lineTo(px(0),pad.t+cH);
@@ -2366,7 +2438,32 @@ function drawChart(weights){
   ctx.beginPath();ctx.strokeStyle='#E8748A';ctx.lineWidth=2;ctx.lineJoin='round';
   weights.forEach((w,i)=>{i===0?ctx.moveTo(px(i),py(w.val)):ctx.lineTo(px(i),py(w.val))});
   ctx.stroke();
-  weights.forEach((w,i)=>{ctx.beginPath();ctx.arc(px(i),py(w.val),3,0,Math.PI*2);ctx.fillStyle='#E8748A';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke()});
+  weights.forEach((w,i)=>{
+    const x=px(i),y=py(w.val);
+    ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fillStyle='#E8748A';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+    _chartPoints.push({x,y,date:w.date,val:w.val});
+  });
+  canvas.onpointermove=canvas.ontouchmove=function(e){
+    e.preventDefault();
+    const rect=canvas.getBoundingClientRect();
+    const sx=canvas.width/(rect.width),sy=canvas.height/(rect.height);
+    const cx=(e.touches?e.touches[0].clientX-rect.left:e.clientX-rect.left)*sx/2;
+    const cy=(e.touches?e.touches[0].clientY-rect.top:e.clientY-rect.top)*sy/2;
+    let nearest=null,minD=Infinity;
+    _chartPoints.forEach(p=>{const d=Math.abs(p.x-cx);if(d<minD){minD=d;nearest=p}});
+    const tooltip=document.getElementById('chartTooltip');
+    if(nearest&&minD<30&&tooltip){
+      tooltip.textContent=`${formatDate(nearest.date)}  ${nearest.val} kg`;
+      const tpx=nearest.x/W*100;
+      tooltip.style.left=`clamp(10px,${tpx}% - 40px, calc(100% - 90px))`;
+      tooltip.style.top=`${nearest.y/H*100 - 18}%`;
+      tooltip.style.opacity='1';
+    }else if(tooltip){tooltip.style.opacity='0'}
+  };
+  canvas.onpointerleave=canvas.ontouchend=function(){
+    const tooltip=document.getElementById('chartTooltip');
+    if(tooltip)tooltip.style.opacity='0';
+  };
 }
 
 function renderGallery(){
@@ -2382,13 +2479,51 @@ function renderGallery(){
     return`<div class="gallery-month"><div class="gallery-month-label">${label}</div><div class="gallery-grid">${items.map(item=>`<div class="gallery-item" onclick="openLightbox('${item.src}','${item.date}')"><img src="${item.src}" loading="lazy"><span class="gallery-date">${formatDateShort(item.date)}</span></div>`).join('')}</div></div>`;
   }).join('');
 }
+let _lightboxPhotos=[];
+let _lightboxIdx=0;
 function openLightbox(src,date){
-  document.getElementById('lightboxImg').src=src;
-  document.getElementById('lightboxDate').textContent=formatDate(date);
+  const gallery=db.gallery||{};
+  const dayPhotos=(gallery[date]||[]).map(s=>({src:s,date}));
+  _lightboxPhotos=dayPhotos.length?dayPhotos:[{src,date}];
+  _lightboxIdx=_lightboxPhotos.findIndex(p=>p.src===src);
+  if(_lightboxIdx<0)_lightboxIdx=0;
+  showLightboxPhoto();
   document.getElementById('lightbox').classList.add('open');
 }
-function closeLightbox(){document.getElementById('lightbox').classList.remove('open')}
-document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)closeLightbox()});
+function showLightboxPhoto(){
+  const p=_lightboxPhotos[_lightboxIdx];if(!p)return;
+  document.getElementById('lightboxImg').src=p.src;
+  document.getElementById('lightboxDate').textContent=formatDate(p.date);
+  const counter=document.getElementById('lightboxCounter');
+  const prev=document.getElementById('lightboxPrev');
+  const next=document.getElementById('lightboxNext');
+  if(_lightboxPhotos.length>1){
+    counter.textContent=`${_lightboxIdx+1} / ${_lightboxPhotos.length}`;
+    prev.style.display=_lightboxIdx>0?'flex':'none';
+    next.style.display=_lightboxIdx<_lightboxPhotos.length-1?'flex':'none';
+  }else{
+    counter.textContent='';
+    prev.style.display='none';
+    next.style.display='none';
+  }
+}
+function lightboxNav(dir){
+  const ni=_lightboxIdx+dir;
+  if(ni<0||ni>=_lightboxPhotos.length)return;
+  _lightboxIdx=ni;
+  showLightboxPhoto();
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');_lightboxPhotos=[];_lightboxIdx=0}
+(function(){
+  const lb=document.getElementById('lightbox');
+  lb.addEventListener('click',function(e){if(e.target===this)closeLightbox()});
+  let tx=0;
+  lb.addEventListener('touchstart',function(e){tx=e.touches[0].clientX},{passive:true});
+  lb.addEventListener('touchend',function(e){
+    const dx=e.changedTouches[0].clientX-tx;
+    if(Math.abs(dx)>50){lightboxNav(dx<0?1:-1)}
+  },{passive:true});
+})();
 
 function renderSummary(){
   const el=document.getElementById('journeySummary');if(!el)return;
@@ -2401,6 +2536,11 @@ function renderSummary(){
   renderSummaryWeek(week,null);
 }
 
+function summaryStatus(val,good,warn){
+  if(val>=good)return'sage';
+  if(val>=warn)return'amber';
+  return'rose';
+}
 function renderSummaryWeek(w,btn){
   if(btn){document.querySelectorAll('.swk-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
   const weekStart=new Date(START_DATE);weekStart.setDate(weekStart.getDate()+(w-1)*7);
@@ -2414,15 +2554,27 @@ function renderSummaryWeek(w,btn){
   const moods=logs.flatMap(l=>l.mood?l.mood.split(','):[]).filter(Boolean);
   const moodCount={};moods.forEach(m=>{moodCount[m]=(moodCount[m]||0)+1});
   const topMood=Object.entries(moodCount).sort((a,b)=>b[1]-a[1])[0];
+
+  const yogaSt=summaryStatus(yogaDays,5,3);
+  const exSt=summaryStatus(exDays,4,2);
+  const sleepSt=summaryStatus(avgSleep,7,5);
+  const logSt=summaryStatus(logDays,6,4);
+  const screenSt=avgScreen?summaryStatus(avgScreen<=120?3:avgScreen<=180?2:0,3,2):'sage';
+
+  const yogaComment=yogaDays>=5?'Great consistency this week':yogaDays>=3?'Good effort, try for more':'Needs more attention';
+  const exComment=exDays>=4?'Staying active, well done':exDays>=2?'Decent, aim for 4+ days':'Try to move more this week';
+  const sleepComment=avgSleep>=7?'Within healthy range':avgSleep>=5?'A bit low, prioritise rest':'Sleep needs improvement';
+  const logComment=logDays>=6?'Almost every day logged':logDays>=4?'Good tracking habit':'Try logging daily';
+  const screenComment=avgScreen?avgScreen<=120?'Well managed':'Consider reducing':'No data yet';
+  const moodComment=topMood?`Felt ${topMood[0]} most often`:'No mood data yet';
+
   document.getElementById('summaryContent').innerHTML=`
-    <div class="summary-grid">
-      <div class="summary-metric"><div class="summary-metric-val">${logDays}/7</div><div class="summary-metric-label">Days logged</div></div>
-      <div class="summary-metric"><div class="summary-metric-val">${yogaDays}/7</div><div class="summary-metric-label">Yoga days</div></div>
-      <div class="summary-metric"><div class="summary-metric-val">${exDays}/7</div><div class="summary-metric-label">Exercise days</div></div>
-      <div class="summary-metric"><div class="summary-metric-val">${avgSleep||'--'}</div><div class="summary-metric-label">Avg sleep (hrs)</div></div>
-      <div class="summary-metric"><div class="summary-metric-val">${avgScreen||'--'}</div><div class="summary-metric-label">Avg screen (mins)</div></div>
-      <div class="summary-metric"><div class="summary-metric-val">${topMood?topMood[0]:'--'}</div><div class="summary-metric-label">Top mood</div></div>
-    </div>`;
+    <div class="report-card"><div class="report-card-icon ${yogaSt}">🧘</div><div class="report-card-body"><div class="report-card-top"><span class="report-card-label">Yoga</span><span class="report-card-val ${yogaSt}">${yogaDays}/7 days</span></div><div class="report-card-comment">${yogaComment}</div></div></div>
+    <div class="report-card"><div class="report-card-icon ${exSt}">🏃</div><div class="report-card-body"><div class="report-card-top"><span class="report-card-label">Exercise</span><span class="report-card-val ${exSt}">${exDays}/7 days</span></div><div class="report-card-comment">${exComment}</div></div></div>
+    <div class="report-card"><div class="report-card-icon ${sleepSt}">😴</div><div class="report-card-body"><div class="report-card-top"><span class="report-card-label">Sleep</span><span class="report-card-val ${sleepSt}">${avgSleep||'--'} hrs avg</span></div><div class="report-card-comment">${sleepComment}</div></div></div>
+    <div class="report-card"><div class="report-card-icon ${logSt}">📝</div><div class="report-card-body"><div class="report-card-top"><span class="report-card-label">Logging</span><span class="report-card-val ${logSt}">${logDays}/7 days</span></div><div class="report-card-comment">${logComment}</div></div></div>
+    <div class="report-card"><div class="report-card-icon ${screenSt}">📱</div><div class="report-card-body"><div class="report-card-top"><span class="report-card-label">Screen time</span><span class="report-card-val ${screenSt}">${avgScreen||'--'} mins avg</span></div><div class="report-card-comment">${screenComment}</div></div></div>
+    <div class="report-card"><div class="report-card-icon sage">💭</div><div class="report-card-body"><div class="report-card-top"><span class="report-card-label">Mood</span><span class="report-card-val sage">${topMood?topMood[0]:'--'}</span></div><div class="report-card-comment">${moodComment}</div></div></div>`;
 }
 
 function exportCSV(){
