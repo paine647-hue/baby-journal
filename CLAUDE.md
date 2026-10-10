@@ -9,7 +9,7 @@ Deployed on Vercel via GitHub. Database on Supabase.
 - PIN: 2707
 - Supabase project ID: dwvtyctgawlshbjqyeqq
 - Storage bucket: baby-journal
-- Live URL: baby-journal-pregnancy-tracker.vercel.app
+- Live URL: https://baby-journal-theta.vercel.app
 
 ## Design principles
 - Read frontend-design, impeccable, and mobile-app-ui-design skills
