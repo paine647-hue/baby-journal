@@ -761,6 +761,24 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
         <button class="kicks-reset" onclick="resetKicks()">Reset</button>
       </div>
     </div>
+    <div class="lifestyle-card">
+      <div class="lifestyle-label">Movement today</div>
+      <div class="toggle-row">
+        <span class="toggle-label-text">Yoga done?</span>
+        <div class="toggle-switch" id="yogaToggle" onclick="toggleMovement('yoga')"><div class="toggle-knob"></div></div>
+      </div>
+      <div id="yogaDetail" style="display:none;margin-top:8px">
+        <div class="input-group" style="margin-bottom:0"><label class="input-label">Minutes</label><input class="input-field" type="number" id="yogaMins" placeholder="e.g. 20" style="background:var(--white)"></div>
+      </div>
+      <div class="toggle-row" style="margin-top:12px">
+        <span class="toggle-label-text">Exercise done?</span>
+        <div class="toggle-switch" id="exerciseToggle" onclick="toggleMovement('exercise')"><div class="toggle-knob"></div></div>
+      </div>
+      <div id="exerciseDetail" style="display:none;margin-top:8px">
+        <div class="input-group"><label class="input-label">Type</label><input class="input-field" id="exerciseTypeInput" placeholder="e.g. Walking" style="background:var(--white)"></div>
+        <div class="input-group" style="margin-bottom:0"><label class="input-label">Minutes</label><input class="input-field" type="number" id="exerciseMinsInput" placeholder="e.g. 30" style="background:var(--white)"></div>
+      </div>
+    </div>
     <div class="input-group"><label class="input-label">Cravings today</label><input class="input-field" id="cravingsInput" placeholder="What are you craving?"></div>
     <div class="input-group"><label class="input-label">Journal</label><div class="journal-wrap"><textarea class="input-field" id="journalInput" rows="5" placeholder="What was today like? Any cravings, feelings, or moments to remember..." oninput="updateJournalCount()"></textarea><span class="journal-charcount" id="journalCharCount">0</span></div></div>
     <div class="input-group">
@@ -1375,6 +1393,15 @@ function loadLogForDate(){
   const ot=document.getElementById('outsideFoodToggle');
   if(log.outside_food){ot.classList.add('on');document.getElementById('outsideFoodDetail').style.display='block';document.getElementById('outsideFoodText').value=log.outside_food_text||''}
   else{ot.classList.remove('on');document.getElementById('outsideFoodDetail').style.display='none';document.getElementById('outsideFoodText').value=''}
+  const yt=document.getElementById('yogaToggle');
+  if(log.yoga_done){yt.classList.add('on');document.getElementById('yogaDetail').style.display='block'}
+  else{yt.classList.remove('on');document.getElementById('yogaDetail').style.display='none'}
+  document.getElementById('yogaMins').value=log.yoga_mins||'';
+  const et=document.getElementById('exerciseToggle');
+  if(log.exercise_done){et.classList.add('on');document.getElementById('exerciseDetail').style.display='block'}
+  else{et.classList.remove('on');document.getElementById('exerciseDetail').style.display='none'}
+  document.getElementById('exerciseTypeInput').value=log.exercise_type||'';
+  document.getElementById('exerciseMinsInput').value=log.exercise_mins||'';
   const row=document.getElementById('photoPreviewRow');
   row.innerHTML='';
   currentPhotos=log.photos?[...log.photos]:[];
@@ -1433,6 +1460,10 @@ function toggleOutsideFood(){
   const t=document.getElementById('outsideFoodToggle');t.classList.toggle('on');
   document.getElementById('outsideFoodDetail').style.display=t.classList.contains('on')?'block':'none';
 }
+function toggleMovement(type){
+  const t=document.getElementById(type+'Toggle');t.classList.toggle('on');
+  document.getElementById(type+'Detail').style.display=t.classList.contains('on')?'block':'none';
+}
 function updateJournalCount(){
   const ta=document.getElementById('journalInput');
   document.getElementById('journalCharCount').textContent=ta.value.length;
@@ -1484,6 +1515,11 @@ async function saveLog(){
     screentime:parseInt(document.getElementById('screentimeInput').value)||null,
     wake_time:document.getElementById('wakeTime').value,
     sleep_time:document.getElementById('sleepTime').value,
+    yoga_done:document.getElementById('yogaToggle').classList.contains('on'),
+    yoga_mins:parseInt(document.getElementById('yogaMins').value)||null,
+    exercise_done:document.getElementById('exerciseToggle').classList.contains('on'),
+    exercise_type:document.getElementById('exerciseTypeInput').value,
+    exercise_mins:parseInt(document.getElementById('exerciseMinsInput').value)||null,
   };
   if(existingId)row.id=existingId;
   db.logs[key]={...row,date:key,id:existingId};
@@ -1933,25 +1969,22 @@ function renderWellnessSummary(){
   </div>`;
 }
 
-async function logYesNo(type,val,btn){
+function logYesNo(type,val,btn){
   const today=dateKey(new Date());
   if(!db.logs[today])db.logs[today]={date_key:today};
   db.logs[today][type+'_done']=val;
-  cacheDB();
   btn.parentElement.querySelectorAll('.yn-btn').forEach(b=>{b.classList.remove('active-yes','active-no')});
   btn.classList.add(val?'active-yes':'active-no');
   renderWellnessSummary();
-  try{await supa.upsert('bj_logs',{date_key:today,[type+'_done']:val})}catch(e){}
 }
 
-async function saveExerciseLog(){
+function saveExerciseLog(){
   const today=dateKey(new Date());
   const type=document.getElementById('exerciseLog').value;
   const mins=parseInt(document.getElementById('exerciseMins').value)||null;
   if(!db.logs[today])db.logs[today]={date_key:today};
   db.logs[today].exercise_type=type;db.logs[today].exercise_mins=mins;
-  cacheDB();showToast('Exercise logged ✓');
-  try{await supa.upsert('bj_logs',{date_key:today,exercise_type:type,exercise_mins:mins})}catch(e){}
+  showToast('Exercise logged ✓');
 }
 
 // ── GUIDE ──
