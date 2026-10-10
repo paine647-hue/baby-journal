@@ -932,11 +932,39 @@ const supa={
 
 // ── DB ──
 let db={logs:{},visits:[],prescriptions:[],reports:[],weights:[],gallery:{},wellness:{}};
-function cacheDB(){try{localStorage.setItem('bj2',JSON.stringify(db))}catch(e){}}
+function cacheDB(){
+  try{
+    const safeLogs={};
+    Object.keys(db.logs||{}).forEach(k=>{
+      const log=db.logs[k];
+      safeLogs[k]={...log,photos:(log.photos||[]).filter(p=>!isBase64DataUrl(p))};
+    });
+    localStorage.setItem('bj2',JSON.stringify({...db,logs:safeLogs}));
+  }catch(e){console.warn('cacheDB failed (localStorage quota?):',e);}
+}
 function loadCached(){try{const s=localStorage.getItem('bj2');if(s)db=JSON.parse(s)}catch(e){}}
 function isBase64DataUrl(s){return typeof s==='string'&&s.startsWith('data:');}
 function mimeFromDataUrl(s){const m=s.match(/^data:([^;]+);/);return m?m[1]:'application/octet-stream';}
 function extFromMime(m){const map={'image/jpeg':'jpg','image/png':'png','image/gif':'gif','image/webp':'webp','application/pdf':'pdf'};return map[m]||'bin';}
+function downscaleDataUrl(dataUrl,maxDim=1600,quality=0.8){
+  return new Promise(resolve=>{
+    if(!/^data:image\//.test(dataUrl)){resolve({dataUrl,mime:mimeFromDataUrl(dataUrl)});return;}
+    const img=new Image();
+    img.onload=()=>{
+      let{width,height}=img;
+      if(width>maxDim||height>maxDim){
+        const scale=maxDim/Math.max(width,height);
+        width=Math.round(width*scale);height=Math.round(height*scale);
+      }
+      const canvas=document.createElement('canvas');
+      canvas.width=width;canvas.height=height;
+      canvas.getContext('2d').drawImage(img,0,0,width,height);
+      resolve({dataUrl:canvas.toDataURL('image/jpeg',quality),mime:'image/jpeg'});
+    };
+    img.onerror=()=>resolve({dataUrl,mime:mimeFromDataUrl(dataUrl)});
+    img.src=dataUrl;
+  });
+}
 
 async function migrateBase64FilesToStorage(visits){
   const toMigrate=visits.filter(v=>isBase64DataUrl(v.file)&&v.id);
@@ -964,30 +992,38 @@ async function migrateBase64FilesToStorage(visits){
   }
 }
 
+// file excluded here — base64 rows make this column huge; fetched separately by loadMedicalFiles()
+const VISIT_COLS='id,type,doctor,date,notes,reminder,file_name,record_type,created_at';
+// photos excluded here — can hold base64 and bloats the whole-table fetch; loaded lazily per-date/gallery
+const LOG_COLS='id,date_key,mood,vomit,sleep,kicks,cravings,journal,weight,outside_food,outside_food_text,screentime,wake_time,sleep_time,yoga_done,yoga_mins,exercise_done,exercise_type,exercise_mins,created_at';
 async function loadDB(){
   loadCached();
   const dot=document.getElementById('syncDot');
   if(dot)dot.style.display='';
   try{
-    // file excluded here — base64 rows make this column huge; fetched separately by loadMedicalFiles()
-    const VISIT_COLS='id,type,doctor,date,notes,reminder,file_name,record_type,created_at';
-    const[logs,visits,weights]=await Promise.all([
-      supa.get('bj_logs'),
-      supa.get('bj_visits',VISIT_COLS),
-      supa.get('bj_weights')
-    ]);
-    db.logs={};
-    logs.forEach(r=>{
-      db.logs[r.date_key]={mood:r.mood,vomit:r.vomit,sleep:r.sleep,kicks:r.kicks,cravings:r.cravings,journal:r.journal,weight:r.weight,photos:r.photos||[],date:r.date_key,id:r.id,outside_food:r.outside_food,outside_food_text:r.outside_food_text,screentime:r.screentime,wake_time:r.wake_time,sleep_time:r.sleep_time,yoga_done:r.yoga_done,exercise_done:r.exercise_done,exercise_type:r.exercise_type,exercise_mins:r.exercise_mins,yoga_mins:r.yoga_mins};
-      if(r.photos&&r.photos.length)db.gallery[r.date_key]=r.photos;
-    });
+    console.time('loadDB:visits');
+    const visits=await supa.get('bj_visits',VISIT_COLS);
+    console.timeEnd('loadDB:visits');
     db.visits=visits.filter(v=>v.record_type==='visit'||!v.record_type).map(v=>({id:v.id,type:v.type,doctor:v.doctor,date:v.date,notes:v.notes,reminder:v.reminder,file:null,fileName:v.file_name}));
     db.prescriptions=visits.filter(v=>v.record_type==='presc').map(v=>({id:v.id,date:v.date,doctor:v.doctor,notes:v.notes,file:null,fileName:v.file_name}));
     db.reports=visits.filter(v=>v.record_type==='report').map(v=>({id:v.id,name:v.type,date:v.date,notes:v.notes,file:null,fileName:v.file_name}));
+    cacheDB();
+    if(document.getElementById('app').classList.contains('visible'))renderMedical();
+    if(localStorage.getItem(MED_MIGRATED_KEY))loadMedicalFiles();
+
+    console.time('loadDB:logs+weights');
+    const[logs,weights]=await Promise.all([
+      supa.get('bj_logs',LOG_COLS),
+      supa.get('bj_weights')
+    ]);
+    console.timeEnd('loadDB:logs+weights');
+    db.logs={};
+    logs.forEach(r=>{
+      db.logs[r.date_key]={mood:r.mood,vomit:r.vomit,sleep:r.sleep,kicks:r.kicks,cravings:r.cravings,journal:r.journal,weight:r.weight,photos:[],date:r.date_key,id:r.id,outside_food:r.outside_food,outside_food_text:r.outside_food_text,screentime:r.screentime,wake_time:r.wake_time,sleep_time:r.sleep_time,yoga_done:r.yoga_done,exercise_done:r.exercise_done,exercise_type:r.exercise_type,exercise_mins:r.exercise_mins,yoga_mins:r.yoga_mins};
+    });
     db.weights=weights.map(r=>({id:r.id,date:r.date,val:r.val}));
     cacheDB();
-    if(document.getElementById('app').classList.contains('visible')){renderToday();renderWeight();initLog();renderMedical();}
-    if(localStorage.getItem(MED_MIGRATED_KEY))loadMedicalFiles();
+    if(document.getElementById('app').classList.contains('visible')){renderToday();renderWeight();initLog();}
     if(dot)dot.style.display='none';
   }catch(e){console.warn('Supabase load failed, using cache:',e);if(dot)dot.style.display='none';}
 }
@@ -1413,6 +1449,23 @@ function loadLogForDate(){
   kicksSessionBest=Math.max(kicksSessionBest,currentKicks);
   const bestEl=document.getElementById('kicksBest');
   if(bestEl)bestEl.textContent=kicksSessionBest?'Best today: '+kicksSessionBest:'';
+  loadLogPhotosForDate(key);
+}
+async function loadLogPhotosForDate(key){
+  try{
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/bj_logs?select=photos&date_key=eq.${key}`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});
+    if(!r.ok)return;
+    const rows=await r.json();
+    const photos=rows[0]?.photos||[];
+    if(!db.logs[key])return;
+    db.logs[key].photos=photos;
+    if(dateKey(logDate)!==key)return;
+    currentPhotos=[...photos];
+    const row=document.getElementById('photoPreviewRow');
+    row.innerHTML='';
+    currentPhotos.forEach((s,i)=>row.appendChild(makeThumb(s,i)));
+    updatePhotoBadge();
+  }catch(e){console.warn('Log photo fetch failed',e);}
 }
 function makeThumb(src,i){
   const wrap=document.createElement('div');wrap.className='photo-thumb-wrap';
@@ -1476,26 +1529,27 @@ function updatePhotoBadge(){
     badge.textContent=currentPhotos.length;
   }else if(badge){badge.remove()}
 }
-function handlePhotoUpload(input){
+async function handlePhotoUpload(input){
   const files=Array.from(input.files);
   if(!files.length)return;
-  let loaded=0;
-  files.forEach(file=>{
-    const reader=new FileReader();
-    reader.onload=e=>{
-      currentPhotos.push(e.target.result);
-      loaded++;
-      if(loaded===files.length){
-        const row=document.getElementById('photoPreviewRow');
-        row.innerHTML='';
-        currentPhotos.forEach((s,i)=>row.appendChild(makeThumb(s,i)));
-        updatePhotoBadge();
-        showToast(files.length>1?`${files.length} photos added`:'Photo added');
-      }
-    };
-    reader.readAsDataURL(file);
-  });
   input.value='';
+  showToast(files.length>1?`Uploading ${files.length} photos...`:'Uploading photo...');
+  const key=dateKey(logDate);
+  for(const file of files){
+    try{
+      const raw=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file)});
+      const{dataUrl,mime}=await downscaleDataUrl(raw);
+      const ext=extFromMime(mime);
+      const path=`logs/${key}_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+      const url=await supa.uploadFile(path,dataUrl,mime);
+      currentPhotos.push(url);
+    }catch(e){console.warn('Photo upload failed',e);showToast('Photo upload failed');}
+  }
+  const row=document.getElementById('photoPreviewRow');
+  row.innerHTML='';
+  currentPhotos.forEach((s,i)=>row.appendChild(makeThumb(s,i)));
+  updatePhotoBadge();
+  showToast('Photos added ✓');
 }
 async function saveLog(){
   const key=dateKey(logDate);
@@ -2478,10 +2532,10 @@ async function uploadMedFile(fds){
   for(const fd of list){
     if(!fd?.data)continue;
     try{
-      const mime=fd.mime||mimeFromDataUrl(fd.data);
+      const{dataUrl,mime}=await downscaleDataUrl(fd.data);
       const ext=extFromMime(mime);
       const path=`medical/${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
-      const url=await supa.uploadFile(path,fd.data,mime);
+      const url=await supa.uploadFile(path,dataUrl,mime);
       results.push({url,name:fd.name});
     }catch(e){
       console.warn('Storage upload failed, falling back to base64:',e);
@@ -2537,13 +2591,27 @@ async function saveReport(){
 }
 
 // ── JOURNEY ──
-function setJourneyTab(tab,btn){
+let _galleryLoaded=false;
+async function loadGalleryPhotos(){
+  if(_galleryLoaded)return;
+  try{
+    console.time('loadDB:gallery');
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/bj_logs?select=date_key,photos&photos=not.is.null&order=date_key.desc`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});
+    console.timeEnd('loadDB:gallery');
+    if(!r.ok)return;
+    const rows=await r.json();
+    db.gallery={};
+    rows.forEach(row=>{if(row.photos&&row.photos.length)db.gallery[row.date_key]=row.photos});
+    _galleryLoaded=true;
+  }catch(e){console.warn('Gallery load failed',e);}
+}
+async function setJourneyTab(tab,btn){
   ['journeyWeight','journeyGallery','journeySummary'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('journey'+tab.charAt(0).toUpperCase()+tab.slice(1)).style.display='block';
   document.querySelectorAll('#pageJourney .gtab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   if(tab==='weight')renderWeight();
-  if(tab==='gallery')renderGallery();
+  if(tab==='gallery'){renderGallery();await loadGalleryPhotos();renderGallery();}
   if(tab==='summary')renderSummary();
 }
 
