@@ -876,7 +876,6 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 
 <script>
 // ── CONFIG ──
-const PIN='2707';
 const START_DATE=new Date('2026-07-27');
 const TOTAL_WEEKS=40;
 const SUPABASE_URL='https://dwvtyctgawlshbjqyeqq.supabase.co';
@@ -1153,9 +1152,15 @@ function pinInput(d){
   pinEntry+=d;
   document.getElementById('d'+(pinEntry.length-1)).classList.add('filled');
   if(pinEntry.length===4){
+    const entered=pinEntry;
     setTimeout(()=>{
-      if(pinEntry===PIN){document.getElementById('lockScreen').style.display='none';document.getElementById('app').classList.add('visible');initApp();}
-      else{document.getElementById('pinError').textContent='Incorrect PIN';pinEntry='';for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('filled')}
+      fetch('https://dwvtyctgawlshbjqyeqq.supabase.co/functions/v1/verify-pin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:entered})})
+        .then(r=>r.json())
+        .then(({valid})=>{
+          if(valid){document.getElementById('lockScreen').style.display='none';document.getElementById('app').classList.add('visible');initApp();}
+          else{document.getElementById('pinError').textContent='Incorrect PIN';pinEntry='';for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('filled')}
+        })
+        .catch(()=>{document.getElementById('pinError').textContent='Incorrect PIN';pinEntry='';for(let i=0;i<4;i++)document.getElementById('d'+i).classList.remove('filled')});
     },200);
   }
 }
