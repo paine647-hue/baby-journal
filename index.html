@@ -2161,12 +2161,18 @@ function closeFileViewer(){
 }
 document.getElementById('fileViewer').addEventListener('click',function(e){if(e.target===this)closeFileViewer()});
 
-function deleteRecord(type,id){
+async function deleteRecord(type,id){
   if(!confirm('Remove this record?'))return;
   const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
   const i=arr.findIndex(x=>x.id===id);
   if(i>=0)arr.splice(i,1);
   cacheDB();renderMedical();showToast('Removed');
+  try{
+    await fetch(`${SUPABASE_URL}/rest/v1/bj_visits?id=eq.${id}`,{
+      method:'DELETE',
+      headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}
+    });
+  }catch(e){console.warn('Supabase delete failed',e);}
 }
 
 function replaceFile(type,id){
@@ -2335,8 +2341,32 @@ function deleteMedFile(type,id,idx){
   cacheDB();renderMedical();showToast('File removed');
   supa.upsert('bj_visits',{id:record.id,file:record.file,file_name:record.fileName}).catch(()=>{});
 }
+function replaceSingleFile(type,id,idx){
+  const input=document.createElement('input');
+  input.type='file';input.accept='image/*,.pdf';
+  input.onchange=async e=>{
+    const file=e.target.files[0];if(!file)return;
+    showToast('Uploading...');
+    const reader=new FileReader();
+    reader.onload=async ev=>{
+      const fd={data:ev.target.result,name:file.name,mime:file.type};
+      const[uploaded]=await uploadMedFile(fd);
+      const arr=type==='visit'?db.visits:type==='presc'?db.prescriptions:db.reports;
+      const record=arr.find(x=>x.id===id);if(!record)return;
+      const files=parseMedFiles(record.file,record.fileName);
+      if(uploaded)files[idx]=uploaded;
+      record.file=files.length?JSON.stringify(files):null;
+      record.fileName=files[0]?.name||null;
+      cacheDB();renderMedical();showToast('File replaced ✓');
+      supa.upsert('bj_visits',{id:record.id,file:record.file,file_name:record.fileName}).catch(()=>{});
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
 function fileActionsHTML(file,fileName,type,id){
   const eyeSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const refreshSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>';
   const attachSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>';
   const trashSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
   const files=parseMedFiles(file,fileName);
@@ -2356,6 +2386,7 @@ function fileActionsHTML(file,fileName,type,id){
       ${preview}
       <div class="file-icon-btns">
         <button class="file-icon-btn view" onclick="viewFileRef('${k}')">${eyeSvg}</button>
+        <button class="file-icon-btn replace" onclick="replaceSingleFile('${type}','${id}',${i})">${refreshSvg}</button>
         <button class="file-icon-btn delete" onclick="deleteMedFile('${type}','${id}',${i})">${trashSvg}</button>
       </div>
     </div>`;
