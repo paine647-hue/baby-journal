@@ -2287,7 +2287,7 @@ function loadMedicalFiles(){
   })();
   return _medFilesPromise;
 }
-const MED_MIGRATED_KEY='medFilesMigrated';
+const MED_MIGRATED_KEY='medFilesMigrated_v2';
 async function migrateRemainingBase64Files(){
   const base64Recs=[...db.visits,...db.prescriptions,...db.reports].filter(r=>isBase64DataUrl(r.file)&&r.id);
   if(!base64Recs.length)return;
