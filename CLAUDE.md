@@ -6,7 +6,7 @@ Deployed on Vercel via GitHub. Database on Supabase.
 
 ## Config
 - Start date: 27 July 2026
-- PIN: 2707
+- PIN: server-side only (verify-pin edge function), not in source
 - Supabase project ID: dwvtyctgawlshbjqyeqq
 - Storage bucket: baby-journal
 - Live URL: https://baby-journal-theta.vercel.app
