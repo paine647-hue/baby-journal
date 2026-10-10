@@ -1314,7 +1314,7 @@ function renderToday(){
   document.getElementById('todayGreeting').textContent=greet;
   document.getElementById('todayTitle').textContent='Week '+week;
   document.getElementById('heroWeek').textContent=week;
-  document.getElementById('heroDays').textContent='Week '+week+' of 40';
+  document.getElementById('heroDays').textContent='Week '+week+' of 40 · '+(days%7)+' days';
   document.getElementById('fruitEmoji').textContent=info.fruit;
   document.getElementById('heroSizeLine').textContent='Baby is the size of '+info.name;
   document.getElementById('babyH').textContent=info.h;
