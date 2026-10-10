@@ -846,6 +846,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
       <button class="med-tab-btn" onclick="setMedTab('prescriptions',this)">💊 Prescriptions</button>
       <button class="med-tab-btn" onclick="setMedTab('reports',this)">🗂 Reports</button>
     </div>
+    <div id="medMigrating" style="display:none;padding:40px 0;text-align:center;color:var(--ink-mid);font-size:13px">Migrating files to storage, one moment...</div>
     <div id="medVisits"></div>
     <div id="medPrescriptions" style="display:none"></div>
     <div id="medReports" style="display:none"></div>
@@ -986,7 +987,7 @@ async function loadDB(){
     db.weights=weights.map(r=>({id:r.id,date:r.date,val:r.val}));
     cacheDB();
     if(document.getElementById('app').classList.contains('visible')){renderToday();renderWeight();initLog();renderMedical();}
-    loadMedicalFiles();
+    if(localStorage.getItem(MED_MIGRATED_KEY))loadMedicalFiles();
     if(dot)dot.style.display='none';
   }catch(e){console.warn('Supabase load failed, using cache:',e);if(dot)dot.style.display='none';}
 }
@@ -1202,7 +1203,7 @@ function showPage(name){
   if(name==='Log')initLog();
   if(name==='Wellness'){setWellnessTab('yoga',document.querySelector('.wtab-btn'))}
   if(name==='Guide'){setGuideTab('weekly',document.querySelector('.gtab-btn'))}
-  if(name==='Medical'){setMedTab('visits',document.querySelector('.med-tab-btn'));if(!window._medMigrationChecked){window._medMigrationChecked=true;loadMedicalFiles().then(migrateRemainingBase64Files);}}
+  if(name==='Medical'){openMedicalPage();}
   if(name==='Journey'){setJourneyTab('weight',document.querySelector('.gtab-btn'))}
   staggerCards(page);
 }
@@ -2286,22 +2287,42 @@ function loadMedicalFiles(){
   })();
   return _medFilesPromise;
 }
+const MED_MIGRATED_KEY='medFilesMigrated';
 async function migrateRemainingBase64Files(){
   const base64Recs=[...db.visits,...db.prescriptions,...db.reports].filter(r=>isBase64DataUrl(r.file)&&r.id);
   if(!base64Recs.length)return;
   showToast(`Migrating ${base64Recs.length} file${base64Recs.length>1?'s':''} to storage...`);
-  for(const rec of base64Recs){
-    try{
-      const mime=mimeFromDataUrl(rec.file);
-      const ext=extFromMime(mime);
-      const path=`medical/${rec.id}.${ext}`;
-      const url=await supa.uploadFile(path,rec.file,mime);
-      await supa.upsert('bj_visits',{id:rec.id,file:url,file_name:rec.fileName||`attachment.${ext}`});
-      rec.file=url;
-    }catch(e){console.warn('Migration failed',rec.id,e);}
+  const CONCURRENCY=5;
+  let idx=0;
+  async function worker(){
+    while(idx<base64Recs.length){
+      const rec=base64Recs[idx++];
+      try{
+        const mime=mimeFromDataUrl(rec.file);
+        const ext=extFromMime(mime);
+        const path=`medical/${rec.id}.${ext}`;
+        const url=await supa.uploadFile(path,rec.file,mime);
+        await supa.upsert('bj_visits',{id:rec.id,file:url,file_name:rec.fileName||`attachment.${ext}`});
+        rec.file=url;
+      }catch(e){console.warn('Migration failed',rec.id,e);}
+    }
   }
-  cacheDB();renderMedical();
+  await Promise.all(Array.from({length:Math.min(CONCURRENCY,base64Recs.length)},worker));
+  cacheDB();
   showToast('Files migrated to storage ✓');
+}
+async function openMedicalPage(){
+  setMedTab('visits',document.querySelector('.med-tab-btn'));
+  if(localStorage.getItem(MED_MIGRATED_KEY)){loadMedicalFiles();return;}
+  if(window._medMigrationChecked)return;
+  window._medMigrationChecked=true;
+  const migEl=document.getElementById('medMigrating');
+  migEl.style.display='block';
+  await loadMedicalFiles();
+  await migrateRemainingBase64Files();
+  localStorage.setItem(MED_MIGRATED_KEY,'1');
+  migEl.style.display='none';
+  renderMedical();
 }
 
 function setMedTab(tab,btn){
