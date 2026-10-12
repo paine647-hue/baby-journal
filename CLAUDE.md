@@ -1,5 +1,32 @@
 # Baby Journal — Pregnancy Tracker
 
+## Session Onboarding
+Every new session reads, in order, before any change:
+1. index.html in full
+2. This file, for project context, live URL, known state
+3. `git log --oneline -10` for recent changes
+Never assume code matches a prior session's description. Read the
+actual current file.
+When local testing needed, start local server (python3 -m http.server
+or npx serve), give user http://localhost URL. Never tell user to open
+index.html as file://. PIN bypass and other hostname checks need real
+localhost origin.
+
+## Current Known State
+- Single file app: index.html (all HTML, CSS, JS in one file)
+- Backend: Supabase, project ref dwvtyctgawlshbjqyeqq. Tables:
+  bj_visits (medical records), bj_logs (daily logs), bj_weights
+  (weight entries)
+- Storage: bucket baby-journal, for file attachments
+- Auth: PIN via edge function verify-pin, PIN server-side only
+- Live URL: https://baby-journal-theta.vercel.app
+- Deployment: Vercel, auto-deploys on push to main
+- Known issue: 9 records in bj_visits still have raw base64 in file
+  column, migration to Storage pending (migrate-files.js script to
+  be run)
+- Migration flag localStorage key: `medFilesMigrated`
+  (const MED_MIGRATED_KEY, index.html:2290)
+
 ## Project
 Single-file PWA. Vanilla HTML + JS. Mobile-first (max 430px).
 Deployed on Vercel via GitHub. Database on Supabase.
