@@ -89,6 +89,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .hero-week{font-family:'Playfair Display',serif;font-size:64px;line-height:1;color:var(--rose)}
 .hero-week-sub{font-size:13px;color:var(--ink-light);margin-top:2px}
 .hero-fruit{font-size:56px;line-height:1;animation:fruitBob 3s ease-in-out infinite}
+.hero-fruit svg{width:56px;height:56px}
 .hero-size-line{font-size:14px;color:var(--ink-mid);margin-bottom:10px}
 .hero-stats-row{display:flex;gap:16px}
 .hero-stat{font-size:12px;color:var(--ink-mid)}
@@ -361,6 +362,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 @keyframes timelinePulse{0%,100%{opacity:.4;transform:scale(.9)}50%{opacity:1;transform:scale(1.1)}}
 .timeline-main{display:flex;align-items:center;gap:8px}
 .timeline-fruit{font-size:22px;flex-shrink:0}
+.timeline-fruit svg{width:22px;height:22px}
 .timeline-info{flex:1;min-width:0}
 .timeline-fruit-name{font-size:13px;font-weight:600;color:var(--ink)}
 .timeline-milestone{font-size:12px;color:var(--ink-mid);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1029,23 +1031,41 @@ async function loadDB(){
 }
 
 // ── WEEK DATA ──
+const ICON_GRAPE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 5V2l-5.89 5.89"/><circle cx="16.6" cy="15.89" r="3"/><circle cx="8.11" cy="7.4" r="3"/><circle cx="12.35" cy="11.65" r="3"/><circle cx="13.91" cy="5.85" r="3"/><circle cx="18.15" cy="10.09" r="3"/><circle cx="6.56" cy="13.2" r="3"/><circle cx="10.8" cy="17.44" r="3"/><circle cx="5" cy="19" r="3"/></svg>';
+const ICON_CHERRY='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17a5 5 0 0 0 10 0c0-2.76-2.5-5-5-3-2.5-2-5 .24-5 3Z"/><path d="M12 17a5 5 0 0 0 10 0c0-2.76-2.5-5-5-3-2.5-2-5 .24-5 3Z"/><path d="M7 14c3.22-2.91 4.29-8.75 5-12 1.66 2.38 4.94 9 5 12"/><path d="M22 9c-4.29 0-7.14-2.33-10-7 5.71 0 10 4.67 10 7Z"/></svg>';
+const ICON_CITRUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.66 17.67a1.08 1.08 0 0 1-.04 1.6A12 12 0 0 1 4.73 2.38a1.1 1.1 0 0 1 1.61-.04z"/><path d="M19.65 15.66A8 8 0 0 1 8.35 4.34"/><path d="m14 10-5.5 5.5"/><path d="M14 17.85V10H6.15"/></svg>';
+const ICON_EGG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 4 8 4 14a8 8 0 0 0 16 0c0-6-4-12-8-12"/></svg>';
+const ICON_BANANA='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13c3.5-2 8-2 10 2a5.5 5.5 0 0 1 8 5"/><path d="M5.15 17.89c5.52-1.52 8.65-6.89 7-12C11.55 4 11.5 2 13 2c3.22 0 5 5.5 5 8 0 6.5-4.2 12-10.49 12C5.11 22 2 22 2 20c0-1.5 1.14-1.55 3.15-2.11Z"/></svg>';
+const ICON_CARROT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 16a1 1 0 0 0-7-7q-4 4-5.987 12.385a.5.5 0 0 0 .602.602Q11 20 15 16l-3-3"/><path d="M15 9q4 4 7 0-3-4-7 0 4-4 0-7-4 3 0 7"/><path d="m8 15-2.58-2.58"/></svg>';
+const ICON_APPLE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.528V3a1 1 0 0 1 1-1h0"/><path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21"/></svg>';
+const ICON_POT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"/><path d="m4 8 16-4"/><path d="m8.86 6.78-.45-1.81a2 2 0 0 1 1.45-2.43l1.94-.48a2 2 0 0 1 2.43 1.46l.45 1.8"/></svg>';
+const ICON_CUMIN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2.5 3 4 6.5 4 9s-1.5 6-4 9c-2.5-3-4-6-4-9s1.5-6 4-9Z"/><path d="M12 6v12"/></svg>';
+const ICON_STRAWBERRY='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8c-4.5 0-8 2.3-8 6.5C4 19 7.5 22 12 22s8-3 8-7.5C20 10.3 16.5 8 12 8Z"/><path d="M7.5 8 6 5M12 8V4M16.5 8 18 5"/><circle cx="9" cy="13" r=".6" fill="currentColor" stroke="none"/><circle cx="15" cy="13" r=".6" fill="currentColor" stroke="none"/><circle cx="12" cy="17" r=".6" fill="currentColor" stroke="none"/><circle cx="9" cy="18" r=".6" fill="currentColor" stroke="none"/><circle cx="15" cy="18" r=".6" fill="currentColor" stroke="none"/></svg>';
+const ICON_AVOCADO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c3 2 6 6 6 11a6 6 0 0 1-12 0c0-5 3-9 6-11Z"/><circle cx="12" cy="14" r="3"/></svg>';
+const ICON_DRUMSTICK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20c2-10 6-16 10-17 1 1 1 2 0 3-4 3-7 9-7 14-1 1-2 1-3 0Z"/><path d="M8 7c3-1 7-2 9 0"/></svg>';
+const ICON_TENNISBALL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M4.5 7.5c3 2 4 4 4 4.5s-1 2.5-4 4.5"/><path d="M19.5 7.5c-3 2-4 4-4 4.5s1 2.5 4 4.5"/></svg>';
+const ICON_COCONUT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><circle cx="9" cy="10" r=".6" fill="currentColor" stroke="none"/><circle cx="13" cy="8.5" r=".6" fill="currentColor" stroke="none"/><circle cx="11" cy="7" r=".6" fill="currentColor" stroke="none"/></svg>';
+const ICON_BASKETBALL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/><path d="M5.5 5.5c3 3 3 10 0 13M18.5 5.5c-3 3-3 10 0 13"/></svg>';
+const ICON_PILLOW='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 12h16"/></svg>';
+const ICON_PRESSURECOOKER='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16v5a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3Z"/><path d="M3 12h18"/><path d="M9 12V7a3 3 0 0 1 6 0v5"/><path d="M12 4v3"/><circle cx="12" cy="3" r="1" fill="currentColor" stroke="none"/></svg>';
 const weekData=[
-  {w:1,fruit:'🤍',name:'poppy seed',h:'0.1 cm',wt:'<1g',hr:'--'},{w:2,fruit:'🤍',name:'sesame seed',h:'0.2 cm',wt:'<1g',hr:'--'},{w:3,fruit:'🤍',name:'poppy seed',h:'0.2 cm',wt:'<1g',hr:'--'},
-  {w:4,fruit:'🫐',name:'blueberry',h:'0.4 cm',wt:'<1g',hr:'90-110'},{w:5,fruit:'🫘',name:'apple seed',h:'0.5 cm',wt:'<1g',hr:'100-140'},{w:6,fruit:'🟤',name:'sweet pea',h:'0.6 cm',wt:'<1g',hr:'100-160'},
-  {w:7,fruit:'🍇',name:'grape',h:'1.0 cm',wt:'<1g',hr:'90-160'},{w:8,fruit:'🫑',name:'raspberry',h:'1.6 cm',wt:'1g',hr:'150-170'},{w:9,fruit:'🍒',name:'cherry',h:'2.3 cm',wt:'2g',hr:'170-200'},
-  {w:10,fruit:'🍓',name:'strawberry',h:'3.1 cm',wt:'4g',hr:'160-180'},{w:11,fruit:'🍋',name:'lime',h:'4.1 cm',wt:'7g',hr:'150-170'},{w:12,fruit:'🥝',name:'kiwi',h:'5.4 cm',wt:'14g',hr:'150-180'},
-  {w:13,fruit:'🫛',name:'lemon',h:'7.4 cm',wt:'23g',hr:'145-165'},{w:14,fruit:'🍑',name:'peach',h:'8.7 cm',wt:'43g',hr:'145-165'},{w:15,fruit:'🍊',name:'orange',h:'10.1 cm',wt:'70g',hr:'140-160'},
-  {w:16,fruit:'🥑',name:'avocado',h:'11.6 cm',wt:'100g',hr:'140-160'},{w:17,fruit:'🍐',name:'pear',h:'13.0 cm',wt:'140g',hr:'140-160'},{w:18,fruit:'🥭',name:'mango',h:'14.2 cm',wt:'190g',hr:'140-160'},
-  {w:19,fruit:'🌽',name:'corn cob',h:'15.3 cm',wt:'240g',hr:'140-160'},{w:20,fruit:'🍌',name:'banana',h:'25.6 cm',wt:'300g',hr:'140-160'},{w:21,fruit:'🥕',name:'carrot',h:'26.7 cm',wt:'360g',hr:'140-160'},
-  {w:22,fruit:'🍆',name:'eggplant',h:'27.8 cm',wt:'430g',hr:'140-160'},{w:23,fruit:'🌽',name:'large corn',h:'28.9 cm',wt:'500g',hr:'140-160'},{w:24,fruit:'🌿',name:'corn ear',h:'30.0 cm',wt:'600g',hr:'140-160'},
-  {w:25,fruit:'🥦',name:'cauliflower',h:'34.6 cm',wt:'660g',hr:'140-160'},{w:26,fruit:'🥬',name:'cabbage',h:'35.6 cm',wt:'760g',hr:'140-160'},{w:27,fruit:'🥦',name:'broccoli',h:'36.6 cm',wt:'875g',hr:'140-160'},
-  {w:28,fruit:'🍈',name:'pomelo',h:'38.6 cm',wt:'1.4 kg',hr:'145-165'},{w:29,fruit:'🎃',name:'butternut squash',h:'38.6 cm',wt:'1.5 kg',hr:'145-165'},{w:30,fruit:'🥥',name:'coconut',h:'39.9 cm',wt:'1.7 kg',hr:'145-165'},
-  {w:31,fruit:'🍍',name:'pineapple',h:'41.1 cm',wt:'1.9 kg',hr:'145-165'},{w:32,fruit:'🎃',name:'large squash',h:'42.4 cm',wt:'2.1 kg',hr:'145-165'},{w:33,fruit:'🍍',name:'large pineapple',h:'43.7 cm',wt:'2.4 kg',hr:'145-165'},
-  {w:34,fruit:'🍈',name:'cantaloupe',h:'45.0 cm',wt:'2.6 kg',hr:'145-165'},{w:35,fruit:'🍑',name:'honeydew melon',h:'46.2 cm',wt:'2.9 kg',hr:'145-165'},{w:36,fruit:'🥬',name:'romaine head',h:'47.4 cm',wt:'3.0 kg',hr:'145-165'},
-  {w:37,fruit:'🌿',name:'winter melon',h:'48.6 cm',wt:'3.2 kg',hr:'145-165'},{w:38,fruit:'🎃',name:'pumpkin',h:'49.8 cm',wt:'3.4 kg',hr:'145-165'},{w:39,fruit:'🍉',name:'small watermelon',h:'50.7 cm',wt:'3.5 kg',hr:'145-165'},
+  {w:1,fruit:'🤍',name:'poppy seed',h:'0.1 cm',wt:'<1g',hr:'--'},{w:2,fruit:'🤍',icon:ICON_CUMIN,name:'cumin seed',h:'0.2 cm',wt:'<1g',hr:'--'},{w:3,fruit:'🤍',name:'mustard seed',h:'0.2 cm',wt:'<1g',hr:'--'},
+  {w:4,fruit:'🫛',name:'green gram',h:'0.4 cm',wt:'<1g',hr:'90-110'},{w:5,fruit:'🫘',name:'chickpea',h:'0.5 cm',wt:'<1g',hr:'100-140'},{w:6,fruit:'🟢',name:'green pea',h:'0.6 cm',wt:'<1g',hr:'100-160'},
+  {w:7,fruit:'🍇',icon:ICON_GRAPE,name:'grape',h:'1.0 cm',wt:'<1g',hr:'90-160'},{w:8,fruit:'🫐',name:'jamun',h:'1.6 cm',wt:'1g',hr:'150-170'},{w:9,fruit:'🍒',icon:ICON_CHERRY,name:'cherry',h:'2.3 cm',wt:'2g',hr:'170-200'},
+  {w:10,fruit:'🍓',icon:ICON_STRAWBERRY,name:'strawberry',h:'3.1 cm',wt:'4g',hr:'160-180'},{w:11,fruit:'🍋',icon:ICON_CITRUS,name:'lime',h:'4.1 cm',wt:'7g',hr:'150-170'},{w:12,fruit:'🥝',name:'kiwi',h:'5.4 cm',wt:'14g',hr:'150-180'},
+  {w:13,fruit:'🫛',icon:ICON_EGG,name:'egg',h:'7.4 cm',wt:'23g',hr:'145-165'},{w:14,fruit:'🍑',name:'peach',h:'8.7 cm',wt:'43g',hr:'145-165'},{w:15,fruit:'🍊',name:'orange',h:'10.1 cm',wt:'70g',hr:'140-160'},
+  {w:16,fruit:'🥑',icon:ICON_AVOCADO,name:'avocado',h:'11.6 cm',wt:'100g',hr:'140-160'},{w:17,fruit:'🍐',name:'pear',h:'13.0 cm',wt:'140g',hr:'140-160'},{w:18,fruit:'🥭',name:'mango',h:'14.2 cm',wt:'190g',hr:'140-160'},
+  {w:19,fruit:'🌽',icon:ICON_DRUMSTICK,name:'drumstick',h:'15.3 cm',wt:'240g',hr:'140-160'},{w:20,fruit:'🍌',icon:ICON_BANANA,name:'banana',h:'25.6 cm',wt:'300g',hr:'140-160'},{w:21,fruit:'🥕',icon:ICON_CARROT,name:'carrot',h:'26.7 cm',wt:'360g',hr:'140-160'},
+  {w:22,fruit:'🍆',name:'brinjal',h:'27.8 cm',wt:'430g',hr:'140-160'},{w:23,fruit:'🥒',name:'cucumber',h:'28.9 cm',wt:'500g',hr:'140-160'},{w:24,fruit:'🫑',name:'capsicum',h:'30.0 cm',wt:'600g',hr:'140-160'},
+  {w:25,fruit:'🥦',icon:ICON_TENNISBALL,name:'tennis ball',h:'34.6 cm',wt:'660g',hr:'140-160'},{w:26,fruit:'🥬',name:'cabbage',h:'35.6 cm',wt:'760g',hr:'140-160'},{w:27,fruit:'🥦',icon:ICON_APPLE,name:'apple',h:'36.6 cm',wt:'875g',hr:'140-160'},
+  {w:28,fruit:'🍈',name:'papaya',h:'38.6 cm',wt:'1.4 kg',hr:'145-165'},{w:29,fruit:'🎃',icon:ICON_COCONUT,name:'coconut',h:'38.6 cm',wt:'1.5 kg',hr:'145-165'},{w:30,fruit:'⚽',name:'football',h:'39.9 cm',wt:'1.7 kg',hr:'145-165'},
+  {w:31,fruit:'🍍',name:'pineapple',h:'41.1 cm',wt:'1.9 kg',hr:'145-165'},{w:32,fruit:'🎃',icon:ICON_BASKETBALL,name:'basketball',h:'42.4 cm',wt:'2.1 kg',hr:'145-165'},{w:33,fruit:'🍍',icon:ICON_PILLOW,name:'throw pillow',h:'43.7 cm',wt:'2.4 kg',hr:'145-165'},
+  {w:34,fruit:'🍈',icon:ICON_PRESSURECOOKER,name:'pressure cooker',h:'45.0 cm',wt:'2.6 kg',hr:'145-165'},{w:35,fruit:'📺',name:'21 inch TV',h:'46.2 cm',wt:'2.9 kg',hr:'145-165'},{w:36,fruit:'🎃',name:'pumpkin',h:'47.4 cm',wt:'3.0 kg',hr:'145-165'},
+  {w:37,fruit:'🌿',icon:ICON_POT,name:'cooking pot',h:'48.6 cm',wt:'3.2 kg',hr:'145-165'},{w:38,fruit:'🍕',name:'large pizza',h:'49.8 cm',wt:'3.4 kg',hr:'145-165'},{w:39,fruit:'🕰️',name:'large wall clock',h:'50.7 cm',wt:'3.5 kg',hr:'145-165'},
   {w:40,fruit:'🍉',name:'watermelon',h:'51.2 cm',wt:'3.6 kg',hr:'145-165'}
 ];
 function getWeekInfo(w){return weekData.find(d=>d.w===w)||weekData[weekData.length-1]}
+function getIconColor(w){return w<=12?'var(--rose)':w<=27?'var(--sage)':'var(--plum)'}
 
 // ── GARBH SANSKAR ──
 const garbhSanskar=[
@@ -1320,7 +1340,8 @@ function renderToday(){
   document.getElementById('todayTitle').textContent='Week '+week;
   document.getElementById('heroWeek').textContent=completedWeeks;
   document.getElementById('heroDays').textContent='Week '+completedWeeks+' of 40 · '+(days%7)+' days';
-  document.getElementById('fruitEmoji').textContent=info.fruit;
+  const fruitEl=document.getElementById('fruitEmoji');
+  if(info.icon){fruitEl.innerHTML=info.icon;fruitEl.style.color=getIconColor(week);}else{fruitEl.textContent=info.fruit;fruitEl.style.color='';}
   document.getElementById('heroSizeLine').textContent='Baby is the size of '+info.name;
   document.getElementById('babyH').textContent=info.h;
   document.getElementById('babyW').textContent=info.wt;
@@ -2127,7 +2148,7 @@ function renderBabyJourney(){
       <div class="timeline-content">
         ${isCurrent?`<div class="timeline-current-pill"><span class="pulse-dot"></span><span style="font-size:12px;font-weight:600;color:var(--rose)">You are here</span></div>`:''}
         <div class="timeline-main">
-          <span class="timeline-fruit">${wd.fruit}</span>
+          <span class="timeline-fruit"${wd.icon?` style="color:${getIconColor(w)}"`:''}>${wd.icon||wd.fruit}</span>
           <div class="timeline-info">
             <div class="timeline-fruit-name">${wd.name}</div>
             <div class="timeline-milestone">${ml.m}</div>
