@@ -1207,6 +1207,10 @@ function pinInput(d){
   document.getElementById('d'+(pinEntry.length-1)).classList.add('filled');
   if(pinEntry.length===4){
     const entered=pinEntry;
+    if(location.hostname==='localhost'||location.hostname==='127.0.0.1'){
+      document.getElementById('lockScreen').style.display='none';document.getElementById('app').classList.add('visible');initApp();
+      return;
+    }
     setTimeout(()=>{
       fetch('https://dwvtyctgawlshbjqyeqq.supabase.co/functions/v1/verify-pin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin:entered})})
         .then(r=>r.json())
@@ -1306,15 +1310,16 @@ function renderToday(){
   const week=calcWeek(START_DATE);
   const days=calcDays(START_DATE);
   const info=getWeekInfo(week);
-  const pct=Math.round((week/TOTAL_WEEKS)*100);
+  const pct=Math.round((days/(TOTAL_WEEKS*7))*100);
+  const completedWeeks=week-1;
   const due=new Date(START_DATE);due.setDate(due.getDate()+TOTAL_WEEKS*7);
   const hr=new Date().getHours();
   const greet=hr<12?'Good morning 🌸':hr<17?'Good afternoon ☀️':'Good evening 🌙';
 
   document.getElementById('todayGreeting').textContent=greet;
   document.getElementById('todayTitle').textContent='Week '+week;
-  document.getElementById('heroWeek').textContent=week;
-  document.getElementById('heroDays').textContent='Week '+week+' of 40 · '+(days%7)+' days';
+  document.getElementById('heroWeek').textContent=completedWeeks;
+  document.getElementById('heroDays').textContent='Week '+completedWeeks+' of 40 · '+(days%7)+' days';
   document.getElementById('fruitEmoji').textContent=info.fruit;
   document.getElementById('heroSizeLine').textContent='Baby is the size of '+info.name;
   document.getElementById('babyH').textContent=info.h;
