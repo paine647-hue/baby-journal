@@ -589,7 +589,9 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     <div class="input-group">
       <label class="input-label">Attach report (optional)</label>
       <input type="file" id="vFile" multiple accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'visit')">
+      <input type="file" id="vCam" accept="image/*" capture="environment" style="display:none" onchange="handleFile(this,'visit')">
       <button class="save-btn secondary" onclick="document.getElementById('vFile').click()">📎 Attach Files (multiple)</button>
+      <button class="save-btn secondary" style="margin-top:8px" onclick="document.getElementById('vCam').click()">Take a photo</button>
       <div id="vFileName" style="font-size:11px;color:var(--ink-light)"></div>
     </div>
     <div class="reminder-toggle">
@@ -609,7 +611,9 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     <div class="input-group"><label class="input-label">Notes</label><textarea class="input-field" id="pNotes" rows="2" placeholder="Medications prescribed..."></textarea></div>
     <div class="input-group">
       <input type="file" id="pFile" multiple accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'presc')">
+      <input type="file" id="pCam" accept="image/*" capture="environment" style="display:none" onchange="handleFile(this,'presc')">
       <button class="save-btn secondary" onclick="document.getElementById('pFile').click()">📎 Attach Files (multiple)</button>
+      <button class="save-btn secondary" style="margin-top:8px" onclick="document.getElementById('pCam').click()">Take a photo</button>
       <div id="pFileName" style="font-size:11px;color:var(--ink-light)"></div>
     </div>
     <button class="save-btn" onclick="savePresc()">Save</button>
@@ -625,7 +629,9 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     <div class="input-group"><label class="input-label">Notes</label><textarea class="input-field" id="rNotes" rows="2"></textarea></div>
     <div class="input-group">
       <input type="file" id="rFile" multiple accept="image/*,.pdf" style="display:none" onchange="handleFile(this,'report')">
+      <input type="file" id="rCam" accept="image/*" capture="environment" style="display:none" onchange="handleFile(this,'report')">
       <button class="save-btn secondary" onclick="document.getElementById('rFile').click()">📎 Attach Files (multiple)</button>
+      <button class="save-btn secondary" style="margin-top:8px" onclick="document.getElementById('rCam').click()">Take a photo</button>
       <div id="rFileName" style="font-size:11px;color:var(--ink-light)"></div>
     </div>
     <button class="save-btn" onclick="saveReport()">Save</button>
@@ -790,6 +796,8 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
         <div style="font-size:12px;color:var(--ink-light)">Tap to add photos</div>
         <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this)">
       </div>
+      <input type="file" id="photoCamInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(this)">
+      <button type="button" class="save-btn secondary" style="margin-top:8px" onclick="document.getElementById('photoCamInput').click()">Take a photo</button>
       <div class="photo-preview-row" id="photoPreviewRow"></div>
     </div>
     <div class="input-group"><label class="input-label">Weight today (kg)</label><input class="input-field" type="number" id="logWeight" step="0.1" placeholder="e.g. 62.5"></div>
