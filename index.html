@@ -905,7 +905,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 
 <script>
 // ── CONFIG ──
-const START_DATE=new Date('2026-07-27');
+const START_DATE=new Date('2026-07-27T00:00:00');
 const TOTAL_WEEKS=40;
 const SUPABASE_URL='https://dwvtyctgawlshbjqyeqq.supabase.co';
 const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR3dnR5Y3RnYXdsc2hianF5ZXFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyNjYzOTgsImV4cCI6MjEwNjg0MjM5OH0.AguAs9-2Ftj3iFJa67T01QBreJBllazCvbkUi9lP8rc';
@@ -1207,8 +1207,9 @@ const watchAvoid=[
 // ── UTILITIES ──
 function calcWeek(d){const days=Math.floor((new Date()-d)/(1000*60*60*24));return Math.max(1,Math.min(Math.floor(days/7)+1,40))}
 function calcDays(d){return Math.floor((new Date()-d)/(1000*60*60*24))}
+function parseKey(d){return typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)?new Date(d+'T00:00:00'):new Date(d)}
 function formatDate(d){
-  const dt=new Date(d);
+  const dt=parseKey(d);
   if(isNaN(dt))return d||'';
   const dd=String(dt.getDate()).padStart(2,'0');
   const mm=String(dt.getMonth()+1).padStart(2,'0');
@@ -1216,13 +1217,13 @@ function formatDate(d){
   return `${dd}/${mm}/${yyyy}`;
 }
 function formatDateShort(d){
-  const dt=new Date(d);
+  const dt=parseKey(d);
   if(isNaN(dt))return d||'';
   const dd=String(dt.getDate()).padStart(2,'0');
   const mm=String(dt.getMonth()+1).padStart(2,'0');
   return `${dd}/${mm}`;
 }
-function dateKey(d){const dt=d||new Date();return dt.toISOString().split('T')[0]}
+function dateKey(d){const dt=d||new Date();return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0')}
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 function openModal(id){document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
@@ -1400,9 +1401,9 @@ function renderToday(){
     <div class="gs-music">🎵 ${gs.music}</div>`;
 
   // Upcoming visits (now at bottom)
-  const up=(db.visits||[]).filter(v=>new Date(v.date)>=new Date()).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,2);
+  const up=(db.visits||[]).filter(v=>parseKey(v.date)>=new Date()).sort((a,b)=>parseKey(a.date)-parseKey(b.date)).slice(0,2);
   document.getElementById('upcomingVisits').innerHTML=up.length?up.map(v=>{
-    const du=Math.ceil((new Date(v.date)-new Date())/(1000*60*60*24));
+    const du=Math.ceil((parseKey(v.date)-new Date())/(1000*60*60*24));
     return`<div class="scan-card"><span class="scan-icon">🩺</span><div class="scan-info"><div class="scan-name">${v.type}</div><div class="scan-date">Dr. ${v.doctor||'--'}</div></div><span class="scan-badge ${du<=7?'soon':'upcoming'}">${du<=7?'In '+du+' days':formatDate(v.date)}</span></div>`;
   }).join(''):'<p class="no-data">No upcoming visits</p>';
 
@@ -2110,10 +2111,10 @@ function setGuideTab(tab,btn){
 function renderWeeklyGuide(){
   const week=calcWeek(START_DATE);
   const g=getWeekGuide(week);
-  const pct=Math.round((week/40)*100);
+  const pct=Math.round((calcDays(START_DATE)/(TOTAL_WEEKS*7))*100);
   document.getElementById('guideWeekly').innerHTML=`
     <div class="week-progress-pill">
-      <span class="week-progress-label">Week ${week} of 40</span>
+      <span class="week-progress-label">Week ${week-1} of 40</span>
       <div class="week-progress-bar"><div class="week-progress-fill" style="width:${pct}%"></div></div>
     </div>
     <div class="week-guide-card">
@@ -2558,8 +2559,8 @@ function renderVisits(){
   const sorted=(db.visits||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
   el.innerHTML=`<button class="save-btn" onclick="openVisitModal()">+ Add Visit or Scan</button>`+
   (sorted.length?`<div class="med-timeline">${sorted.map((v,i)=>{
-    const wk=Math.floor((new Date(v.date)-START_DATE)/(1000*60*60*24*7))+1;
-    const wkL=wk>=1&&wk<=40?'Week '+wk:'';
+    const wk=Math.floor((parseKey(v.date)-START_DATE)/(1000*60*60*24*7));
+    const wkL=wk>=0&&wk<=39?'Week '+wk:'';
     return`<div class="med-timeline-item" style="animation-delay:${i*50}ms"><div class="med-timeline-dot visit"></div><div class="visit-card"><div class="visit-header"><div><div class="visit-name">${v.type}</div><div class="visit-date">${formatDate(v.date)}${v.doctor?' · Dr. '+v.doctor:''}</div>${wkL?`<span class="visit-week-badge">${wkL}</span>`:''}</div></div>${v.notes?`<div class="visit-notes">${v.notes}</div>`:''}${remarksHTML(v,'visit')}${fileActionsHTML(v.file,v.fileName,'visit',v.id)}</div></div>`;
   }).join('')}</div>`:'<p class="no-data">No visits logged yet</p>');
 }
@@ -2760,7 +2761,7 @@ function renderGallery(){
   const byMonth={};
   keys.forEach(k=>{const m=k.substring(0,7);if(!byMonth[m])byMonth[m]=[];byMonth[m].push(k)});
   el.innerHTML=Object.entries(byMonth).map(([month,dates])=>{
-    const label=new Date(month+'-01').toLocaleDateString('en-IN',{month:'long',year:'numeric'});
+    const label=new Date(month+'-01T00:00:00').toLocaleDateString('en-IN',{month:'long',year:'numeric'});
     const items=dates.flatMap(date=>(gallery[date]||[]).map(src=>({src,date})));
     return`<div class="gallery-month"><div class="gallery-month-label">${label}</div><div class="gallery-grid">${items.map(item=>`<div class="gallery-item" onclick="openLightbox('${item.src}','${item.date}')"><img src="${item.src}" loading="lazy"><span class="gallery-date">${formatDateShort(item.date)}</span></div>`).join('')}</div></div>`;
   }).join('');
@@ -2816,7 +2817,7 @@ function renderSummary(){
   const week=calcWeek(START_DATE);
   const weekNums=[];for(let i=Math.max(1,week-3);i<=week;i++)weekNums.push(i);
   el.innerHTML=`<div class="section-title">Weekly analysis</div>
-  <div class="summary-week-selector">${weekNums.map(w=>`<button class="swk-pill ${w===week?'active':''}" onclick="renderSummaryWeek(${w},this)">Wk ${w}</button>`).join('')}</div>
+  <div class="summary-week-selector">${weekNums.map(w=>`<button class="swk-pill ${w===week?'active':''}" onclick="renderSummaryWeek(${w},this)">Wk ${w-1}</button>`).join('')}</div>
   <div id="summaryContent"></div>
   <button class="export-btn" onclick="exportCSV()">📥 Export all data (CSV)</button>`;
   renderSummaryWeek(week,null);
