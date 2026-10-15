@@ -907,7 +907,8 @@ const BUCKET='baby-journal';
 const supa={
   async get(t,cols='*'){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=${cols}&order=created_at.asc`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)throw new Error(await r.text());return r.json()},
   async getById(t,id,cols='*'){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=${cols}&id=eq.${id}`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)return[];return r.json()},
-  async upsert(t,row){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}`,{method:'POST',headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return r.json()},
+  async getByDate(t,key){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=*&date_key=eq.${encodeURIComponent(key)}&limit=1`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)throw new Error(await r.text());return r.json()},
+  async upsert(t,row,conflict){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}${conflict?`?on_conflict=${conflict}`:''}`,{method:'POST',headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return r.json()},
   async uploadFile(path,dataUrl,mimeType){
     // Convert base64 dataUrl to binary blob
     const base64=dataUrl.split(',')[1];
@@ -1337,7 +1338,7 @@ function renderToday(){
   const greet=hr<12?'Good morning 🌸':hr<17?'Good afternoon ☀️':'Good evening 🌙';
 
   document.getElementById('todayGreeting').textContent=greet;
-  document.getElementById('todayTitle').textContent='Week '+week;
+  document.getElementById('todayTitle').textContent='Week '+completedWeeks;
   document.getElementById('heroWeek').textContent=completedWeeks;
   document.getElementById('heroDays').textContent='Week '+completedWeeks+' of 40 · '+(days%7)+' days';
   const fruitEl=document.getElementById('fruitEmoji');
@@ -1347,7 +1348,7 @@ function renderToday(){
   document.getElementById('babyW').textContent=info.wt;
   document.getElementById('babyHR').textContent=info.hr==='--'?'--':info.hr+' bpm';
   document.getElementById('progressPct').textContent=pct+'%';
-  document.getElementById('progressLabel').textContent='Week '+week+' of 40';
+  document.getElementById('progressLabel').textContent='Week '+completedWeeks+' of 40';
   document.getElementById('dueDate').textContent=formatDate(due);
 
   const circ=2*Math.PI*20;
@@ -1580,6 +1581,7 @@ async function handlePhotoUpload(input){
 async function saveLog(){
   const key=dateKey(logDate);
   if(!db.logs)db.logs={};
+  const prev=db.logs[key];
   const existingId=db.logs[key]?.id;
   const row={
     date_key:key,mood:selectedMoods.join(','),
@@ -1614,13 +1616,27 @@ async function saveLog(){
   const btn=document.getElementById('saveLogBtn');
   btn.textContent='Saving...';
   try{
-    const saved=await supa.upsert('bj_logs',row);
+    // only fields changed since this device's last save overwrite the server row
+    const blank=v=>v===''||v==null||v===false||(Array.isArray(v)&&!v.length);
+    const changed=k=>prev?JSON.stringify(row[k])!==JSON.stringify(prev[k]):!blank(row[k]);
+    const[srv]=await supa.getByDate('bj_logs',key);
+    let out=row;
+    if(srv){
+      out={...srv};
+      for(const k of Object.keys(row))if(k!=='date_key'&&changed(k))out[k]=row[k];
+      if(changed('photos'))out.photos=[...new Set([...(srv.photos||[]),...row.photos])];
+      delete out.created_at;delete out.updated_at;
+    }
+    const saved=await supa.upsert('bj_logs',out);
     if(saved&&saved[0])db.logs[key].id=saved[0].id;
-    if(row.weight)await supa.upsert('bj_weights',{date:key,val:row.weight});
+    if(row.weight)await supa.upsert('bj_weights',{date:key,val:row.weight},'date');
     cacheDB();
     flashSaveBtn(btn,'Saved','Save log');
     showToast('Log saved');
-  }catch(e){showToast('Saved locally');btn.textContent='Save log';console.warn(e)}
+  }catch(e){
+    console.error('saveLog sync failed',e,'message:',e&&e.message,'status:',e&&e.status);
+    showToast('Saved locally');btn.textContent='Save log';
+  }
 }
 
 // ── WELLNESS ──
@@ -2647,11 +2663,10 @@ async function saveWeight(){
   if(!date||!val){showToast('Fill date and weight');return}
   if(!db.weights)db.weights=[];
   const ei=db.weights.findIndex(w=>w.date===date);
-  const existingId=ei>=0?db.weights[ei].id:null;
   if(ei>=0)db.weights[ei].val=val;else db.weights.push({date,val});
   db.weights.sort((a,b)=>a.date.localeCompare(b.date));
   cacheDB();closeModal('weightModal');renderWeight();showToast('Saving...');
-  try{await supa.upsert('bj_weights',{date,val,...(existingId?{id:existingId}:{})});showToast('Weight logged ✓')}catch(e){showToast('Saved locally')}
+  try{await supa.upsert('bj_weights',{date,val},'date');showToast('Weight logged ✓')}catch(e){console.error('saveWeight sync failed',e);showToast('Saved locally')}
 }
 
 function renderWeight(){
