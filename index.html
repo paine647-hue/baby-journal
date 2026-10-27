@@ -55,7 +55,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 
 /* COMMON COMPONENTS */
 .page-header{margin-bottom:20px;position:relative}
-.sync-dot{position:absolute;top:4px;right:0;font-size:10px;color:var(--rose);font-weight:500;animation:syncPulse 1.2s ease-in-out infinite}
+.sync-dot{position:absolute;top:4px;right:50px;font-size:10px;color:var(--rose);font-weight:500;animation:syncPulse 1.2s ease-in-out infinite}
 @keyframes syncPulse{0%,100%{opacity:.35}50%{opacity:1}}
 .page-eyebrow{font-size:12px;color:var(--ink-light);margin-bottom:2px}
 .page-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:600}
@@ -220,6 +220,25 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 
 /* ── WELLNESS PAGE ── */
 .wellness-tabs{display:flex;gap:8px;margin-bottom:16px}
+.gear-btn{position:absolute;top:0;right:0;width:40px;height:40px;border:none;border-radius:50%;background:var(--white);box-shadow:var(--shadow);color:var(--ink-mid);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,transform .1s}
+.gear-btn:active{background:var(--rose-pale);transform:scale(.94)}
+.gear-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.advice-card{background:var(--white);border-radius:var(--radius-sm);padding:14px 16px;box-shadow:var(--shadow);margin-bottom:14px}
+.advice-title{font-size:13px;font-weight:600;color:var(--ink-mid);margin-bottom:8px}
+.advice-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--sage-pale)}
+.advice-row:first-of-type{border-top:none}
+.advice-text{flex:1;font-size:13px;color:var(--ink);line-height:1.4;min-width:0;overflow-wrap:anywhere}
+.advice-yn{display:flex;gap:6px;flex-shrink:0}
+.advice-yn button{padding:6px 14px;border-radius:20px;border:1.5px solid var(--sage-light);background:var(--white);color:var(--sage);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:background .15s,color .15s,transform .1s}
+.advice-yn button.no{border-color:var(--rose-mid);color:var(--rose)}
+.advice-yn button:active{transform:scale(.94)}
+.advice-yn button.yes.on{background:var(--sage);border-color:var(--sage);color:var(--white)}
+.advice-yn button.no.on{background:var(--rose);border-color:var(--rose);color:var(--white)}
+.advice-del{border:none;background:none;color:var(--ink-light);font-size:16px;cursor:pointer;padding:4px 6px;border-radius:8px}
+.advice-del:active{background:var(--rose-pale)}
+.advice-add{display:flex;gap:8px;margin-bottom:14px}
+.advice-add .input-field{flex:1}
+.advice-add .save-btn{width:auto;padding:0 18px;margin-bottom:0}
 .wtab-btn{flex:1;padding:8px 4px;border-radius:20px;border:1.5px solid var(--rose-mid);background:var(--white);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--ink-mid);cursor:pointer;transition:all .2s}
 .wtab-btn.active{background:var(--rose);border-color:var(--rose);color:var(--white)}
 .today-practice-card{background:var(--sage);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;color:var(--white)}
@@ -648,6 +667,15 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
   </div>
 </div>
 
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
+    <h2 class="modal-title">Settings</h2>
+    <div class="input-group"><label class="input-label">Pregnancy start date</label><input class="input-field" type="date" id="startDateInput"></div>
+    <button class="save-btn" onclick="saveStartDate()">Save</button>
+  </div>
+</div>
+
 <!-- APP -->
 <div id="app">
 
@@ -657,6 +685,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
       <div class="page-eyebrow" id="todayGreeting">Good morning 🌸</div>
       <div class="page-title" id="todayTitle">Week --</div>
       <span class="sync-dot" id="syncDot" style="display:none">Syncing...</span>
+      <button class="gear-btn" onclick="openSettings()" aria-label="Settings"><svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
     </div>
     <div class="hero-card" id="heroCard">
       <div class="hero-top">
@@ -711,6 +740,7 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     </div>
     <div class="section-title">Today's Do's & Don'ts</div>
     <div class="dos-donts-row" id="dosDontsRow"></div>
+    <div id="adviceToday"></div>
     <div class="section-title">Garbh Sanskar</div>
     <div class="gs-card" id="gsCard"></div>
     <div class="section-title">Upcoming visits</div>
@@ -825,9 +855,11 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     <div class="wellness-tabs">
       <button class="wtab-btn active" onclick="setWellnessTab('yoga',this)">🧘 Yoga</button>
       <button class="wtab-btn" onclick="setWellnessTab('exercise',this)">🏃 Exercise</button>
+      <button class="wtab-btn" onclick="setWellnessTab('advice',this)">💬 Advice</button>
     </div>
     <div id="wellnessYoga"></div>
     <div id="wellnessExercise" style="display:none"></div>
+    <div id="wellnessAdvice" style="display:none"></div>
     <div id="wellnessSummary"></div>
   </div>
 
@@ -905,7 +937,10 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 
 <script>
 // ── CONFIG ──
-const START_DATE=new Date('2026-07-27T00:00:00');
+const DEFAULT_START='2026-07-27';
+const START_KEY='bjStartDate';
+// let: Settings can change it at runtime; every reader uses it at call time
+let START_DATE=new Date((()=>{try{const s=localStorage.getItem(START_KEY);return /^\d{4}-\d{2}-\d{2}$/.test(s)?s:DEFAULT_START}catch(e){return DEFAULT_START}})()+'T00:00:00');
 const TOTAL_WEEKS=40;
 const SUPABASE_URL='https://dwvtyctgawlshbjqyeqq.supabase.co';
 const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR3dnR5Y3RnYXdsc2hianF5ZXFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyNjYzOTgsImV4cCI6MjEwNjg0MjM5OH0.AguAs9-2Ftj3iFJa67T01QBreJBllazCvbkUi9lP8rc';
@@ -913,7 +948,7 @@ const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 // ── SUPABASE ──
 const BUCKET='baby-journal';
 const supa={
-  async get(t,cols='*'){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=${cols}&order=created_at.asc`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)throw new Error(await r.text());return r.json()},
+  async get(t,cols='*',order='created_at.asc'){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=${cols}${order?`&order=${order}`:''}`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)throw new Error(await r.text());return r.json()},
   async getById(t,id,cols='*'){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=${cols}&id=eq.${id}`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)return[];return r.json()},
   async getByDate(t,key){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?select=*&date_key=eq.${encodeURIComponent(key)}&limit=1`,{headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)throw new Error(await r.text());return r.json()},
   async upsert(t,row,conflict){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}${conflict?`?on_conflict=${conflict}`:''}`,{method:'POST',headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(row)});if(!r.ok)throw new Error(await r.text());return r.json()},
@@ -942,7 +977,7 @@ const supa={
 };
 
 // ── DB ──
-let db={logs:{},visits:[],prescriptions:[],reports:[],weights:[],gallery:{},wellness:{}};
+let db={logs:{},visits:[],prescriptions:[],reports:[],weights:[],gallery:{},wellness:{},advice:[],adviceLog:{}};
 function cacheDB(){
   try{
     const safeLogs={};
@@ -953,7 +988,7 @@ function cacheDB(){
     localStorage.setItem('bj2',JSON.stringify({...db,logs:safeLogs}));
   }catch(e){console.warn('cacheDB failed (localStorage quota?):',e);}
 }
-function loadCached(){try{const s=localStorage.getItem('bj2');if(s)db=JSON.parse(s)}catch(e){}}
+function loadCached(){try{const s=localStorage.getItem('bj2');if(s)db={...db,...JSON.parse(s)}}catch(e){}}
 function isBase64DataUrl(s){return typeof s==='string'&&s.startsWith('data:');}
 function mimeFromDataUrl(s){const m=s.match(/^data:([^;]+);/);return m?m[1]:'application/octet-stream';}
 function extFromMime(m){const map={'image/jpeg':'jpg','image/png':'png','image/gif':'gif','image/webp':'webp','application/pdf':'pdf'};return map[m]||'bin';}
@@ -1023,10 +1058,21 @@ async function loadDB(){
     if(localStorage.getItem(MED_MIGRATED_KEY))loadMedicalFiles();
 
     console.time('loadDB:logs+weights');
-    const[logs,weights]=await Promise.all([
+    // new tables: a missing table must not break the core load, so these resolve to null on failure
+    const[logs,weights,settings,advice,adviceLog]=await Promise.all([
       supa.get('bj_logs',LOG_COLS),
-      supa.get('bj_weights')
+      supa.get('bj_weights'),
+      supa.get('bj_settings','*',null).catch(()=>null),
+      supa.get('bj_advice').catch(()=>null),
+      supa.get('bj_advice_log','*',null).catch(()=>null)
     ]);
+    const sd=settings&&settings.find(s=>s.key==='start_date');
+    if(sd&&/^\d{4}-\d{2}-\d{2}$/.test(sd.value)){
+      try{localStorage.setItem(START_KEY,sd.value)}catch(e){}
+      START_DATE=new Date(sd.value+'T00:00:00');
+    }
+    if(advice)db.advice=advice.map(a=>({id:a.id,text:a.text,active:a.active!==false}));
+    if(adviceLog){db.adviceLog={};adviceLog.forEach(r=>{db.adviceLog[r.date_key+'|'+r.advice_id]=r.done})}
     console.timeEnd('loadDB:logs+weights');
     db.logs={};
     logs.forEach(r=>{
@@ -1390,6 +1436,8 @@ function renderToday(){
       ${mkItems(dd.donts,'dont')}
     </div>`;
 
+  renderAdviceToday();
+
   // Garbh Sanskar
   const gs=getGSForWeek(week);
   document.getElementById('gsCard').innerHTML=`
@@ -1654,8 +1702,71 @@ function setWellnessTab(tab,btn){
   btn.classList.add('active');
   document.getElementById('wellnessYoga').style.display=tab==='yoga'?'block':'none';
   document.getElementById('wellnessExercise').style.display=tab==='exercise'?'block':'none';
+  document.getElementById('wellnessAdvice').style.display=tab==='advice'?'block':'none';
   if(tab==='yoga')renderYoga();
   if(tab==='exercise')renderExercise();
+  if(tab==='advice'){document.getElementById('wellnessSummary').innerHTML='';renderAdvice()}
+}
+
+// ── SETTINGS ──
+function openSettings(){
+  document.getElementById('startDateInput').value=dateKey(START_DATE);
+  openModal('settingsModal');
+}
+async function saveStartDate(){
+  const v=document.getElementById('startDateInput').value;
+  const d=parseKey(v);
+  const now=new Date();
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(v)||isNaN(d)||d>now||now-d>TOTAL_WEEKS*7*86400000){showToast('Pick a date within the last 40 weeks');return}
+  START_DATE=d;
+  try{localStorage.setItem(START_KEY,v)}catch(e){}
+  closeModal('settingsModal');
+  // re-render whatever is on screen so the new date shows without reload
+  renderToday();initLog();
+  const active=document.querySelector('.page.active');
+  if(active&&active.id!=='pageToday')showPage(active.id.slice(4));
+  try{await supa.upsert('bj_settings',{key:'start_date',value:v},'key');showToast('Start date saved ✓')}catch(e){console.error('start date sync failed',e);showToast('Saved locally')}
+}
+
+// ── ADVICE ──
+const escHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function adviceRowsHTML(withDel){
+  const today=dateKey(new Date());
+  return (db.advice||[]).filter(a=>a.active).map(a=>{
+    const v=db.adviceLog[today+'|'+a.id];
+    return`<div class="advice-row"><span class="advice-text">${escHtml(a.text)}</span>
+      <div class="advice-yn"><button class="yes ${v===true?'on':''}" onclick="setAdvice('${a.id}',true)">Yes</button><button class="no ${v===false?'on':''}" onclick="setAdvice('${a.id}',false)">No</button></div>
+      ${withDel?`<button class="advice-del" aria-label="Remove" onclick="removeAdvice('${a.id}')">✕</button>`:''}</div>`;
+  }).join('');
+}
+function renderAdviceToday(){
+  const el=document.getElementById('adviceToday');if(!el)return;
+  const rows=adviceRowsHTML(false);
+  el.innerHTML=rows?`<div class="advice-card"><div class="advice-title">Doctor's advice today</div>${rows}</div>`:'';
+}
+function renderAdvice(){
+  const el=document.getElementById('wellnessAdvice');if(!el)return;
+  const rows=adviceRowsHTML(true);
+  el.innerHTML=`<div class="advice-add"><input class="input-field" id="adviceInput" maxlength="120" placeholder="e.g. Walk after meals"><button class="save-btn" onclick="addAdvice()">Add</button></div>`+
+    (rows?`<div class="advice-card">${rows}</div>`:'<p class="no-data">No advice added yet</p>');
+}
+function refreshAdvice(){renderAdviceToday();if(document.getElementById('wellnessAdvice').style.display!=='none')renderAdvice()}
+async function addAdvice(){
+  const inp=document.getElementById('adviceInput');
+  const text=inp.value.trim();if(!text)return;
+  const a={id:crypto.randomUUID(),text,active:true};
+  db.advice.push(a);cacheDB();refreshAdvice();
+  try{await supa.upsert('bj_advice',{id:a.id,text:a.text,active:true})}catch(e){console.error('advice sync failed',e);showToast('Saved locally')}
+}
+async function removeAdvice(id){
+  const a=db.advice.find(x=>x.id===id);if(!a||!confirm('Remove "'+a.text+'"? Past history is kept.'))return;
+  a.active=false;cacheDB();refreshAdvice();
+  try{await supa.upsert('bj_advice',{id,text:a.text,active:false})}catch(e){console.error('advice sync failed',e);showToast('Saved locally')}
+}
+async function setAdvice(id,val){
+  const today=dateKey(new Date());
+  db.adviceLog[today+'|'+id]=val;cacheDB();refreshAdvice();
+  try{await supa.upsert('bj_advice_log',{advice_id:id,date_key:today,done:val},'advice_id,date_key')}catch(e){console.error('advice log sync failed',e);showToast('Saved locally')}
 }
 
 function makeYogaSVG(anim){
@@ -2898,6 +3009,9 @@ ALTER TABLE bj_logs ADD COLUMN IF NOT EXISTS exercise_mins int;
 ALTER TABLE bj_visits ADD COLUMN IF NOT EXISTS record_type text DEFAULT 'visit';
 ALTER TABLE bj_visits ADD COLUMN IF NOT EXISTS remarks text;
 -- No schema change needed, file column stores JSON array now
+-- Already created in Supabase (RLS on, allow_all policies):
+--   bj_settings(key pk, value)  bj_advice(id, text, active, created_at)
+--   bj_advice_log(advice_id, date_key, done, unique(advice_id,date_key))  -- no id or created_at
 */
 </script>
 </body>
