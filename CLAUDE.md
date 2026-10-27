@@ -18,7 +18,9 @@ localhost origin.
   bj_visits (medical records), bj_logs (daily logs), bj_weights
   (weight entries)
 - Storage: bucket baby-journal, for file attachments
-- Auth: PIN via edge function verify-pin, PIN server-side only
+- Auth: PIN via edge function verify-pin, PIN stored as Supabase secret `PIN`
+  (read with Deno.env.get). The old PIN was hard-coded in this repo's git
+  history until the fix commit, so treat it as exposed.
 - Live URL: https://baby-journal-theta.vercel.app
 - Deployment: Vercel, auto-deploys on push to main
 - Known issue: 9 records in bj_visits still have raw base64 in file
@@ -33,7 +35,8 @@ Deployed on Vercel via GitHub. Database on Supabase.
 
 ## Config
 - Start date: 27 July 2026
-- PIN: server-side only (verify-pin edge function), not in source
+- PIN: Supabase secret `PIN`, read by the verify-pin edge function. Change it
+  with `supabase secrets set PIN=<new> --project-ref dwvtyctgawlshbjqyeqq`
 - Supabase project ID: dwvtyctgawlshbjqyeqq
 - Storage bucket: baby-journal
 - Live URL: https://baby-journal-theta.vercel.app

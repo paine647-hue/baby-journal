@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
-const CORRECT_PIN = "2707"
+const CORRECT_PIN = Deno.env.get("PIN")
 
 serve(async (req) => {
   const corsHeaders = {
@@ -15,7 +15,7 @@ serve(async (req) => {
 
   try {
     const { pin } = await req.json()
-    const valid = pin === CORRECT_PIN
+    const valid = !!CORRECT_PIN && pin === CORRECT_PIN
 
     return new Response(
       JSON.stringify({ valid }),
