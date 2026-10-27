@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Baby Journal 🌸</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#E8748A">
+<link rel="icon" type="image/png" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1336,6 +1340,8 @@ function initApp(){
   renderToday();
   initLog();
   checkNotifPrompt();
+  // already granted (e.g. after a reinstall): make sure this install has a stored subscription
+  if('Notification' in window&&Notification.permission==='granted')subscribePush().catch(e=>console.warn('push resubscribe failed',e));
   loadDB();
   staggerCards(document.getElementById('pageToday'));
 }
@@ -1468,13 +1474,22 @@ function checkNotifPrompt(){
 async function requestNotifPermission(){
   const p=await Notification.requestPermission();
   document.getElementById('notifCard').style.display='none';
-  if(p==='granted'){scheduleNotifications();showToast('Notifications enabled ✓')}
-  else showToast('Permission denied');
+  if(p==='granted'){
+    try{await subscribePush();showToast('Reminders on ✓')}
+    catch(e){console.error('push subscribe failed',e);showToast('Could not enable reminders')}
+  }else showToast('Permission denied');
 }
-function scheduleNotifications(){
-  if(!('serviceWorker' in navigator))return;
-  showToast('Reminders set for 10am & 11pm');
+const VAPID_PUBLIC='BE2D24rqf-66BsUm0HNzKR0UhopRETXRqaTPQ-kWxaOzR-81ysT4fWR2D_KwUKWVqDbw5-nqgiFYkcjx9ptupA8';
+function b64ToBytes(s){const p='='.repeat((4-s.length%4)%4);const b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0))}
+// Reminders are sent by the send-reminders edge function via Web Push, so they fire with the app closed.
+async function subscribePush(){
+  if(!('serviceWorker' in navigator)||!('PushManager' in window))throw new Error('push unsupported');
+  const reg=await navigator.serviceWorker.ready;
+  const sub=(await reg.pushManager.getSubscription())||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64ToBytes(VAPID_PUBLIC)});
+  const j=sub.toJSON();
+  await supa.upsert('bj_push_subs',{endpoint:j.endpoint,p256dh:j.keys.p256dh,auth:j.keys.auth},'endpoint');
 }
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(e=>console.warn('sw register failed',e));
 
 // ── LOG ──
 let logDate=new Date();
