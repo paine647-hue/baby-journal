@@ -21,8 +21,31 @@ localhost origin.
 - Auth: PIN via edge function verify-pin, PIN stored as Supabase secret `PIN`
   (read with Deno.env.get). The old PIN was hard-coded in this repo's git
   history until the fix commit, so treat it as exposed.
+- Settings (gear on Today): start date (bj_settings key `start_date`,
+  cached in localStorage `bjStartDate`) and reminders
+- Doctor's advice: Wellness "Advice" tab + Today card. Tables bj_advice,
+  bj_advice_log (advice_id, date_key, done; no id or created_at column)
+- PWA: manifest.json, sw.js (pass-through fetch, push, notificationclick),
+  icons/. vercel.json uses an explicit static allowlist; a new root file
+  is NOT deployed until added to `builds` there (never serve supabase/ or
+  *.md publicly)
+- Reminders (Web Push, works with app closed): table bj_reminders (id, label,
+  body, time_local 'HH:MM', enabled, last_sent_date). Subscriptions in
+  bj_push_subs. UI in Settings sheet (add/edit/delete, daily only, times IST).
+  Sender: edge function send-reminders (verify_jwt on, npm:web-push), run
+  every minute by pg_cron job `bj-send-reminders` via pg_net with the anon
+  key. A reminder fires at the first tick at or after time_local if
+  last_sent_date is not today, up to 30 min late, then last_sent_date is set.
+  Secrets: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT. Public key is
+  also hard-coded as VAPID_PUBLIC in index.html; rotating keys needs both
+  changed and every device re-subscribed.
+  Debug cron: `select * from net._http_response order by created desc limit 5`
+  (401 means bad key in the cron command), `cron.job_run_details`.
+  Not supported: one-off or per-weekday reminders (needs a schema change).
 - Live URL: https://baby-journal-theta.vercel.app
 - Deployment: Vercel, auto-deploys on push to main
+- Edge functions deploy with `npx supabase functions deploy <name>
+  --project-ref dwvtyctgawlshbjqyeqq` (CLI is logged in, no link needed)
 - Known issue: 9 records in bj_visits still have raw base64 in file
   column, migration to Storage pending (migrate-files.js script to
   be run)

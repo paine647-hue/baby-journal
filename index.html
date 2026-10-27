@@ -243,6 +243,14 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
 .advice-add{display:flex;gap:8px;margin-bottom:14px}
 .advice-add .input-field{flex:1}
 .advice-add .save-btn{width:auto;padding:0 18px;margin-bottom:0}
+.rem-row{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--sage-pale);cursor:pointer;transition:background .15s}
+.rem-row:active{background:var(--rose-pale)}
+.rem-time{font-family:'Playfair Display',serif;font-size:16px;width:78px;flex-shrink:0;color:var(--ink)}
+.rem-info{flex:1;min-width:0;font-size:13px;color:var(--ink);overflow-wrap:anywhere}
+.rem-row.off .rem-time,.rem-row.off .rem-info{opacity:.45}
+.rem-status{font-size:12px;color:var(--ink-mid);background:var(--rose-pale);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.rem-status button{margin-left:auto;padding:6px 14px;border:none;border-radius:20px;background:var(--rose);color:var(--white);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+.rem-status button:active{opacity:.85;transform:scale(.96)}
 .wtab-btn{flex:1;padding:8px 4px;border-radius:20px;border:1.5px solid var(--rose-mid);background:var(--white);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--ink-mid);cursor:pointer;transition:all .2s}
 .wtab-btn.active{background:var(--rose);border-color:var(--rose);color:var(--white)}
 .today-practice-card{background:var(--sage);border-radius:var(--radius-sm);padding:16px;margin-bottom:14px;color:var(--white)}
@@ -677,6 +685,23 @@ body{font-family:'DM Sans',sans-serif;color:var(--ink);max-width:430px;margin:0 
     <h2 class="modal-title">Settings</h2>
     <div class="input-group"><label class="input-label">Pregnancy start date</label><input class="input-field" type="date" id="startDateInput"></div>
     <button class="save-btn" onclick="saveStartDate()">Save</button>
+    <div class="section-title" style="margin-top:8px">Reminders</div>
+    <div id="remStatus"></div>
+    <div id="remList"></div>
+    <button class="save-btn secondary" style="margin-top:10px" onclick="openReminder(null)">+ Add reminder</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="reminderModal">
+  <div class="modal-sheet">
+    <button class="modal-close" onclick="closeModal('reminderModal')">✕</button>
+    <h2 class="modal-title" id="remTitle">Add reminder</h2>
+    <div class="input-group"><label class="input-label">Title</label><input class="input-field" id="remLabel" maxlength="60" placeholder="e.g. Take vitamin"></div>
+    <div class="input-group"><label class="input-label">Time (IST, every day)</label><input class="input-field" type="time" id="remTime"></div>
+    <div class="input-group"><label class="input-label">Note (optional)</label><input class="input-field" id="remBody" maxlength="120" placeholder="Shown under the title"></div>
+    <div class="toggle-row" style="margin-bottom:16px"><span class="toggle-label-text">Enabled</span><div class="toggle-switch on" id="remEnabled" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div></div>
+    <button class="save-btn" onclick="saveReminder()">Save</button>
+    <button class="save-btn secondary" id="remDelete" onclick="deleteReminder()">Delete</button>
   </div>
 </div>
 
@@ -977,11 +1002,12 @@ const supa={
       headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}
     });
   },
+  async del(t,col,val){const r=await fetch(`${SUPABASE_URL}/rest/v1/${t}?${col}=eq.${encodeURIComponent(val)}`,{method:'DELETE',headers:{apikey:SUPABASE_ANON,Authorization:`Bearer ${SUPABASE_ANON}`}});if(!r.ok)throw new Error(await r.text())},
   publicUrl(path){return `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${path}`}
 };
 
 // ── DB ──
-let db={logs:{},visits:[],prescriptions:[],reports:[],weights:[],gallery:{},wellness:{},advice:[],adviceLog:{}};
+let db={logs:{},visits:[],prescriptions:[],reports:[],weights:[],gallery:{},wellness:{},advice:[],adviceLog:{},reminders:[]};
 function cacheDB(){
   try{
     const safeLogs={};
@@ -1063,13 +1089,15 @@ async function loadDB(){
 
     console.time('loadDB:logs+weights');
     // new tables: a missing table must not break the core load, so these resolve to null on failure
-    const[logs,weights,settings,advice,adviceLog]=await Promise.all([
+    const[logs,weights,settings,advice,adviceLog,reminders]=await Promise.all([
       supa.get('bj_logs',LOG_COLS),
       supa.get('bj_weights'),
       supa.get('bj_settings','*',null).catch(()=>null),
       supa.get('bj_advice').catch(()=>null),
-      supa.get('bj_advice_log','*',null).catch(()=>null)
+      supa.get('bj_advice_log','*',null).catch(()=>null),
+      supa.get('bj_reminders').catch(()=>null)
     ]);
+    if(reminders)db.reminders=reminders.map(r=>({id:r.id,label:r.label,body:r.body,time_local:r.time_local,enabled:r.enabled!==false,last_sent_date:r.last_sent_date}));
     const sd=settings&&settings.find(s=>s.key==='start_date');
     if(sd&&/^\d{4}-\d{2}-\d{2}$/.test(sd.value)){
       try{localStorage.setItem(START_KEY,sd.value)}catch(e){}
@@ -1726,7 +1754,72 @@ function setWellnessTab(tab,btn){
 // ── SETTINGS ──
 function openSettings(){
   document.getElementById('startDateInput').value=dateKey(START_DATE);
+  renderReminders();
   openModal('settingsModal');
+}
+
+// ── REMINDERS ──
+// Sent by the send-reminders edge function (IST, daily, first cron tick at or after the time, 30 min grace).
+const IST_FMT=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+function nowIST(){const p=Object.fromEntries(IST_FMT.formatToParts(new Date()).map(x=>[x.type,x.value]));return{date:p.year+'-'+p.month+'-'+p.day,minutes:+p.hour*60+ +p.minute}}
+function fmtTime(t){const[h,m]=t.split(':').map(Number);return(h%12||12)+':'+String(m).padStart(2,'0')+' '+(h<12?'am':'pm')}
+let editingReminder=null;
+function renderReminders(){
+  const perm=('Notification' in window)?Notification.permission:'unsupported';
+  document.getElementById('remStatus').innerHTML=
+    perm==='granted'?'<div class="rem-status">Notifications are on</div>':
+    perm==='default'?'<div class="rem-status">Notifications are off<button onclick="requestNotifPermission().then(renderReminders)">Enable</button></div>':
+    '<div class="rem-status">Notifications are blocked. Allow them for this app in Chrome site settings.</div>';
+  const list=(db.reminders||[]).slice().sort((a,b)=>a.time_local.localeCompare(b.time_local));
+  document.getElementById('remList').innerHTML=list.length?list.map(r=>
+    `<div class="rem-row ${r.enabled?'':'off'}" onclick="openReminder('${r.id}')"><span class="rem-time">${fmtTime(r.time_local)}</span><span class="rem-info">${escHtml(r.label)}</span><div class="toggle-switch ${r.enabled?'on':''}" onclick="event.stopPropagation();toggleReminder('${r.id}')"><div class="toggle-knob"></div></div></div>`
+  ).join(''):'<p class="no-data">No reminders yet</p>';
+}
+function openReminder(id){
+  const r=id?db.reminders.find(x=>x.id===id):null;
+  editingReminder=r||null;
+  document.getElementById('remTitle').textContent=r?'Edit reminder':'Add reminder';
+  document.getElementById('remLabel').value=r?r.label:'';
+  document.getElementById('remTime').value=r?r.time_local:'09:00';
+  document.getElementById('remBody').value=r?r.body:'';
+  document.getElementById('remEnabled').classList.toggle('on',r?r.enabled:true);
+  document.getElementById('remDelete').style.display=r?'':'none';
+  openModal('reminderModal');
+}
+// Mark today as sent when the time has already passed, so saving never fires it immediately.
+function reminderSentDate(time,enabledNow,prev){
+  const n=nowIST();const[h,m]=time.split(':').map(Number);
+  return h*60+m<=n.minutes?n.date:(prev&&prev.time_local===time&&enabledNow===prev.enabled?prev.last_sent_date:null);
+}
+async function persistReminder(r){
+  const i=db.reminders.findIndex(x=>x.id===r.id);
+  if(i>=0)db.reminders[i]=r;else db.reminders.push(r);
+  cacheDB();renderReminders();
+  try{await supa.upsert('bj_reminders',{id:r.id,label:r.label,body:r.body,time_local:r.time_local,enabled:r.enabled,last_sent_date:r.last_sent_date})}
+  catch(e){console.error('reminder sync failed',e);showToast('Saved locally')}
+}
+async function saveReminder(){
+  const label=document.getElementById('remLabel').value.trim();
+  const time=document.getElementById('remTime').value;
+  if(!label){showToast('Add a title');return}
+  if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)){showToast('Pick a time');return}
+  const enabled=document.getElementById('remEnabled').classList.contains('on');
+  const prev=editingReminder;
+  const r={id:prev?prev.id:crypto.randomUUID(),label,body:document.getElementById('remBody').value.trim()||'Tap to open Baby Journal',time_local:time,enabled,last_sent_date:reminderSentDate(time,enabled,prev)};
+  closeModal('reminderModal');
+  await persistReminder(r);
+  if(enabled&&'Notification' in window&&Notification.permission==='granted')subscribePush().catch(()=>{});
+}
+async function toggleReminder(id){
+  const prev=db.reminders.find(x=>x.id===id);if(!prev)return;
+  const enabled=!prev.enabled;
+  await persistReminder({...prev,enabled,last_sent_date:reminderSentDate(prev.time_local,enabled,prev)});
+}
+async function deleteReminder(){
+  const r=editingReminder;if(!r||!confirm('Delete "'+r.label+'"?'))return;
+  closeModal('reminderModal');
+  db.reminders=db.reminders.filter(x=>x.id!==r.id);cacheDB();renderReminders();
+  try{await supa.del('bj_reminders','id',r.id)}catch(e){console.error('reminder delete failed',e);showToast('Delete failed, will reappear on reload')}
 }
 async function saveStartDate(){
   const v=document.getElementById('startDateInput').value;
